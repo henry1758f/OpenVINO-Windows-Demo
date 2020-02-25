@@ -1,0 +1,32 @@
+﻿<Page
+    x:Class="OpenVINO_Windows_Demo.DemosPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:OpenVINO_Windows_Demo"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Page.Resources>
+        <DataTemplate x:Key="DemosItemTemplate" x:DataType="local:Demo_and_Sample_List">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="200" />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <Image Margin="8" Source="{x:Bind preview_Path}" />
+                <StackPanel Grid.Column="1" VerticalAlignment="Center" >
+                    <TextBlock Margin="0,0,0,4" Text="{x:Bind Name}" TextWrapping="WrapWholeWords" Style="{StaticResource TitleTextBlockStyle}" />
+                    <!--<TextBlock Margin="0,0,0,4" Text="{x:Bind Name}" TextWrapping="WrapWholeWords"/> -->
+
+                    <!-- <TextBlock Margin="0,0,0,4" Text="{x:Bind details}" Style="{StaticResource SubtitleTextBlockStyle}"/> -->
+                </StackPanel>
+            </Grid>
+        </DataTemplate>
+    </Page.Resources>
+
+    <Grid>
+        <ListView ItemTemplate="{StaticResource DemosItemTemplate}" ItemsSource="{x:Bind Demos}" IsItemClickEnabled="True" ItemClick="ListView_ItemClick"/>
+
+    </Grid>
+</Page>
