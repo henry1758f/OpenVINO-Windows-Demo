@@ -44,6 +44,8 @@ namespace OpenVINO_Windows_Demo
         /// <param name="e">關於啟動要求和處理序的詳細資料。</param>
         protected override void OnLaunched(LaunchActivatedEventArgs e)
         {
+            APPLaunch();
+
             Frame rootFrame = Window.Current.Content as Frame;
 
             // 當視窗中已有內容時，不重複應用程式初始化，
@@ -102,9 +104,14 @@ namespace OpenVINO_Windows_Demo
             deferral.Complete();
         }
         
+
+
         AppServiceConnection Connection = null;
         BackgroundTaskDeferral appServiceDeferral = null;
-
+        private async void APPLaunch()
+        {
+            await FullTrustProcessLauncher.LaunchFullTrustProcessForCurrentAppAsync();
+        }
         /// <summary>
         /// Override the Application.OnBackgroundActivated method to handle background activation in 
         /// the main process. This entry point is used when BackgroundTaskBuilder.TaskEntryPoint is 
@@ -145,7 +152,7 @@ namespace OpenVINO_Windows_Demo
                 this.appServiceDeferral.Complete();
             }
         }
-        private async Task SendRequestToWin32()
+        public async Task SendRequestToWin32()
         {
 
             ValueSet request = new ValueSet();
@@ -156,7 +163,7 @@ namespace OpenVINO_Windows_Demo
             response = await Connection.SendMessageAsync(request);
 
             string serialNumber = response.Message["serialNumber"] as string;
-
+            
 
             var localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
 

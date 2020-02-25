@@ -46,9 +46,6 @@
         <!--<desktop:Extension Category="windows.fullTrustProcess" Executable="Demos\ConsoleConnector.exe"  >-->
         <desktop:Extension Category="windows.fullTrustProcess" Executable="Demos\ConsoleConnector.exe">
           <desktop:FullTrustProcess>
-            <desktop:ParameterGroup GroupId="Model_Downloader_downloadALL" Parameters="9085b9dd-6f91-4b95-85a4-eae5213c6f3c Model_Downloader_downloadALL"/>
-            <desktop:ParameterGroup GroupId="interactive_face_detection_demo" Parameters="9085b9dd-6f91-4b95-85a4-eae5213c6f3c interactive_face_detection_demo"/>
-            <desktop:ParameterGroup GroupId="Crossroad_Camera_Demo" Parameters="9085b9dd-6f91-4b95-85a4-eae5213c6f3c Crossroad_Camera_Demo"/>
           </desktop:FullTrustProcess>
         </desktop:Extension>
         <!--For comunication with win32-->

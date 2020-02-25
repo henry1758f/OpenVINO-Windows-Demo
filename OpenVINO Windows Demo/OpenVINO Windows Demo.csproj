@@ -153,7 +153,6 @@
   <ItemGroup>
     <Content Include="Assets\Interactive_Face_Detection_C++_Demo.png" />
     <Content Include="Demos\ConsoleConnector.exe" />
-    <Content Include="Demos\Parameter_to_connector_path.inf" />
     <Content Include="Properties\Default.rd.xml" />
     <Content Include="Assets\LockScreenLogo.scale-200.png" />
     <Content Include="Assets\SplashScreen.scale-200.png" />

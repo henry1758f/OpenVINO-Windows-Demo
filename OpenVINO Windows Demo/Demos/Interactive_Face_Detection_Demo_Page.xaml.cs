@@ -161,24 +161,12 @@ namespace OpenVINO_Windows_Demo.Demos
 
         private async void Button_Click(object sender, RoutedEventArgs e)
         {
-            string parameter_string;
-            // Create sample file; replace if exists.
-            Windows.Storage.StorageFolder storageFolder =
-                Windows.Storage.ApplicationData.Current.LocalFolder;
-            //Windows.Storage.StorageFolder storageFolder = Windows.Storage.KnownFolders.DocumentsLibrary;
-            Windows.Storage.StorageFile ParameterFile =
-                await storageFolder.CreateFileAsync("Parameter_to_connector.inf",
-                    Windows.Storage.CreationCollisionOption.ReplaceExisting);
-            parameter_string = " -m \"" + model0_name.Text + "\" ";
-            parameter_string += " -i cam ";
-            
-            await Windows.Storage.FileIO.WriteTextAsync(ParameterFile, parameter_string);
+
 
 
 #if (DEBUG)
-            
-            var messageDialog = new MessageDialog("[ DEBUG ] Parameter: " + parameter_string + "\n Save as " + storageFolder.Path);
-            await messageDialog.ShowAsync();
+
+
 #endif
 
             if (cam_init && previewing)
