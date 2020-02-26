@@ -38,28 +38,105 @@ namespace OpenVINO_Windows_Demo.Demos
     /// </summary>
     public sealed partial class Interactive_Face_Detection_Demo_Page : Page
     {
+        private static string Model_rootPath = @"D:\Intel\openvino_models\";
+
+        private class model_dataList
+        {
+            public string Model_Name { get; set; }
+            public string Model_Path { get; set; }
+            public string[] Model_precision_Support { get; set; }
+            public string Model_framework { get; set; }
+            public string Model_detail { get; set; }
+        }
+        private static List<model_dataList> model0_list = new List<model_dataList>()
+        {
+            new model_dataList{
+                Model_Name = "face-detection-adas-0001",
+                Model_Path = @"models\SYNNEX_demo\intel\",
+                Model_precision_Support = new string[]{"FP32","FP16", "FP32-INT8" },
+                Model_framework = "dldt"
+            },
+            new model_dataList{
+                Model_Name = "face-detection-adas-binary-0001",
+                Model_Path = @"models\SYNNEX_demo\intel\",
+                Model_precision_Support = new string[]{"FP32-INT1" },
+                Model_framework = "dldt"
+            }
+        };
+        private static List<model_dataList> model1_list = new List<model_dataList>()
+        {
+            new model_dataList{
+                Model_Name = "age-gender-recognition-retail-0013",
+                Model_Path = @"models\SYNNEX_demo\intel\",
+                Model_precision_Support = new string[]{"FP32","FP16", "FP32-INT8" },
+                Model_framework = "dldt"
+            }
+        };
+        private static List<model_dataList> model2_list = new List<model_dataList>()
+        {
+            new model_dataList{
+                Model_Name = "head-pose-estimation-adas-0001",
+                Model_Path = @"models\SYNNEX_demo\intel\",
+                Model_precision_Support = new string[]{"FP32","FP16", "FP32-INT8" },
+                Model_framework = "dldt"
+            }
+        };
+        private static List<model_dataList> model3_list = new List<model_dataList>()
+        {
+            new model_dataList{
+                Model_Name = "emotions-recognition-retail-0003",
+                Model_Path = @"models\SYNNEX_demo\intel\",
+                Model_precision_Support = new string[]{"FP32","FP16", "FP32-INT8" },
+                Model_framework = "dldt"
+            }
+        };
+        private static List<model_dataList> model4_list = new List<model_dataList>()
+        {
+            new model_dataList{
+                Model_Name = "facial-landmarks-35-adas-0002",
+                Model_Path = @"models\SYNNEX_demo\intel\",
+                Model_precision_Support = new string[]{"FP32","FP16", "FP32-INT8" },
+                Model_framework = "dldt"
+            }
+        };
+
+        /*
         private readonly List<(string Model_Name,string Model_Path)> _model0_list = new List<(string Model_Name, string Model_Path)>
         {
-            ("model0-1","model0-path01")
+            ("face-detection-adas-0001 [FP32]", @"models\SYNNEX_demo\intel\face-detection-adas-0001\FP32\face-detection-adas-0001.xml"),
+            ("face-detection-adas-0001 [FP16]", @"models\SYNNEX_demo\intel\face-detection-adas-0001\FP16\face-detection-adas-0001.xml"),
+            ("face-detection-adas-0001 [FP32-INT8]", @"models\SYNNEX_demo\intel\face-detection-adas-0001\FP32-INT8\face-detection-adas-0001.xml"),
+            ("face-detection-adas-binary-0001 [FP32-INT1]",@"models\SYNNEX_demo\intel\face-detection-adas-binary-0001\FP32-INT1\face-detection-adas-binary-0001.xml")
         };
         private readonly List<(string Model_Name, string Model_Path)> _model1_list = new List<(string Model_Name, string Model_Path)>
         {
-            ("model0-1","model0-path01")
+            ("age-gender-recognition-retail-0013 [FP32]", @"models\SYNNEX_demo\intel\age-gender-recognition-retail-0013\FP32\age-gender-recognition-retail-0013.xml"),
+            ("age-gender-recognition-retail-0013 [FP16]", @"models\SYNNEX_demo\intel\age-gender-recognition-retail-0013\FP16\age-gender-recognition-retail-0013.xml"),
+            ("age-gender-recognition-retail-0013 [FP32-INT8]", @"models\SYNNEX_demo\intel\age-gender-recognition-retail-0013\FP32-INT8\age-gender-recognition-retail-0013.xml")
         };
         private readonly List<(string Model_Name, string Model_Path)> _model2_list = new List<(string Model_Name, string Model_Path)>
         {
-            ("model0-1","model0-path01")
+            ("head-pose-estimation-adas-0001 [FP32]", @"models\SYNNEX_demo\intel\head-pose-estimation-adas-0001\FP32\head-pose-estimation-adas-0001.xml"),
+            ("head-pose-estimation-adas-0001 [FP16]", @"models\SYNNEX_demo\intel\head-pose-estimation-adas-0001\FP16\head-pose-estimation-adas-0001.xml"),
+            ("head-pose-estimation-adas-0001 [FP32-INT8]", @"models\SYNNEX_demo\intel\head-pose-estimation-adas-0001\FP32-INT8\head-pose-estimation-adas-0001.xml")
         };
         private readonly List<(string Model_Name, string Model_Path)> _model3_list = new List<(string Model_Name, string Model_Path)>
         {
-            ("model0-1","model0-path01")
+            ("emotions-recognition-retail-0003 [FP32]", @"models\SYNNEX_demo\intel\emotions-recognition-retail-0003\FP32\emotions-recognition-retail-0003.xml"),
+            ("emotions-recognition-retail-0003 [FP16]", @"models\SYNNEX_demo\intel\emotions-recognition-retail-0003\FP16\emotions-recognition-retail-0003.xml"),
+            ("emotions-recognition-retail-0003 [FP32-INT8]", @"models\SYNNEX_demo\intel\emotions-recognition-retail-0003\FP32-INT8\emotions-recognition-retail-0003.xml")
         };
         private readonly List<(string Model_Name, string Model_Path)> _model4_list = new List<(string Model_Name, string Model_Path)>
         {
-            ("model0-1","model0-path01")
+            ("facial-landmarks-35-adas-0002 [FP32]", @"models\SYNNEX_demo\intel\facial-landmarks-35-adas-0002\FP32\facial-landmarks-35-adas-0002.xml"),
+            ("facial-landmarks-35-adas-0002 [FP16]", @"models\SYNNEX_demo\intel\facial-landmarks-35-adas-0002\FP16\facial-landmarks-35-adas-0002.xml"),
+            ("facial-landmarks-35-adas-0002 [FP32-INT8]", @"models\SYNNEX_demo\intel\facial-landmarks-35-adas-0002\FP32-INT8\facial-landmarks-35-adas-0002.xml")
         };
+        */
         string[] Target_device_list = new string[] { "CPU", "GPU", "MYRIAD" };
 
+
+        #region CameraPreview
         MediaCapture mediaCapture;
         bool isPreviewing,cam_init = false, previewing = false;
         DisplayRequest displayRequest = new DisplayRequest();
@@ -150,35 +227,184 @@ namespace OpenVINO_Windows_Demo.Demos
                 deferral.Complete();
             }
         }
+        #endregion
+
 
         public Interactive_Face_Detection_Demo_Page()
         {
             this.InitializeComponent();
             Application.Current.Suspending += Application_Suspending;
 
+            foreach (model_dataList model_DataList in model0_list)
+            {
+                foreach (string precision in model_DataList.Model_precision_Support)
+                {
+                    model0_name.Items.Add(model_DataList.Model_Name + " [" + precision + "]");
+                }
+            }
+            foreach (model_dataList model_DataList in model1_list)
+            {
+                foreach (string precision in model_DataList.Model_precision_Support)
+                {
+                    model1_name.Items.Add(model_DataList.Model_Name + " [" + precision + "]");
+                }
+            }
+            foreach (model_dataList model_DataList in model2_list)
+            {
+                foreach (string precision in model_DataList.Model_precision_Support)
+                {
+                    model2_name.Items.Add(model_DataList.Model_Name + " [" + precision + "]");
+                }
+            }
+            foreach (model_dataList model_DataList in model3_list)
+            {
+                foreach (string precision in model_DataList.Model_precision_Support)
+                {
+                    model3_name.Items.Add(model_DataList.Model_Name + " [" + precision + "]");
+                }
+            }
+            foreach (model_dataList model_DataList in model4_list)
+            {
+                foreach (string precision in model_DataList.Model_precision_Support)
+                {
+                    model4_name.Items.Add(model_DataList.Model_Name + " [" + precision + "]");
+                }
+            }
+
         }
 
 
         private async void Button_Click(object sender, RoutedEventArgs e)
         {
-
-
-
-#if (DEBUG)
-
-
-#endif
-
+            string Parameter = "";
+            // Close camera and resource 
             if (cam_init && previewing)
             {
                 await mediaCaptureMgr.StopPreviewAsync();
                 await CleanupCameraAsync();
                 previewing = false;
-                
-            }
-            
 
-            await FullTrustProcessLauncher.LaunchFullTrustProcessForCurrentAppAsync("interactive_face_detection_demo");
+            }
+            // Build Parameter String
+            if (model0_name.SelectedItem == null)
+            {
+                MessageDialog messageDialogs = new MessageDialog("You have to " + model0_TextBlock.Text, "ERROR!");
+                messageDialogs.ShowAsync();
+                return;
+            }
+            else
+            {
+                foreach (model_dataList model_DataList in model0_list)
+                {
+                    foreach (string precision in model_DataList.Model_precision_Support)
+                    {
+                        if (model0_name.SelectedItem.ToString().Contains(precision) && model0_name.SelectedItem.ToString().Contains(model_DataList.Model_Name))
+                        {
+                            
+                            if (model0_target.SelectedItem != null)
+                                Parameter = " -m " + Model_rootPath + model_DataList.Model_Path + model_DataList.Model_Name + @"\" + precision + @"\" + model_DataList.Model_Name + ".xml -d " + model0_target.SelectedItem.ToString() + " ";
+                            else
+                                Parameter = " -m " + Model_rootPath + model_DataList.Model_Path + model_DataList.Model_Name + @"\" + precision + @"\" + model_DataList.Model_Name + ".xml ";
+                        }
+                    }
+                }
+            }
+
+            if (model1_name.SelectedItem == null)
+            {
+                MessageDialog messageDialogs = new MessageDialog("You have to " + model1_TextBlock.Text, "ERROR!");
+                messageDialogs.ShowAsync();
+                return;
+            }
+            else
+            {
+                foreach (model_dataList model_DataList in model1_list)
+                {
+                    foreach (string precision in model_DataList.Model_precision_Support)
+                    {
+                        if (model1_name.SelectedItem.ToString().Contains(precision) && model1_name.SelectedItem.ToString().Contains(model_DataList.Model_Name))
+                        {
+
+                            if (model1_target.SelectedItem != null)
+                                Parameter += " -m_ag " + Model_rootPath + model_DataList.Model_Path + model_DataList.Model_Name + @"\" + precision + @"\" + model_DataList.Model_Name + ".xml -d_ag " + model1_target.SelectedItem.ToString() + " ";
+                            else
+                                Parameter += " -m_ag " + Model_rootPath + model_DataList.Model_Path + model_DataList.Model_Name + @"\" + precision + @"\" + model_DataList.Model_Name + ".xml ";
+                        }
+                    }
+                }
+            }
+            if (model2_name.SelectedItem == null)
+            {
+                MessageDialog messageDialogs = new MessageDialog("You have to " + model2_TextBlock.Text, "ERROR!");
+                messageDialogs.ShowAsync();
+                return;
+            }
+            else
+            {
+                foreach (model_dataList model_DataList in model2_list)
+                {
+                    foreach (string precision in model_DataList.Model_precision_Support)
+                    {
+                        if (model2_name.SelectedItem.ToString().Contains(precision) && model2_name.SelectedItem.ToString().Contains(model_DataList.Model_Name))
+                        {
+
+                            if (model2_target.SelectedItem != null)
+                                Parameter += " -m_hp " + Model_rootPath + model_DataList.Model_Path + model_DataList.Model_Name + @"\" + precision + @"\" + model_DataList.Model_Name + ".xml -d_hp " + model2_target.SelectedItem.ToString() + " ";
+                            else
+                                Parameter += " -m_hp " + Model_rootPath + model_DataList.Model_Path + model_DataList.Model_Name + @"\" + precision + @"\" + model_DataList.Model_Name + ".xml ";
+                        }
+                    }
+                }
+            }
+            if (model3_name.SelectedItem == null)
+            {
+                MessageDialog messageDialogs = new MessageDialog("You have to " + model3_TextBlock.Text, "ERROR!");
+                messageDialogs.ShowAsync();
+                return;
+            }
+            else
+            {
+                foreach (model_dataList model_DataList in model3_list)
+                {
+                    foreach (string precision in model_DataList.Model_precision_Support)
+                    {
+                        if (model3_name.SelectedItem.ToString().Contains(precision) && model3_name.SelectedItem.ToString().Contains(model_DataList.Model_Name))
+                        {
+
+                            if (model3_target.SelectedItem != null)
+                                Parameter += " -m_em " + Model_rootPath + model_DataList.Model_Path + model_DataList.Model_Name + @"\" + precision + @"\" + model_DataList.Model_Name + ".xml -d_em " + model3_target.SelectedItem.ToString() + " ";
+                            else
+                                Parameter += " -m_em " + Model_rootPath + model_DataList.Model_Path + model_DataList.Model_Name + @"\" + precision + @"\" + model_DataList.Model_Name + ".xml ";
+                        }
+                    }
+                }
+            }
+            if (model4_name.SelectedItem == null)
+            {
+                MessageDialog messageDialogs = new MessageDialog("You have to " + model4_TextBlock.Text, "ERROR!");
+                messageDialogs.ShowAsync();
+                return;
+            }
+            else
+            {
+                foreach (model_dataList model_DataList in model4_list)
+                {
+                    foreach (string precision in model_DataList.Model_precision_Support)
+                    {
+                        if (model4_name.SelectedItem.ToString().Contains(precision) && model4_name.SelectedItem.ToString().Contains(model_DataList.Model_Name))
+                        {
+
+                            if (model4_target.SelectedItem != null)
+                                Parameter += " -m_lm " + Model_rootPath + model_DataList.Model_Path + model_DataList.Model_Name + @"\" + precision + @"\" + model_DataList.Model_Name + ".xml -d_lm " + model4_target.SelectedItem.ToString() + " ";
+                            else
+                                Parameter += " -m_lm " + Model_rootPath + model_DataList.Model_Path + model_DataList.Model_Name + @"\" + precision + @"\" + model_DataList.Model_Name + ".xml ";
+                        }
+                    }
+                }
+            }
+
+            // Send Request to ConsoleConnector
+            await ((App)Application.Current).SendRequestToConsoleConnector("Interactive_face_detection_demo", Parameter + " -i cam");
         }
 
         private async void Preview_Button_Click(object sender, RoutedEventArgs e)

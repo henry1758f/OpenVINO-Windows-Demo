@@ -37,45 +37,45 @@
             <TextBlock Grid.Row="0" Text="Setting Your Models" Style="{StaticResource TitleTextBlockStyle}" 
                    HorizontalAlignment="Left" VerticalAlignment="Center" />
             <TextBlock Grid.Row="1" Text="Select a trained Face Detection model" Margin="5" Style="{StaticResource SubtitleTextBlockStyle}" 
-                   HorizontalAlignment="Left" VerticalAlignment="Bottom" />
+                   HorizontalAlignment="Left" VerticalAlignment="Bottom" x:Name="model0_TextBlock"/>
             <RelativePanel  Grid.Row="2">
-                <TextBox x:Name="model0_name" Width="600" RelativePanel.AlignLeftWithPanel="True"/>
-                <Button x:Name="model0_select_button" Content="..." RelativePanel.RightOf="model0_name"  />
+                <ComboBox x:Name="model0_name" Width="600" RelativePanel.AlignLeftWithPanel="True" />
+                <Button x:Name="model0_select_button" Content="..." RelativePanel.RightOf="model0_name" />
                 <ComboBox x:Name="model0_target" PlaceholderText="Pick your Target Device" Width="200" RelativePanel.RightOf="model0_select_button" Margin="10,0" ItemsSource="{x:Bind Target_device_list}">
                 </ComboBox>
             </RelativePanel>
 
             <TextBlock Grid.Row="3" Text="Select a trained Age/Gender Recognition model" Margin="5" Style="{StaticResource SubtitleTextBlockStyle}" 
-                   HorizontalAlignment="Left" VerticalAlignment="Bottom" />
+                   HorizontalAlignment="Left" VerticalAlignment="Bottom" x:Name="model1_TextBlock"/>
             <RelativePanel  Grid.Row="4">
-                <TextBox x:Name="model1_name" Width="600" RelativePanel.AlignLeftWithPanel="True"/>
-                <Button x:Name="model1_select_button" Content="..." RelativePanel.RightOf="model1_name"  />
+                <ComboBox x:Name="model1_name" Width="600" RelativePanel.AlignLeftWithPanel="True" />
+                <Button x:Name="model1_select_button" Content="..." RelativePanel.RightOf="model1_name" />
                 <ComboBox x:Name="model1_target" PlaceholderText="Pick your Target Device" Width="200" RelativePanel.RightOf="model1_select_button" Margin="10,0"  ItemsSource="{x:Bind Target_device_list}">
                 </ComboBox>
             </RelativePanel>
 
             <TextBlock Grid.Row="5" Text="Select a trained Head Pose Estimation model" Margin="5" Style="{StaticResource SubtitleTextBlockStyle}" 
-                   HorizontalAlignment="Left" VerticalAlignment="Bottom" />
+                   HorizontalAlignment="Left" VerticalAlignment="Bottom" x:Name="model2_TextBlock"/>
             <RelativePanel  Grid.Row="6">
-                <TextBox x:Name="model2_name" Width="600" RelativePanel.AlignLeftWithPanel="True"/>
+                <ComboBox x:Name="model2_name" Width="600" RelativePanel.AlignLeftWithPanel="True" />
                 <Button x:Name="model2_select_button" Content="..." RelativePanel.RightOf="model2_name"  />
                 <ComboBox x:Name="model2_target" PlaceholderText="Pick your Target Device" Width="200" RelativePanel.RightOf="model2_select_button" Margin="10,0" ItemsSource="{x:Bind Target_device_list}">
                 </ComboBox>
             </RelativePanel>
 
             <TextBlock Grid.Row="7" Text="Select a trained Emotions Recognition model" Margin="5" Style="{StaticResource SubtitleTextBlockStyle}" 
-                   HorizontalAlignment="Left" VerticalAlignment="Bottom" />
+                   HorizontalAlignment="Left" VerticalAlignment="Bottom" x:Name="model3_TextBlock"/>
             <RelativePanel  Grid.Row="8">
-                <TextBox x:Name="model3_name" Width="600" RelativePanel.AlignLeftWithPanel="True"/>
+                <ComboBox x:Name="model3_name" Width="600" RelativePanel.AlignLeftWithPanel="True" />
                 <Button x:Name="model3_select_button" Content="..." RelativePanel.RightOf="model3_name"  />
                 <ComboBox x:Name="model3_target" PlaceholderText="Pick your Target Device" Width="200" RelativePanel.RightOf="model3_select_button" Margin="10,0" ItemsSource="{x:Bind Target_device_list}">
                 </ComboBox>
             </RelativePanel>
 
             <TextBlock Grid.Row="9" Text="Select a trained Facial Landmarks Estimation model" Margin="5" Style="{StaticResource SubtitleTextBlockStyle}" 
-                   HorizontalAlignment="Left" VerticalAlignment="Bottom" />
+                   HorizontalAlignment="Left" VerticalAlignment="Bottom" x:Name="model4_TextBlock"/>
             <RelativePanel  Grid.Row="10">
-                <TextBox x:Name="model4_name" Width="600" RelativePanel.AlignLeftWithPanel="True"/>
+                <ComboBox x:Name="model4_name" Width="600" RelativePanel.AlignLeftWithPanel="True" />
                 <Button x:Name="model4_select_button" Content="..." RelativePanel.RightOf="model4_name"  />
                 <ComboBox x:Name="model4_target" PlaceholderText="Pick your Target Device" Width="200" RelativePanel.RightOf="model4_select_button" Margin="10,0" ItemsSource="{x:Bind Target_device_list}">
                 </ComboBox>

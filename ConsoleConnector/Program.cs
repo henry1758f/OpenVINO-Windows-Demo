@@ -1,5 +1,8 @@
-﻿using System;
+﻿#define DEBUG
+#define TERMINAL_SHOW
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -13,6 +16,11 @@ namespace ConsoleConnector
     class Program
     {
         static AppServiceConnection connection = null;
+
+        static string openvino_install_dir = @"C:\Program Files (x86)\IntelSWTools\openvino\";
+        static string setupvars_path = openvino_install_dir + @"bin\setupvars.bat";
+        static string demo_Path = @"%USERPROFILE%\Documents\Intel\OpenVINO\omz_demos_build\intel64\Release\";
+
         static void Main(string[] args)
         {
             new Thread(ThreadProc).Start();
@@ -69,7 +77,21 @@ namespace ConsoleConnector
             Console.WriteLine(DateTime.Now.TimeOfDay.ToString() + "\t(b) Get message from UWP!");
 
             string key = args.Request.Message.First().Key;
-            Console.WriteLine("[DEBUG] " + key);
+            string value = args.Request.Message.First().Value.ToString();
+#if (DEBUG)
+            Console.WriteLine("[DEBUG] " + key + ", " + value );
+#endif
+            switch(key)
+            {
+                case "Command":
+                    command(value);
+                    break;
+                case "Interactive_face_detection_demo":
+                    Interactive_face_detection_demo(value);
+                    break;
+                default:
+                    break;
+            }
 
             ValueSet valueSet = new ValueSet();
 
@@ -79,6 +101,29 @@ namespace ConsoleConnector
             //Send back message to UWP
             args.Request.SendResponseAsync(valueSet).Completed += delegate { };
             Console.WriteLine(DateTime.Now.TimeOfDay.ToString() + "\tMessage to UWP has been sent!!");
+        }
+        private static void command(string value_str)
+        {
+            Console.WriteLine("[INFO] Command: " + value_str);
+        }
+
+        private static void Interactive_face_detection_demo(string value_str)
+        {
+            Console.WriteLine("[INFO] Interactive_face_detection_demo " + value_str);
+            ProcessStartInfo processStartInfo = new ProcessStartInfo();
+            processStartInfo.FileName = "cmd.exe";
+            processStartInfo.Arguments = "/C \"" + setupvars_path + "\" & " + demo_Path + "interactive_face_detection_demo.exe " + value_str + " ";
+            //processStartInfo.Arguments = "/C \"" + setupvars_path + "\" &  %USERPROFILE%\\Documents\\Intel\\OpenVINO\\omz_demos_build\\intel64\\Release\\interactive_face_detection_demo.exe" +
+            //    " -m D:\\Intel\\openvino_models\\models\\SYNNEX_demo\\intel\\face-detection-adas-binary-0001\\FP32-INT1\\face-detection-adas-binary-0001.xml -i cam & PAUSE";
+            //processStartInfo.Arguments = "/C \"" + setupvars_path + "\" & PAUSE";
+
+            Console.WriteLine("[DEBUG] " + processStartInfo.Arguments);
+            processStartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+            Process.Start(processStartInfo);
+
+
+            //Process.Start("cmd.exe", "/C \"" + openvino_install_dir + setupvars_path + "\" && PAUSE");
+
         }
     }
 }

@@ -136,8 +136,8 @@ namespace OpenVINO_Windows_Demo
                 AppServiceTriggerDetails details = args.TaskInstance.TriggerDetails as AppServiceTriggerDetails;
                 Connection = details.AppServiceConnection;
 
-                // Send request to win32
-                await SendRequestToWin32();
+                // Send request to ConsoleConnector
+                await SendRequestToConsoleConnector("Command", "initialize");
             }
         }
 
@@ -152,11 +152,11 @@ namespace OpenVINO_Windows_Demo
                 this.appServiceDeferral.Complete();
             }
         }
-        public async Task SendRequestToWin32()
+        public async Task SendRequestToConsoleConnector(string requestKay_str,string request_str)
         {
 
             ValueSet request = new ValueSet();
-            request.Add("GetBiosSerialnumer", "");
+            request.Add(requestKay_str, request_str);
 
 
             AppServiceResponse response = null;
@@ -164,7 +164,6 @@ namespace OpenVINO_Windows_Demo
 
             string serialNumber = response.Message["serialNumber"] as string;
             
-
             var localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
 
             localSettings.Values["serialNumber"] = serialNumber;
