@@ -20,6 +20,7 @@ namespace ConsoleConnector
         static string openvino_install_dir = @"C:\Program Files (x86)\IntelSWTools\openvino\";
         static string setupvars_path = openvino_install_dir + @"bin\setupvars.bat";
         static string demo_Path = @"%USERPROFILE%\Documents\Intel\OpenVINO\omz_demos_build\intel64\Release\";
+        static string python_demo_path = openvino_install_dir + @"deployment_tools\open_model_zoo\demos\python_demos\";
 
         static void Main(string[] args)
         {
@@ -89,6 +90,9 @@ namespace ConsoleConnector
                 case "Interactive_face_detection_demo":
                     Interactive_face_detection_demo(value);
                     break;
+                case "Face_Recognition_Demo_Page":
+                    Face_Recognition_Demo_Page(value);
+                    break;
                 default:
                     break;
             }
@@ -119,6 +123,21 @@ namespace ConsoleConnector
 
             Console.WriteLine("[DEBUG] " + processStartInfo.Arguments);
             processStartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+            Process.Start(processStartInfo);
+
+
+            //Process.Start("cmd.exe", "/C \"" + openvino_install_dir + setupvars_path + "\" && PAUSE");
+
+        }
+        private static void Face_Recognition_Demo_Page(string value_str)
+        {
+            Console.WriteLine("[INFO] Face_Recognition_Demo_Page " + value_str);
+            ProcessStartInfo processStartInfo = new ProcessStartInfo();
+            processStartInfo.FileName = "cmd.exe";
+            processStartInfo.Arguments = "/C \"\"" + setupvars_path + "\" & python \"" + python_demo_path + "face_recognition_demo\\face_recognition_demo.py\"\" " + value_str + " & PAUSE ";
+
+            Console.WriteLine("[DEBUG] " + processStartInfo.Arguments);
+            processStartInfo.WindowStyle = ProcessWindowStyle.Normal;
             Process.Start(processStartInfo);
 
 

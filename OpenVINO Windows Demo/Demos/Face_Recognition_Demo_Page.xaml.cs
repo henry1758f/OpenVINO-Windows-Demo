@@ -1,14 +1,16 @@
-﻿#define DEBUG
-//#undef DEBUG
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Graphics.Display;
+using Windows.Media.Capture;
+using Windows.System.Display;
+using Windows.UI.Core;
 using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -17,18 +19,6 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
-using Windows.ApplicationModel;
-using Windows.ApplicationModel.Activation;
-using Windows.ApplicationModel.AppService;
-using Windows.ApplicationModel.Background;
-using System.Threading.Tasks;
-using Windows.Devices.Enumeration;
-using Windows.Media.Capture;
-using Windows.Media.Capture.Frames;
-using Windows.System.Display;
-using Windows.Graphics.Display;
-using Windows.UI.Core;
-using Windows.UI.Xaml.Media.Imaging;
 
 // 空白頁項目範本已記錄在 https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -37,8 +27,13 @@ namespace OpenVINO_Windows_Demo.Demos
     /// <summary>
     /// 可以在本身使用或巡覽至框架內的空白頁面。
     /// </summary>
-    public sealed partial class Interactive_Face_Detection_Demo_Page : Page
+    public sealed partial class Face_Recognition_Demo_Page : Page
     {
+        const string user_source_select_inform = "select a picture/video";
+        string[] Target_device_list = new string[] { "CPU", "GPU", "MYRIAD" };
+        string[] Input_Source = new string[] { "cam", user_source_select_inform };
+        string[] Input_Source_subname_support = new string[] { ".jpg", ".jpeg", ".png", ".mp4" };
+
         private static string Model_rootPath = @"D:\Intel\openvino_models\";
 
         private class model_dataList
@@ -62,12 +57,24 @@ namespace OpenVINO_Windows_Demo.Demos
                 Model_Path = @"models\SYNNEX_demo\intel\",
                 Model_precision_Support = new string[]{"FP32-INT1" },
                 Model_framework = "dldt"
+            },
+            new model_dataList{
+                Model_Name = "face-detection-retail-0004",
+                Model_Path = @"models\SYNNEX_demo\intel\",
+                Model_precision_Support = new string[]{"FP32","FP16", "FP32-INT8" },
+                Model_framework = "dldt"
+            },
+            new model_dataList{
+                Model_Name = "face-detection-retail-0005",
+                Model_Path = @"models\SYNNEX_demo\intel\",
+                Model_precision_Support = new string[]{"FP32","FP16", "FP32-INT8" },
+                Model_framework = "dldt"
             }
         };
         private static List<model_dataList> model1_list = new List<model_dataList>()
         {
             new model_dataList{
-                Model_Name = "age-gender-recognition-retail-0013",
+                Model_Name = "landmarks-regression-retail-0009",
                 Model_Path = @"models\SYNNEX_demo\intel\",
                 Model_precision_Support = new string[]{"FP32","FP16", "FP32-INT8" },
                 Model_framework = "dldt"
@@ -76,72 +83,47 @@ namespace OpenVINO_Windows_Demo.Demos
         private static List<model_dataList> model2_list = new List<model_dataList>()
         {
             new model_dataList{
-                Model_Name = "head-pose-estimation-adas-0001",
-                Model_Path = @"models\SYNNEX_demo\intel\",
-                Model_precision_Support = new string[]{"FP32","FP16", "FP32-INT8" },
-                Model_framework = "dldt"
-            }
-        };
-        private static List<model_dataList> model3_list = new List<model_dataList>()
-        {
-            new model_dataList{
-                Model_Name = "emotions-recognition-retail-0003",
-                Model_Path = @"models\SYNNEX_demo\intel\",
-                Model_precision_Support = new string[]{"FP32","FP16", "FP32-INT8" },
-                Model_framework = "dldt"
-            }
-        };
-        private static List<model_dataList> model4_list = new List<model_dataList>()
-        {
-            new model_dataList{
-                Model_Name = "facial-landmarks-35-adas-0002",
+                Model_Name = "face-reidentification-retail-0095",
                 Model_Path = @"models\SYNNEX_demo\intel\",
                 Model_precision_Support = new string[]{"FP32","FP16", "FP32-INT8" },
                 Model_framework = "dldt"
             }
         };
 
-        /*
-        private readonly List<(string Model_Name,string Model_Path)> _model0_list = new List<(string Model_Name, string Model_Path)>
+
+        public Face_Recognition_Demo_Page()
         {
-            ("face-detection-adas-0001 [FP32]", @"models\SYNNEX_demo\intel\face-detection-adas-0001\FP32\face-detection-adas-0001.xml"),
-            ("face-detection-adas-0001 [FP16]", @"models\SYNNEX_demo\intel\face-detection-adas-0001\FP16\face-detection-adas-0001.xml"),
-            ("face-detection-adas-0001 [FP32-INT8]", @"models\SYNNEX_demo\intel\face-detection-adas-0001\FP32-INT8\face-detection-adas-0001.xml"),
-            ("face-detection-adas-binary-0001 [FP32-INT1]",@"models\SYNNEX_demo\intel\face-detection-adas-binary-0001\FP32-INT1\face-detection-adas-binary-0001.xml")
-        };
-        private readonly List<(string Model_Name, string Model_Path)> _model1_list = new List<(string Model_Name, string Model_Path)>
-        {
-            ("age-gender-recognition-retail-0013 [FP32]", @"models\SYNNEX_demo\intel\age-gender-recognition-retail-0013\FP32\age-gender-recognition-retail-0013.xml"),
-            ("age-gender-recognition-retail-0013 [FP16]", @"models\SYNNEX_demo\intel\age-gender-recognition-retail-0013\FP16\age-gender-recognition-retail-0013.xml"),
-            ("age-gender-recognition-retail-0013 [FP32-INT8]", @"models\SYNNEX_demo\intel\age-gender-recognition-retail-0013\FP32-INT8\age-gender-recognition-retail-0013.xml")
-        };
-        private readonly List<(string Model_Name, string Model_Path)> _model2_list = new List<(string Model_Name, string Model_Path)>
-        {
-            ("head-pose-estimation-adas-0001 [FP32]", @"models\SYNNEX_demo\intel\head-pose-estimation-adas-0001\FP32\head-pose-estimation-adas-0001.xml"),
-            ("head-pose-estimation-adas-0001 [FP16]", @"models\SYNNEX_demo\intel\head-pose-estimation-adas-0001\FP16\head-pose-estimation-adas-0001.xml"),
-            ("head-pose-estimation-adas-0001 [FP32-INT8]", @"models\SYNNEX_demo\intel\head-pose-estimation-adas-0001\FP32-INT8\head-pose-estimation-adas-0001.xml")
-        };
-        private readonly List<(string Model_Name, string Model_Path)> _model3_list = new List<(string Model_Name, string Model_Path)>
-        {
-            ("emotions-recognition-retail-0003 [FP32]", @"models\SYNNEX_demo\intel\emotions-recognition-retail-0003\FP32\emotions-recognition-retail-0003.xml"),
-            ("emotions-recognition-retail-0003 [FP16]", @"models\SYNNEX_demo\intel\emotions-recognition-retail-0003\FP16\emotions-recognition-retail-0003.xml"),
-            ("emotions-recognition-retail-0003 [FP32-INT8]", @"models\SYNNEX_demo\intel\emotions-recognition-retail-0003\FP32-INT8\emotions-recognition-retail-0003.xml")
-        };
-        private readonly List<(string Model_Name, string Model_Path)> _model4_list = new List<(string Model_Name, string Model_Path)>
-        {
-            ("facial-landmarks-35-adas-0002 [FP32]", @"models\SYNNEX_demo\intel\facial-landmarks-35-adas-0002\FP32\facial-landmarks-35-adas-0002.xml"),
-            ("facial-landmarks-35-adas-0002 [FP16]", @"models\SYNNEX_demo\intel\facial-landmarks-35-adas-0002\FP16\facial-landmarks-35-adas-0002.xml"),
-            ("facial-landmarks-35-adas-0002 [FP32-INT8]", @"models\SYNNEX_demo\intel\facial-landmarks-35-adas-0002\FP32-INT8\facial-landmarks-35-adas-0002.xml")
-        };
-        */
-        const string user_source_select_inform = "select a picture/video";
-        string[] Target_device_list = new string[] { "CPU", "GPU", "MYRIAD" };
-        string[] Input_Source = new string[] { "cam", user_source_select_inform };
-        string[] Input_Source_subname_support = new string[] { ".jpg", ".jpeg", ".png" , ".mp4"};
+            this.InitializeComponent();
+            foreach (model_dataList model_DataList in model0_list)
+            {
+                foreach (string precision in model_DataList.Model_precision_Support)
+                {
+                    model0_name.Items.Add(model_DataList.Model_Name + " [" + precision + "]");
+                }
+            }
+            foreach (model_dataList model_DataList in model1_list)
+            {
+                foreach (string precision in model_DataList.Model_precision_Support)
+                {
+                    model1_name.Items.Add(model_DataList.Model_Name + " [" + precision + "]");
+                }
+            }
+            foreach (model_dataList model_DataList in model2_list)
+            {
+                foreach (string precision in model_DataList.Model_precision_Support)
+                {
+                    model2_name.Items.Add(model_DataList.Model_Name + " [" + precision + "]");
+                }
+            }
+            foreach (string str in Input_Source)
+            {
+                Source.Items.Add(str);
+            }
+        }
 
         #region CameraPreview
         MediaCapture mediaCapture;
-        bool isPreviewing,cam_init = false, previewing = false;
+        bool isPreviewing, cam_init = false, previewing = false;
         DisplayRequest displayRequest = new DisplayRequest();
         MediaCapture mediaCaptureMgr = new MediaCapture();
 
@@ -232,53 +214,6 @@ namespace OpenVINO_Windows_Demo.Demos
         }
         #endregion
 
-
-        public Interactive_Face_Detection_Demo_Page()
-        {
-            this.InitializeComponent();
-            Application.Current.Suspending += Application_Suspending;
-
-            foreach (model_dataList model_DataList in model0_list)
-            {
-                foreach (string precision in model_DataList.Model_precision_Support)
-                {
-                    model0_name.Items.Add(model_DataList.Model_Name + " [" + precision + "]");
-                }
-            }
-            foreach (model_dataList model_DataList in model1_list)
-            {
-                foreach (string precision in model_DataList.Model_precision_Support)
-                {
-                    model1_name.Items.Add(model_DataList.Model_Name + " [" + precision + "]");
-                }
-            }
-            foreach (model_dataList model_DataList in model2_list)
-            {
-                foreach (string precision in model_DataList.Model_precision_Support)
-                {
-                    model2_name.Items.Add(model_DataList.Model_Name + " [" + precision + "]");
-                }
-            }
-            foreach (model_dataList model_DataList in model3_list)
-            {
-                foreach (string precision in model_DataList.Model_precision_Support)
-                {
-                    model3_name.Items.Add(model_DataList.Model_Name + " [" + precision + "]");
-                }
-            }
-            foreach (model_dataList model_DataList in model4_list)
-            {
-                foreach (string precision in model_DataList.Model_precision_Support)
-                {
-                    model4_name.Items.Add(model_DataList.Model_Name + " [" + precision + "]");
-                }
-            }
-            foreach (string str in Input_Source)
-            {
-                Source.Items.Add(str);
-            }
-        }
-
         private async void Source_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (Source.SelectedItem.ToString().Equals(user_source_select_inform))
@@ -331,16 +266,15 @@ namespace OpenVINO_Windows_Demo.Demos
                     {
                         if (model0_name.SelectedItem.ToString().Contains(precision) && model0_name.SelectedItem.ToString().Contains(model_DataList.Model_Name))
                         {
-                            
+
                             if (model0_target.SelectedItem != null)
-                                Parameter = " -m " + Model_rootPath + model_DataList.Model_Path + model_DataList.Model_Name + @"\" + precision + @"\" + model_DataList.Model_Name + ".xml -d " + model0_target.SelectedItem.ToString() + " ";
+                                Parameter = " -m_fd " + Model_rootPath + model_DataList.Model_Path + model_DataList.Model_Name + @"\" + precision + @"\" + model_DataList.Model_Name + ".xml -d_fd " + model0_target.SelectedItem.ToString() + " ";
                             else
-                                Parameter = " -m " + Model_rootPath + model_DataList.Model_Path + model_DataList.Model_Name + @"\" + precision + @"\" + model_DataList.Model_Name + ".xml ";
+                                Parameter = " -m_fd " + Model_rootPath + model_DataList.Model_Path + model_DataList.Model_Name + @"\" + precision + @"\" + model_DataList.Model_Name + ".xml ";
                         }
                     }
                 }
             }
-
             if (model1_name.SelectedItem == null)
             {
                 MessageDialog messageDialogs = new MessageDialog("You have to " + model1_TextBlock.Text, "ERROR!");
@@ -357,9 +291,9 @@ namespace OpenVINO_Windows_Demo.Demos
                         {
 
                             if (model1_target.SelectedItem != null)
-                                Parameter += " -m_ag " + Model_rootPath + model_DataList.Model_Path + model_DataList.Model_Name + @"\" + precision + @"\" + model_DataList.Model_Name + ".xml -d_ag " + model1_target.SelectedItem.ToString() + " ";
+                                Parameter += " -m_lm " + Model_rootPath + model_DataList.Model_Path + model_DataList.Model_Name + @"\" + precision + @"\" + model_DataList.Model_Name + ".xml -d_lm " + model1_target.SelectedItem.ToString() + " ";
                             else
-                                Parameter += " -m_ag " + Model_rootPath + model_DataList.Model_Path + model_DataList.Model_Name + @"\" + precision + @"\" + model_DataList.Model_Name + ".xml ";
+                                Parameter += " -m_lm " + Model_rootPath + model_DataList.Model_Path + model_DataList.Model_Name + @"\" + precision + @"\" + model_DataList.Model_Name + ".xml ";
                         }
                     }
                 }
@@ -380,75 +314,30 @@ namespace OpenVINO_Windows_Demo.Demos
                         {
 
                             if (model2_target.SelectedItem != null)
-                                Parameter += " -m_hp " + Model_rootPath + model_DataList.Model_Path + model_DataList.Model_Name + @"\" + precision + @"\" + model_DataList.Model_Name + ".xml -d_hp " + model2_target.SelectedItem.ToString() + " ";
+                                Parameter += " -m_reid " + Model_rootPath + model_DataList.Model_Path + model_DataList.Model_Name + @"\" + precision + @"\" + model_DataList.Model_Name + ".xml -d_reid " + model2_target.SelectedItem.ToString() + " ";
                             else
-                                Parameter += " -m_hp " + Model_rootPath + model_DataList.Model_Path + model_DataList.Model_Name + @"\" + precision + @"\" + model_DataList.Model_Name + ".xml ";
+                                Parameter += " -m_reid " + Model_rootPath + model_DataList.Model_Path + model_DataList.Model_Name + @"\" + precision + @"\" + model_DataList.Model_Name + ".xml ";
                         }
                     }
                 }
             }
-            if (model3_name.SelectedItem == null)
-            {
-                MessageDialog messageDialogs = new MessageDialog("You have to " + model3_TextBlock.Text, "ERROR!");
-                messageDialogs.ShowAsync();
-                return;
-            }
-            else
-            {
-                foreach (model_dataList model_DataList in model3_list)
-                {
-                    foreach (string precision in model_DataList.Model_precision_Support)
-                    {
-                        if (model3_name.SelectedItem.ToString().Contains(precision) && model3_name.SelectedItem.ToString().Contains(model_DataList.Model_Name))
-                        {
 
-                            if (model3_target.SelectedItem != null)
-                                Parameter += " -m_em " + Model_rootPath + model_DataList.Model_Path + model_DataList.Model_Name + @"\" + precision + @"\" + model_DataList.Model_Name + ".xml -d_em " + model3_target.SelectedItem.ToString() + " ";
-                            else
-                                Parameter += " -m_em " + Model_rootPath + model_DataList.Model_Path + model_DataList.Model_Name + @"\" + precision + @"\" + model_DataList.Model_Name + ".xml ";
-                        }
-                    }
-                }
-            }
-            if (model4_name.SelectedItem == null)
-            {
-                MessageDialog messageDialogs = new MessageDialog("You have to " + model4_TextBlock.Text, "ERROR!");
-                messageDialogs.ShowAsync();
-                return;
-            }
-            else
-            {
-                foreach (model_dataList model_DataList in model4_list)
-                {
-                    foreach (string precision in model_DataList.Model_precision_Support)
-                    {
-                        if (model4_name.SelectedItem.ToString().Contains(precision) && model4_name.SelectedItem.ToString().Contains(model_DataList.Model_Name))
-                        {
-
-                            if (model4_target.SelectedItem != null)
-                                Parameter += " -m_lm " + Model_rootPath + model_DataList.Model_Path + model_DataList.Model_Name + @"\" + precision + @"\" + model_DataList.Model_Name + ".xml -d_lm " + model4_target.SelectedItem.ToString() + " ";
-                            else
-                                Parameter += " -m_lm " + Model_rootPath + model_DataList.Model_Path + model_DataList.Model_Name + @"\" + precision + @"\" + model_DataList.Model_Name + ".xml ";
-                        }
-                    }
-                }
-            }
+            /*
             if (Source.SelectedItem == null || Source.SelectedItem == "cam")
             {
                 Parameter += " -i cam";
             }
             else if (Source.SelectedItem.ToString().Contains(" "))
             {
-                Parameter += " -i \"" + Source.SelectedItem.ToString() + "\" "; 
+                Parameter += " -i \"" + Source.SelectedItem.ToString() + "\" ";
             }
             else
             {
                 Parameter += " -i " + Source.SelectedItem.ToString() + " ";
-            }
+            }*/
             // Send Request to ConsoleConnector
-            await ((App)Application.Current).SendRequestToConsoleConnector("Interactive_face_detection_demo", Parameter + " ");
+            await ((App)Application.Current).SendRequestToConsoleConnector("Face_Recognition_Demo_Page", Parameter + " --verbose -fg %USERPROFILE%\\Pictures\\face_gallery\\");
         }
-
         private async void Preview_Button_Click(object sender, RoutedEventArgs e)
         {
             // Using Windows.Media.Capture.MediaCapture APIs 
@@ -468,10 +357,9 @@ namespace OpenVINO_Windows_Demo.Demos
                 previewing = true;
             }
 
-            
-            
+
+
             //await FullTrustProcessLauncher.LaunchFullTrustProcessForCurrentAppAsync();
         }
     }
-        
 }
