@@ -125,6 +125,9 @@
     <Compile Include="DemosPage.xaml.cs">
       <DependentUpon>DemosPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Demos\Face_Recognition_Demo_Page.xaml.cs">
+      <DependentUpon>Face_Recognition_Demo_Page.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Demos\Interactive_Face_Detection_Demo_Page.xaml.cs">
       <DependentUpon>Interactive_Face_Detection_Demo_Page.xaml</DependentUpon>
     </Compile>
@@ -153,7 +156,6 @@
   <ItemGroup>
     <Content Include="Assets\Interactive_Face_Detection_C++_Demo.png" />
     <Content Include="Demos\ConsoleConnector.exe" />
-    <Content Include="Demos\Parameter_to_connector_path.inf" />
     <Content Include="Properties\Default.rd.xml" />
     <Content Include="Assets\LockScreenLogo.scale-200.png" />
     <Content Include="Assets\SplashScreen.scale-200.png" />
@@ -173,6 +175,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="DemosPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Demos\Face_Recognition_Demo_Page.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
