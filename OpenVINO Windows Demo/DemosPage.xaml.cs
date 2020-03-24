@@ -47,9 +47,9 @@ namespace OpenVINO_Windows_Demo
             "https://docs.openvinotoolkit.org/latest/_demos_crossroad_camera_demo_README.html",
             "/Assets/Interactive_Face_Detection_C++_Demo.png"
             ),
-            ("",
-            "",
-            "",
+            ("Human Pose Estimation C++ Demo",
+            "PATH",
+            "This demo showcases the work of multi-person 2D pose estimation algorithm. The task is to predict a pose: body skeleton, which consists of keypoints and connections between them, for every person in an input video. The pose may contain up to 18 keypoints: ears, eyes, nose, neck, shoulders, elbows, wrists, hips, knees, and ankles. Some of potential use cases of the algorithm are action recognition and behavior understanding. ",
             "",
             "/Assets/Interactive_Face_Detection_C++_Demo.png"
             )
@@ -79,6 +79,7 @@ namespace OpenVINO_Windows_Demo
             else if (item.Name == "Crossroad Camera C++ Demo")
             {
                 messageDialog.ShowAsync();
+                this.Frame.Navigate(typeof(Demos.Crossroad_Camera_Demo_Page), null);
             }
             else if (item.Name == "Face Recognition Demo")
             {

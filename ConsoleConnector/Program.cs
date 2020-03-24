@@ -93,6 +93,9 @@ namespace ConsoleConnector
                 case "Face_Recognition_Demo_Page":
                     Face_Recognition_Demo_Page(value);
                     break;
+                case "Crossroad_Camera_Demo_Page":
+                    Crossroad_Camera_Demo_Page(value);
+                    break;
                 default:
                     break;
             }
@@ -135,7 +138,22 @@ namespace ConsoleConnector
             ProcessStartInfo processStartInfo = new ProcessStartInfo();
             processStartInfo.FileName = "cmd.exe";
             processStartInfo.Arguments = "/C \"\"" + setupvars_path + "\" & python \"" + python_demo_path + "face_recognition_demo\\face_recognition_demo.py\"\" " + value_str + " & PAUSE ";
+            //processStartInfo.Arguments = "/C \"\"" + setupvars_path + "\" & python \"D:\\Intel\\open_model_zoo\\demos\\python_demos\\face_recognition_demo_Azure_IoT\\face_recognition_demo.py\"\" " + value_str + " & PAUSE ";
+            Console.WriteLine("[DEBUG] " + processStartInfo.Arguments);
+            processStartInfo.WindowStyle = ProcessWindowStyle.Normal;
+            Process.Start(processStartInfo);
 
+
+            //Process.Start("cmd.exe", "/C \"" + openvino_install_dir + setupvars_path + "\" && PAUSE");
+
+        }
+        private static void Crossroad_Camera_Demo_Page(string value_str)
+        {
+            Console.WriteLine("[INFO] Crossroad_Camera_Demo_Page " + value_str);
+            ProcessStartInfo processStartInfo = new ProcessStartInfo();
+            processStartInfo.FileName = "cmd.exe";
+
+            processStartInfo.Arguments = "/C \"" + setupvars_path + "\" & " + demo_Path + "crossroad_camera_demo.exe " + value_str + " & PAUSE ";
             Console.WriteLine("[DEBUG] " + processStartInfo.Arguments);
             processStartInfo.WindowStyle = ProcessWindowStyle.Normal;
             Process.Start(processStartInfo);
