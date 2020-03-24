@@ -99,6 +99,9 @@ namespace ConsoleConnector
                 case "Human_Pose_Estimation_Demo_Page":
                     Human_Pose_Estimation_Demo_Page(value);
                     break;
+                case "Gaze_Estimation_Demo_Page":
+                    Gaze_Estimation_Demo_Page(value);
+                    break;
                 default:
                     break;
             }
@@ -172,6 +175,21 @@ namespace ConsoleConnector
             processStartInfo.FileName = "cmd.exe";
 
             processStartInfo.Arguments = "/C \"" + setupvars_path + "\" & " + demo_Path + "human_pose_estimation_demo.exe " + value_str + " & PAUSE ";
+            Console.WriteLine("[DEBUG] " + processStartInfo.Arguments);
+            processStartInfo.WindowStyle = ProcessWindowStyle.Normal;
+            Process.Start(processStartInfo);
+
+
+            //Process.Start("cmd.exe", "/C \"" + openvino_install_dir + setupvars_path + "\" && PAUSE");
+
+        }
+        private static void Gaze_Estimation_Demo_Page(string value_str)
+        {
+            Console.WriteLine("[INFO] Gaze_Estimation_Demo_Page " + value_str);
+            ProcessStartInfo processStartInfo = new ProcessStartInfo();
+            processStartInfo.FileName = "cmd.exe";
+
+            processStartInfo.Arguments = "/C \"" + setupvars_path + "\" & " + demo_Path + "gaze_estimation_demo.exe " + value_str + " & PAUSE ";
             Console.WriteLine("[DEBUG] " + processStartInfo.Arguments);
             processStartInfo.WindowStyle = ProcessWindowStyle.Normal;
             Process.Start(processStartInfo);

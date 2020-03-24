@@ -52,6 +52,12 @@ namespace OpenVINO_Windows_Demo
             "This demo showcases the work of multi-person 2D pose estimation algorithm. The task is to predict a pose: body skeleton, which consists of keypoints and connections between them, for every person in an input video. The pose may contain up to 18 keypoints: ears, eyes, nose, neck, shoulders, elbows, wrists, hips, knees, and ankles. Some of potential use cases of the algorithm are action recognition and behavior understanding. ",
             "",
             "/Assets/Interactive_Face_Detection_C++_Demo.png"
+            ),
+            ("Gaze Estimation Demo",
+            "PATH",
+            "This demo showcases the work of gaze estimation model.",
+            "",
+            "/Assets/Interactive_Face_Detection_C++_Demo.png"
             )
         };
 
@@ -90,6 +96,11 @@ namespace OpenVINO_Windows_Demo
             {
                 messageDialog.ShowAsync();
                 this.Frame.Navigate(typeof(Demos.Human_Pose_Estimation_Demo_Page), null);
+            }
+            else if (item.Name == "Gaze Estimation Demo")
+            {
+                messageDialog.ShowAsync();
+                this.Frame.Navigate(typeof(Demos.Gaze_Estimation_Demo_Page), null);
             }
         }
     }
