@@ -86,6 +86,11 @@ namespace OpenVINO_Windows_Demo
                 messageDialog.ShowAsync();
                 this.Frame.Navigate(typeof(Demos.Face_Recognition_Demo_Page), null);
             }
+            else if (item.Name == "Human Pose Estimation C++ Demo")
+            {
+                messageDialog.ShowAsync();
+                this.Frame.Navigate(typeof(Demos.Human_Pose_Estimation_Demo_Page), null);
+            }
         }
     }
     public class Demo_and_Sample_List
