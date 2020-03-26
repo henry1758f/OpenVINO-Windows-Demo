@@ -27,7 +27,7 @@ namespace OpenVINO_Windows_Demo.Demos
     /// <summary>
     /// 可以在本身使用或巡覽至框架內的空白頁面。
     /// </summary>
-    public sealed partial class Face_Recognition_Demo_Page : Page
+    public sealed partial class Face_Recognition_Demo_Azure_Iot_Page : Page
     {
         const string user_source_select_inform = "select a picture/video";
         string[] Target_device_list = new string[] { "CPU", "GPU", "MYRIAD" };
@@ -90,9 +90,7 @@ namespace OpenVINO_Windows_Demo.Demos
                 Model_framework = "dldt"
             }
         };
-
-
-        public Face_Recognition_Demo_Page()
+        public Face_Recognition_Demo_Azure_Iot_Page()
         {
             this.InitializeComponent();
             foreach (model_dataList model_DataList in model0_list)
@@ -129,8 +127,8 @@ namespace OpenVINO_Windows_Demo.Demos
             model2_name.SelectedIndex = 0;
             Source.SelectedIndex = 0;
             fg_path.SelectedIndex = 0;
-        }
 
+        }
         #region CameraPreview
         MediaCapture mediaCapture;
         bool isPreviewing, cam_init = false, previewing = false;
@@ -273,6 +271,13 @@ namespace OpenVINO_Windows_Demo.Demos
                     new MessageDialog("No File been selected!").ShowAsync();
                 }
             }
+            
+
+
+
+
+            MessageDialog messageDialogs = new MessageDialog("No File been selected!");
+            messageDialogs.ShowAsync();
         }
 
         private async void Button_Click(object sender, RoutedEventArgs e)
@@ -362,8 +367,29 @@ namespace OpenVINO_Windows_Demo.Demos
             }
             if (allow_grow_toggle.IsOn)
             {
-                Parameter +="";
+                Parameter += "";
             }
+            if (azs_iothub.Text.Length!=0)
+            {
+                Parameter += " -azstr_iothub " + azs_iothub.Text + " ";
+            }
+            else
+            {
+                MessageDialog messageDialogs = new MessageDialog("You have to Set the Connection String of Azure IoT Hub", "ERROR!");
+                messageDialogs.ShowAsync();
+                return;
+            }
+            if(azs_storage.Text.Length!=0)
+            {
+                Parameter += " -azstr_storage " + azs_storage.Text + " ";
+            }
+            else
+            {
+                MessageDialog messageDialogs = new MessageDialog("You have to Set the Connection String of Azure Storage" , "ERROR!");
+                messageDialogs.ShowAsync();
+                return;
+            }
+
             /*
             if (Source.SelectedItem == null || Source.SelectedItem == "cam")
             {
@@ -378,7 +404,7 @@ namespace OpenVINO_Windows_Demo.Demos
                 Parameter += " -i " + Source.SelectedItem.ToString() + " ";
             }*/
             // Send Request to ConsoleConnector
-            await ((App)Application.Current).SendRequestToConsoleConnector("Face_Recognition_Demo_Page", Parameter + " --verbose -fg %USERPROFILE%\\Pictures\\face_gallery\\");
+            await ((App)Application.Current).SendRequestToConsoleConnector("Face_Recognition_Demo_Azure_Iot_Page", Parameter + " --verbose -fg DEFAULT ");
         }
         private async void Preview_Button_Click(object sender, RoutedEventArgs e)
         {

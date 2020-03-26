@@ -128,6 +128,9 @@
     <Compile Include="Demos\Crossroad_Camera_Demo_Page.xaml.cs">
       <DependentUpon>Crossroad_Camera_Demo_Page.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Demos\Face_Recognition_Demo_Azure_Iot_Page.xaml.cs">
+      <DependentUpon>Face_Recognition_Demo_Azure_Iot_Page.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Demos\Face_Recognition_Demo_Page.xaml.cs">
       <DependentUpon>Face_Recognition_Demo_Page.xaml</DependentUpon>
     </Compile>
@@ -188,6 +191,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Demos\Crossroad_Camera_Demo_Page.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Demos\Face_Recognition_Demo_Azure_Iot_Page.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
