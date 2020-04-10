@@ -1,5 +1,5 @@
 ﻿<Page
-    x:Class="OpenVINO_Windows_Demo.Demos.Face_Recognition_Demo_Page"
+    x:Class="OpenVINO_Windows_Demo.Demos.Human_Pose_Estimation_Demo_Page"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:OpenVINO_Windows_Demo.Demos"
@@ -9,7 +9,7 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid>
-        <TextBlock Text="Face Recognition Demo" Style="{StaticResource TitleTextBlockStyle}"/>
+        <TextBlock Text="Human Pose Estimation C++ Demo" Style="{StaticResource TitleTextBlockStyle}"/>
         <StackPanel>
             <Button Content="RUN with Setttings as Below" Margin="0,24" Click="Button_Click" HorizontalAlignment="Center"/>
         </StackPanel>
@@ -27,7 +27,7 @@
                 <RowDefinition Height="*" />
                 <RowDefinition Height="*" />
                 <RowDefinition Height="*" />
-                <RowDefinition Height="auto" />
+                <RowDefinition Height="*" />
                 <RowDefinition Height="*" />
                 <RowDefinition Height="*" />
                 <RowDefinition Height="*" />
@@ -36,44 +36,13 @@
 
             <TextBlock Grid.Row="0" Text="Setting Your Models" Style="{StaticResource TitleTextBlockStyle}" 
                    HorizontalAlignment="Left" VerticalAlignment="Center" />
-            <TextBlock Grid.Row="1" Text="Select a trained Face Detection model" Margin="5" Style="{StaticResource SubtitleTextBlockStyle}" 
+            <TextBlock Grid.Row="1" Text="Select a trained Person/vehicle/bike Detection model" Margin="5" Style="{StaticResource SubtitleTextBlockStyle}" 
                    HorizontalAlignment="Left" VerticalAlignment="Bottom" x:Name="model0_TextBlock"/>
             <RelativePanel  Grid.Row="2">
                 <ComboBox x:Name="model0_name" Width="600" RelativePanel.AlignLeftWithPanel="True" />
                 <Button x:Name="model0_select_button" Content="..." RelativePanel.RightOf="model0_name" />
                 <ComboBox x:Name="model0_target" PlaceholderText="Pick your Target Device" Width="200" RelativePanel.RightOf="model0_select_button" Margin="10,0" ItemsSource="{x:Bind Target_device_list}">
                 </ComboBox>
-            </RelativePanel>
-
-            <TextBlock Grid.Row="3" Text="Select a trained Facial Landmarks Regression model" Margin="5" Style="{StaticResource SubtitleTextBlockStyle}" 
-                   HorizontalAlignment="Left" VerticalAlignment="Bottom" x:Name="model1_TextBlock"/>
-            <RelativePanel  Grid.Row="4">
-                <ComboBox x:Name="model1_name" Width="600" RelativePanel.AlignLeftWithPanel="True" />
-                <Button x:Name="model1_select_button" Content="..." RelativePanel.RightOf="model1_name" />
-                <ComboBox x:Name="model1_target" PlaceholderText="Pick your Target Device" Width="200" RelativePanel.RightOf="model1_select_button" Margin="10,0"  ItemsSource="{x:Bind Target_device_list}">
-                </ComboBox>
-            </RelativePanel>
-
-            <TextBlock Grid.Row="5" Text="Select a trained Face Reidentification model" Margin="5" Style="{StaticResource SubtitleTextBlockStyle}" 
-                   HorizontalAlignment="Left" VerticalAlignment="Bottom" x:Name="model2_TextBlock"/>
-            <RelativePanel  Grid.Row="6">
-                <ComboBox x:Name="model2_name" Width="600" RelativePanel.AlignLeftWithPanel="True" />
-                <Button x:Name="model2_select_button" Content="..." RelativePanel.RightOf="model2_name"  />
-                <ComboBox x:Name="model2_target" PlaceholderText="Pick your Target Device" Width="200" RelativePanel.RightOf="model2_select_button" Margin="10,0" ItemsSource="{x:Bind Target_device_list}">
-                </ComboBox>
-            </RelativePanel>
-            <TextBlock Grid.Row="7" Text="Set a Folder as your Face Gallery" Margin="5" Style="{StaticResource SubtitleTextBlockStyle}" 
-                   HorizontalAlignment="Left" VerticalAlignment="Bottom" x:Name="fg_TextBlock"/>
-            <RelativePanel  Grid.Row="8">
-                <ComboBox x:Name="fg_path" Width="600" RelativePanel.AlignLeftWithPanel="True"  SelectionChanged="fg_path_SelectionChanged" />
-            </RelativePanel>
-            <RelativePanel Grid.Row="9">
-                <ToggleSwitch x:Name="run_detector_toggle" Header="Use Face Detection model to find faces on the face images"
-                              OffContent="Disable"
-                              OnContent="Enable" RelativePanel.AlignLeftWithPanel="True"/>
-                <ToggleSwitch x:Name="allow_grow_toggle" Header="Allow growing the face database"
-                              OffContent="Disable"
-                              OnContent="Enable" RelativePanel.Below="run_detector_toggle"/>
             </RelativePanel>
 
             <TextBlock Grid.Row="11" Text="Setting Your Inference Source" Style="{StaticResource TitleTextBlockStyle}" 
