@@ -47,10 +47,22 @@ namespace OpenVINO_Windows_Demo
             "https://docs.openvinotoolkit.org/latest/_demos_crossroad_camera_demo_README.html",
             "/Assets/Interactive_Face_Detection_C++_Demo.png"
             ),
-            ("",
+            ("Human Pose Estimation C++ Demo",
+            "PATH",
+            "This demo showcases the work of multi-person 2D pose estimation algorithm. The task is to predict a pose: body skeleton, which consists of keypoints and connections between them, for every person in an input video. The pose may contain up to 18 keypoints: ears, eyes, nose, neck, shoulders, elbows, wrists, hips, knees, and ankles. Some of potential use cases of the algorithm are action recognition and behavior understanding. ",
             "",
+            "/Assets/Interactive_Face_Detection_C++_Demo.png"
+            ),
+            ("Gaze Estimation Demo",
+            "PATH",
+            "This demo showcases the work of gaze estimation model.",
             "",
-            "",
+            "/Assets/Interactive_Face_Detection_C++_Demo.png"
+            ),
+            ("Face Recognition Demo Azure IoT Showcase",
+            "PATH",
+            "This example demonstrates an approach to create interactive applications for video processing. It shows the basic architecture for building model pipelines supporting model placement on different devices and simultaneous parallel or sequential execution using OpenVINO library in Python. In particular, this demo uses 3 models to build a pipeline able to detect faces on videos, their keypoints (aka \"landmarks\"), and recognize persons using the provided faces database (the gallery).",
+            "https://docs.openvinotoolkit.org/latest/_demos_crossroad_camera_demo_README.html",
             "/Assets/Interactive_Face_Detection_C++_Demo.png"
             )
         };
@@ -79,11 +91,27 @@ namespace OpenVINO_Windows_Demo
             else if (item.Name == "Crossroad Camera C++ Demo")
             {
                 messageDialog.ShowAsync();
+                this.Frame.Navigate(typeof(Demos.Crossroad_Camera_Demo_Page), null);
             }
             else if (item.Name == "Face Recognition Demo")
             {
                 messageDialog.ShowAsync();
                 this.Frame.Navigate(typeof(Demos.Face_Recognition_Demo_Page), null);
+            }
+            else if (item.Name == "Human Pose Estimation C++ Demo")
+            {
+                messageDialog.ShowAsync();
+                this.Frame.Navigate(typeof(Demos.Human_Pose_Estimation_Demo_Page), null);
+            }
+            else if (item.Name == "Gaze Estimation Demo")
+            {
+                messageDialog.ShowAsync();
+                this.Frame.Navigate(typeof(Demos.Gaze_Estimation_Demo_Page), null);
+            }
+            else if (item.Name == "Face Recognition Demo Azure IoT Showcase")
+            {
+                messageDialog.ShowAsync();
+                this.Frame.Navigate(typeof(Demos.Face_Recognition_Demo_Azure_Iot_Page), null);
             }
         }
     }

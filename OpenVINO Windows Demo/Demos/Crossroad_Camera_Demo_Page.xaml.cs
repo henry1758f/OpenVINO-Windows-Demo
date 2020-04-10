@@ -27,12 +27,11 @@ namespace OpenVINO_Windows_Demo.Demos
     /// <summary>
     /// 可以在本身使用或巡覽至框架內的空白頁面。
     /// </summary>
-    public sealed partial class Face_Recognition_Demo_Page : Page
+    public sealed partial class Crossroad_Camera_Demo_Page : Page
     {
         const string user_source_select_inform = "select a picture/video";
         string[] Target_device_list = new string[] { "CPU", "GPU", "MYRIAD" };
         string[] Input_Source = new string[] { "cam", user_source_select_inform };
-        string[] FG_path_list = new string[] { "Default Path", "..." };
         string[] Input_Source_subname_support = new string[] { ".jpg", ".jpeg", ".png", ".mp4" };
 
         private static string Model_rootPath = @"D:\Intel\openvino_models\";
@@ -48,34 +47,22 @@ namespace OpenVINO_Windows_Demo.Demos
         private static List<model_dataList> model0_list = new List<model_dataList>()
         {
             new model_dataList{
-                Model_Name = "face-detection-adas-0001",
+                Model_Name = "person-vehicle-bike-detection-crossroad-0078",
                 Model_Path = @"models\SYNNEX_demo\intel\",
                 Model_precision_Support = new string[]{"FP32","FP16", "FP32-INT8" },
                 Model_framework = "dldt"
             },
             new model_dataList{
-                Model_Name = "face-detection-adas-binary-0001",
+                Model_Name = "person-vehicle-bike-detection-crossroad-1016",
                 Model_Path = @"models\SYNNEX_demo\intel\",
                 Model_precision_Support = new string[]{"FP32-INT1" },
-                Model_framework = "dldt"
-            },
-            new model_dataList{
-                Model_Name = "face-detection-retail-0004",
-                Model_Path = @"models\SYNNEX_demo\intel\",
-                Model_precision_Support = new string[]{"FP32","FP16", "FP32-INT8" },
-                Model_framework = "dldt"
-            },
-            new model_dataList{
-                Model_Name = "face-detection-retail-0005",
-                Model_Path = @"models\SYNNEX_demo\intel\",
-                Model_precision_Support = new string[]{"FP32","FP16", "FP32-INT8" },
                 Model_framework = "dldt"
             }
         };
         private static List<model_dataList> model1_list = new List<model_dataList>()
         {
             new model_dataList{
-                Model_Name = "landmarks-regression-retail-0009",
+                Model_Name = "person-attributes-recognition-crossroad-0230",
                 Model_Path = @"models\SYNNEX_demo\intel\",
                 Model_precision_Support = new string[]{"FP32","FP16", "FP32-INT8" },
                 Model_framework = "dldt"
@@ -84,15 +71,32 @@ namespace OpenVINO_Windows_Demo.Demos
         private static List<model_dataList> model2_list = new List<model_dataList>()
         {
             new model_dataList{
-                Model_Name = "face-reidentification-retail-0095",
+                Model_Name = "person-reidentification-retail-0031",
+                Model_Path = @"models\SYNNEX_demo\intel\",
+                Model_precision_Support = new string[]{"FP32","FP16", "FP32-INT8" },
+                Model_framework = "dldt"
+            },
+            new model_dataList{
+                Model_Name = "person-reidentification-retail-0103",
+                Model_Path = @"models\SYNNEX_demo\intel\",
+                Model_precision_Support = new string[]{"FP32","FP16", "FP32-INT8" },
+                Model_framework = "dldt"
+            },
+            new model_dataList{
+                Model_Name = "person-reidentification-retail-0107",
+                Model_Path = @"models\SYNNEX_demo\intel\",
+                Model_precision_Support = new string[]{"FP32","FP16", "FP32-INT8" },
+                Model_framework = "dldt"
+            },
+            new model_dataList{
+                Model_Name = "person-reidentification-retail-0200",
                 Model_Path = @"models\SYNNEX_demo\intel\",
                 Model_precision_Support = new string[]{"FP32","FP16", "FP32-INT8" },
                 Model_framework = "dldt"
             }
         };
 
-
-        public Face_Recognition_Demo_Page()
+        public Crossroad_Camera_Demo_Page()
         {
             this.InitializeComponent();
             foreach (model_dataList model_DataList in model0_list)
@@ -120,15 +124,6 @@ namespace OpenVINO_Windows_Demo.Demos
             {
                 Source.Items.Add(str);
             }
-            foreach (string str in FG_path_list)
-            {
-                fg_path.Items.Add(str);
-            }
-            model0_name.SelectedIndex = 0;
-            model1_name.SelectedIndex = 0;
-            model2_name.SelectedIndex = 0;
-            Source.SelectedIndex = 0;
-            fg_path.SelectedIndex = 0;
         }
 
         #region CameraPreview
@@ -223,7 +218,6 @@ namespace OpenVINO_Windows_Demo.Demos
             }
         }
         #endregion
-
         private async void Source_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (Source.SelectedItem.ToString().Equals(user_source_select_inform))
@@ -249,32 +243,6 @@ namespace OpenVINO_Windows_Demo.Demos
                 }
             }
         }
-
-        private async void fg_path_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (fg_path.SelectedItem.ToString().Equals("Default"))
-            {
-
-            }
-            else if (fg_path.SelectedItem.ToString().Equals("..."))
-            {
-                var picker = new Windows.Storage.Pickers.FolderPicker();
-                picker.SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.PicturesLibrary;
-                picker.FileTypeFilter.Add("*");
-                Windows.Storage.StorageFolder folder = await picker.PickSingleFolderAsync();
-                if (folder != null)
-                {
-                    // Application now has read/write access to the picked file
-                    fg_path.Items.Add(folder.Path);
-                    fg_path.SelectedItem = folder.Path;
-                }
-                else
-                {
-                    new MessageDialog("No File been selected!").ShowAsync();
-                }
-            }
-        }
-
         private async void Button_Click(object sender, RoutedEventArgs e)
         {
             string Parameter = "";
@@ -303,9 +271,9 @@ namespace OpenVINO_Windows_Demo.Demos
                         {
 
                             if (model0_target.SelectedItem != null)
-                                Parameter = " -m_fd " + Model_rootPath + model_DataList.Model_Path + model_DataList.Model_Name + @"\" + precision + @"\" + model_DataList.Model_Name + ".xml -d_fd " + model0_target.SelectedItem.ToString() + " ";
+                                Parameter = " -m " + Model_rootPath + model_DataList.Model_Path + model_DataList.Model_Name + @"\" + precision + @"\" + model_DataList.Model_Name + ".xml -d " + model0_target.SelectedItem.ToString() + " ";
                             else
-                                Parameter = " -m_fd " + Model_rootPath + model_DataList.Model_Path + model_DataList.Model_Name + @"\" + precision + @"\" + model_DataList.Model_Name + ".xml ";
+                                Parameter = " -m " + Model_rootPath + model_DataList.Model_Path + model_DataList.Model_Name + @"\" + precision + @"\" + model_DataList.Model_Name + ".xml ";
                         }
                     }
                 }
@@ -326,9 +294,9 @@ namespace OpenVINO_Windows_Demo.Demos
                         {
 
                             if (model1_target.SelectedItem != null)
-                                Parameter += " -m_lm " + Model_rootPath + model_DataList.Model_Path + model_DataList.Model_Name + @"\" + precision + @"\" + model_DataList.Model_Name + ".xml -d_lm " + model1_target.SelectedItem.ToString() + " ";
+                                Parameter += " -m_pa " + Model_rootPath + model_DataList.Model_Path + model_DataList.Model_Name + @"\" + precision + @"\" + model_DataList.Model_Name + ".xml -d_pa " + model1_target.SelectedItem.ToString() + " ";
                             else
-                                Parameter += " -m_lm " + Model_rootPath + model_DataList.Model_Path + model_DataList.Model_Name + @"\" + precision + @"\" + model_DataList.Model_Name + ".xml ";
+                                Parameter += " -m_pa " + Model_rootPath + model_DataList.Model_Path + model_DataList.Model_Name + @"\" + precision + @"\" + model_DataList.Model_Name + ".xml ";
                         }
                     }
                 }
@@ -356,14 +324,7 @@ namespace OpenVINO_Windows_Demo.Demos
                     }
                 }
             }
-            if (run_detector_toggle.IsOn)
-            {
-                Parameter += "";
-            }
-            if (allow_grow_toggle.IsOn)
-            {
-                Parameter +="";
-            }
+            
             /*
             if (Source.SelectedItem == null || Source.SelectedItem == "cam")
             {
@@ -378,7 +339,7 @@ namespace OpenVINO_Windows_Demo.Demos
                 Parameter += " -i " + Source.SelectedItem.ToString() + " ";
             }*/
             // Send Request to ConsoleConnector
-            await ((App)Application.Current).SendRequestToConsoleConnector("Face_Recognition_Demo_Page", Parameter + " --verbose -fg %USERPROFILE%\\Pictures\\face_gallery\\");
+            await ((App)Application.Current).SendRequestToConsoleConnector("Crossroad_Camera_Demo_Page", Parameter);
         }
         private async void Preview_Button_Click(object sender, RoutedEventArgs e)
         {

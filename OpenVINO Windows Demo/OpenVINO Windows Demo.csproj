@@ -125,8 +125,20 @@
     <Compile Include="DemosPage.xaml.cs">
       <DependentUpon>DemosPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Demos\Crossroad_Camera_Demo_Page.xaml.cs">
+      <DependentUpon>Crossroad_Camera_Demo_Page.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Demos\Face_Recognition_Demo_Azure_Iot_Page.xaml.cs">
+      <DependentUpon>Face_Recognition_Demo_Azure_Iot_Page.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Demos\Face_Recognition_Demo_Page.xaml.cs">
       <DependentUpon>Face_Recognition_Demo_Page.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Demos\Gaze_Estimation_Demo_Page.xaml.cs">
+      <DependentUpon>Gaze_Estimation_Demo_Page.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Demos\Human_Pose_Estimation_Demo_Page.xaml.cs">
+      <DependentUpon>Human_Pose_Estimation_Demo_Page.xaml</DependentUpon>
     </Compile>
     <Compile Include="Demos\Interactive_Face_Detection_Demo_Page.xaml.cs">
       <DependentUpon>Interactive_Face_Detection_Demo_Page.xaml</DependentUpon>
@@ -178,7 +190,23 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Demos\Crossroad_Camera_Demo_Page.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Demos\Face_Recognition_Demo_Azure_Iot_Page.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Demos\Face_Recognition_Demo_Page.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Demos\Gaze_Estimation_Demo_Page.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Demos\Human_Pose_Estimation_Demo_Page.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
