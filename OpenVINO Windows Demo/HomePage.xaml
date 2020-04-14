@@ -6,9 +6,76 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+    Loaded="Page_Loaded">
 
     <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0">         <!--   Title   -->
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Row="0" Grid.Column="0" Text="OpenVINO Windows Demo Tool" Style="{StaticResource HeaderTextBlockStyle}"/>
+            <TextBlock Grid.Row="0" Grid.Column="2" Text="version " HorizontalAlignment="Right" VerticalAlignment="Top"/>
+        </Grid>
 
+        <Grid Grid.Row="1">
+            <!--   Information Grid   -->
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Grid Grid.Row="0">
+                <!--   Application Introduction   -->
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <TextBlock Grid.Column="0" Grid.Row="0" Text="About This Application" Style="{StaticResource TitleTextBlockStyle}" HorizontalAlignment="Center"/>
+                <TextBlock Grid.Column="0" Grid.Row="1" Text="Introduction of this Application....." Style="{StaticResource SubtitleTextBlockStyle}"/>
+            </Grid>
+            <Grid Grid.Row="1">
+                <!--   Environment Checking   -->
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Ellipse Grid.Column="1" Grid.Row="1" Height="30" Width="30" Fill="Yellow" HorizontalAlignment="Right" Margin="5" />
+                <Ellipse Grid.Column="1" Grid.Row="2" Height="30" Width="30" Fill="Yellow" HorizontalAlignment="Right" Margin="5"  />
+                <Ellipse Grid.Column="1" Grid.Row="3" Height="30" Width="30" Fill="Yellow" HorizontalAlignment="Right" Margin="5"  />
+                <Ellipse Grid.Column="1" Grid.Row="4" Height="30" Width="30" Fill="Yellow" HorizontalAlignment="Right" Margin="5"  />
+                
+                <TextBlock Grid.Column="0" Grid.Row="0" Text="Environment Checking : " Style="{StaticResource TitleTextBlockStyle}" HorizontalAlignment="Right" Margin="5"/>
+                <TextBlock Grid.Column="2" Grid.Row="1" Text="Hardware Checking" Style="{StaticResource TitleTextBlockStyle}" HorizontalAlignment="Left" Margin="5"/>
+                <TextBlock Grid.Column="2" Grid.Row="2" Text="OpenVINO Installation" Style="{StaticResource TitleTextBlockStyle}" HorizontalAlignment="Left" Margin="5"/>
+                <TextBlock Grid.Column="2" Grid.Row="3" Text="OpenVINO Sample and Demo Compilation" Style="{StaticResource TitleTextBlockStyle}" HorizontalAlignment="Left" Margin="5"/>
+                <TextBlock Grid.Column="2" Grid.Row="4" Text="Open Model Zoo Download" Style="{StaticResource TitleTextBlockStyle}" HorizontalAlignment="Left" Margin="5"/>
+            </Grid>
+        </Grid>
     </Grid>
+    
 </Page>

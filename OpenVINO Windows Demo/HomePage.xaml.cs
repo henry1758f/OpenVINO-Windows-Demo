@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection.Metadata;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
@@ -25,6 +26,23 @@ namespace OpenVINO_Windows_Demo
         public HomePage()
         {
             this.InitializeComponent();
+        }
+        private async void Environment_check()
+        {
+            try
+            {
+                await ((App)Application.Current).SendRequestToConsoleConnector("Home_Page", "CPU_check");
+            }
+            catch (Exception e)
+            {
+                Environment_check();
+            }
+            
+        }
+
+        private void Page_Loaded(object sender, RoutedEventArgs e)
+        {
+            Environment_check();
         }
     }
 }

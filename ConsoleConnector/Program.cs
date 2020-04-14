@@ -87,6 +87,9 @@ namespace ConsoleConnector
                 case "Command":
                     command(value);
                     break;
+                case "Home_Page":
+                    Home_Page(value);
+                    break;
                 case "Interactive_face_detection_demo":
                     Interactive_face_detection_demo(value);
                     break;
@@ -121,6 +124,53 @@ namespace ConsoleConnector
         private static void command(string value_str)
         {
             Console.WriteLine("[INFO] Command: " + value_str);
+        }
+        private static void Home_Page(string value_str)
+        {
+            switch(value_str)
+            {
+                case "CPU_check":
+                    try
+                    {
+                        ProcessStartInfo processStartInfo = new ProcessStartInfo()
+                        {
+                            FileName = "cmd.exe",
+                            Arguments = "/C \"wmic cpu get Name & pause\"",
+                            UseShellExecute = false,
+                            RedirectStandardOutput = true,
+                            CreateNoWindow = true
+                        };
+                        var process = new Process()
+                        {
+                            StartInfo = processStartInfo
+                        };
+                        process.Start();
+                        while (!process.StandardOutput.EndOfStream)
+                        {
+                            var line = process.StandardOutput.ReadLine();
+                            if (line.Contains("CPU"))
+                            {
+                                Console.WriteLine("[INFO] Get CPU info:" + line);
+                            }
+                            else
+                            {
+
+                            }
+                            
+                        }
+                        process.WaitForExit();
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(e.Message);
+                    }
+                    
+                    
+                    
+                    break;
+                default:
+                    break;
+            }
         }
 
         private static void Interactive_face_detection_demo(string value_str)
