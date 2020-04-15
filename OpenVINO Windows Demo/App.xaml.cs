@@ -137,7 +137,14 @@ namespace OpenVINO_Windows_Demo
                 Connection = details.AppServiceConnection;
 
                 // Send request to ConsoleConnector
-                await SendRequestToConsoleConnector("Command", "initialize");
+                try
+                {
+                    await SendRequestToConsoleConnector("Command", "initialize");
+                }
+                catch (Exception e)
+                {
+
+                }
             }
         }
 
@@ -161,13 +168,24 @@ namespace OpenVINO_Windows_Demo
 
             AppServiceResponse response = null;
             response = await Connection.SendMessageAsync(request);
-
-            string serialNumber = response.Message["serialNumber"] as string;
-            
-            var localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
-
-            localSettings.Values["serialNumber"] = serialNumber;
-
+            if(response.Message.Keys.Contains("CPU"))
+            {
+                string CPU_info = response.Message["CPU"] as string;
+                var localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
+                localSettings.Values["CPU"] = CPU_info;
+            }
+            else if (response.Message.Keys.Contains("OpenVINO"))
+            {
+                string OpenVINO_info = response.Message["OpenVINO"] as string;
+                var localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
+                localSettings.Values["OpenVINO"] = OpenVINO_info;
+            }
+            else
+            {
+                
+                var localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
+                localSettings.Values["OpenVINO"] = "No Detect";
+            }
         }
     }
 }

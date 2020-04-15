@@ -64,14 +64,16 @@
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
-                <Ellipse Grid.Column="1" Grid.Row="1" Height="30" Width="30" Fill="Yellow" HorizontalAlignment="Right" Margin="5" />
+                <Ellipse Grid.Column="1" Grid.Row="1" Height="30" Width="30" Fill="Yellow" HorizontalAlignment="Right" Margin="5" x:Name="Hardware_Checking_sign" />
                 <Ellipse Grid.Column="1" Grid.Row="2" Height="30" Width="30" Fill="Yellow" HorizontalAlignment="Right" Margin="5"  />
                 <Ellipse Grid.Column="1" Grid.Row="3" Height="30" Width="30" Fill="Yellow" HorizontalAlignment="Right" Margin="5"  />
                 <Ellipse Grid.Column="1" Grid.Row="4" Height="30" Width="30" Fill="Yellow" HorizontalAlignment="Right" Margin="5"  />
                 
                 <TextBlock Grid.Column="0" Grid.Row="0" Text="Environment Checking : " Style="{StaticResource TitleTextBlockStyle}" HorizontalAlignment="Right" Margin="5"/>
                 <TextBlock Grid.Column="2" Grid.Row="1" Text="Hardware Checking" Style="{StaticResource TitleTextBlockStyle}" HorizontalAlignment="Left" Margin="5"/>
+                <TextBlock Grid.Column="3" Grid.Row="1" x:Name="Hardware_info" Margin="5" HorizontalAlignment="Left" TextWrapping="WrapWholeWords"/>
                 <TextBlock Grid.Column="2" Grid.Row="2" Text="OpenVINO Installation" Style="{StaticResource TitleTextBlockStyle}" HorizontalAlignment="Left" Margin="5"/>
+                <TextBlock Grid.Column="3" Grid.Row="2" x:Name="OpenVINO_info" Margin="5" HorizontalAlignment="Left" TextWrapping="WrapWholeWords"/>
                 <TextBlock Grid.Column="2" Grid.Row="3" Text="OpenVINO Sample and Demo Compilation" Style="{StaticResource TitleTextBlockStyle}" HorizontalAlignment="Left" Margin="5"/>
                 <TextBlock Grid.Column="2" Grid.Row="4" Text="Open Model Zoo Download" Style="{StaticResource TitleTextBlockStyle}" HorizontalAlignment="Left" Margin="5"/>
             </Grid>

@@ -6,6 +6,9 @@ using System.Reflection.Metadata;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Storage;
+using Windows.UI;
+using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -27,22 +30,56 @@ namespace OpenVINO_Windows_Demo
         {
             this.InitializeComponent();
         }
-        private async void Environment_check()
+        int Env_check_counter = 0;
+        private async void Environment_check(string check)
         {
-            try
+            var localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
+            switch (check)
             {
-                await ((App)Application.Current).SendRequestToConsoleConnector("Home_Page", "CPU_check");
+                case "CPU":
+                    await ((App)Application.Current).SendRequestToConsoleConnector("Home_Page", "CPU_check");
+                    try
+                    {
+                        Hardware_info.Text = localSettings.Values["CPU"].ToString();
+                        if(Hardware_info.Text.Contains("Intel"))
+                        {
+                            Hardware_Checking_sign.Fill = new SolidColorBrush(Colors.Green);
+                        }
+                        else
+                        {
+                            Hardware_Checking_sign.Fill = new SolidColorBrush(Colors.Red);
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        Hardware_info.Text = "ERROR!";
+                    }
+                    break;
+                case "OpenVINO":
+                    await ((App)Application.Current).SendRequestToConsoleConnector("Home_Page", "OpenVINO_check");
+                    try
+                    {
+                        OpenVINO_info.Text = localSettings.Values["OpenVINO"].ToString();
+                    }
+                    catch (Exception e)
+                    {
+                        OpenVINO_info.Text = "ERROR!";
+                    }
+                    break;
+                default:
+                    break;
             }
-            catch (Exception e)
-            {
-                Environment_check();
-            }
+
             
+
+
         }
 
-        private void Page_Loaded(object sender, RoutedEventArgs e)
+        private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            Environment_check();
+            
+            Environment_check("CPU");
+            Environment_check("OpenVINO");
         }
     }
 }

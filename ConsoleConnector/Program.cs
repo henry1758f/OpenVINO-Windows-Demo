@@ -86,48 +86,58 @@ namespace ConsoleConnector
             {
                 case "Command":
                     command(value);
+                    send_message(args, "command", "ECHO");
                     break;
                 case "Home_Page":
-                    Home_Page(value);
+                    Home_Page(args, value);
                     break;
                 case "Interactive_face_detection_demo":
                     Interactive_face_detection_demo(value);
+                    send_message(args, "command", "ECHO");
                     break;
                 case "Face_Recognition_Demo_Page":
                     Face_Recognition_Demo_Page(value);
+                    send_message(args, "command", "ECHO");
                     break;
                 case "Crossroad_Camera_Demo_Page":
                     Crossroad_Camera_Demo_Page(value);
+                    send_message(args, "command", "ECHO");
                     break;
                 case "Human_Pose_Estimation_Demo_Page":
                     Human_Pose_Estimation_Demo_Page(value);
+                    send_message(args, "command", "ECHO");
                     break;
                 case "Gaze_Estimation_Demo_Page":
                     Gaze_Estimation_Demo_Page(value);
+                    send_message(args, "command", "ECHO");
                     break;
                 case "Face_Recognition_Demo_Azure_Iot_Page":
                     Face_Recognition_Demo_Azure_Iot_Page(value);
+                    send_message(args, "command", "ECHO");
                     break;
                 default:
+                    send_message(args, "command", "ECHO");
                     break;
             }
-
+        }
+        private static void send_message(AppServiceRequestReceivedEventArgs args, string key_str,string value_str)
+        {
             ValueSet valueSet = new ValueSet();
-
-
-            valueSet.Add("serialNumber", "12345");
-
+            valueSet.Add(key_str, value_str);
             //Send back message to UWP
             args.Request.SendResponseAsync(valueSet).Completed += delegate { };
-            Console.WriteLine(DateTime.Now.TimeOfDay.ToString() + "\tMessage to UWP has been sent!!");
+            Console.WriteLine(DateTime.Now.TimeOfDay.ToString() + "\tMessage to UWP has been sent (" + key_str + " , " + value_str + ")");
         }
         private static void command(string value_str)
         {
             Console.WriteLine("[INFO] Command: " + value_str);
         }
-        private static void Home_Page(string value_str)
+        private static void Home_Page(AppServiceRequestReceivedEventArgs args, string value_str)
         {
-            switch(value_str)
+#if (DEBUG)
+            Console.WriteLine("[DEBUG] HOME_PAGE:" + value_str);
+#endif
+            switch (value_str)
             {
                 case "CPU_check":
                     try
@@ -135,7 +145,7 @@ namespace ConsoleConnector
                         ProcessStartInfo processStartInfo = new ProcessStartInfo()
                         {
                             FileName = "cmd.exe",
-                            Arguments = "/C \"wmic cpu get Name & pause\"",
+                            Arguments = "/C \"wmic cpu get Name\"",
                             UseShellExecute = false,
                             RedirectStandardOutput = true,
                             CreateNoWindow = true
@@ -151,22 +161,59 @@ namespace ConsoleConnector
                             if (line.Contains("CPU"))
                             {
                                 Console.WriteLine("[INFO] Get CPU info:" + line);
+                                send_message(args, "CPU", line);
                             }
                             else
                             {
-
+#if (DEBUG)
+                                Console.WriteLine("[DEBUG] " + processStartInfo.Arguments + ":" + line);
+#endif
                             }
                             
                         }
-                        process.WaitForExit();
                     }
                     catch (Exception e)
                     {
                         Console.WriteLine(e.Message);
                     }
-                    
-                    
-                    
+                    break;
+                case "OpenVINO_check":
+                    try
+                    {
+                        ProcessStartInfo processStartInfo = new ProcessStartInfo()
+                        {
+                            FileName = "cmd.exe",
+                            Arguments = "/C \"dir \"C:\\Program Files(x86)\\IntelSWTools\\\" |find \"openvino\"\"",
+                            UseShellExecute = false,
+                            RedirectStandardOutput = true,
+                            CreateNoWindow = true
+                        };
+                        var process = new Process()
+                        {
+                            StartInfo = processStartInfo
+                        };
+                        process.Start();
+                        while (!process.StandardOutput.EndOfStream)
+                        {
+                            var line = process.StandardOutput.ReadLine();
+                            if (line.Contains("["))
+                            {
+                                Console.WriteLine("[INFO] Get OpenVINO info:" + line);
+                                send_message(args, "OpenVINO", line);
+                            }
+                            else
+                            {
+#if (DEBUG)
+                                Console.WriteLine("[DEBUG] " + processStartInfo.Arguments + ":" + line);
+#endif
+                            }
+
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(e.Message);
+                    }
                     break;
                 default:
                     break;
