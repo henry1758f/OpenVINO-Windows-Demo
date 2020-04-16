@@ -101,6 +101,15 @@ namespace OpenVINO_Windows_Demo
         {
             var deferral = e.SuspendingOperation.GetDeferral();
             //TODO: 儲存應用程式狀態，並停止任何背景活動
+            try
+            {
+                SendRequestToConsoleConnector("Command", "Close");
+            }
+            catch(Exception)
+            {
+
+            }
+            
             deferral.Complete();
         }
         
@@ -180,11 +189,23 @@ namespace OpenVINO_Windows_Demo
                 var localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
                 localSettings.Values["OpenVINO"] = OpenVINO_info;
             }
+            else if (response.Message.Keys.Contains("SampleDemo"))
+            {
+                string OpenVINO_info = response.Message["SampleDemo"] as string;
+                var localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
+                localSettings.Values["SampleDemo"] = OpenVINO_info;
+            }
+            else if (response.Message.Keys.Contains("OMZ_Model"))
+            {
+                string OpenVINO_info = response.Message["OMZ_Model"] as string;
+                var localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
+                localSettings.Values["OMZ_Model"] = OpenVINO_info;
+            }
             else
             {
                 
                 var localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
-                localSettings.Values["OpenVINO"] = "No Detect";
+                localSettings.Values["OMZ_Model"] = "No Detect";
             }
         }
     }

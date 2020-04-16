@@ -25,10 +25,16 @@ namespace ConsoleConnector
         static void Main(string[] args)
         {
             new Thread(ThreadProc).Start();
-            Console.Title = "Hello World";
-            Console.WriteLine("This process runs at the full privileges of the user and has access to the entire public desktop API surface");
-            Console.WriteLine("\r\nPress any key to exit ...");
-            Console.ReadLine();
+            Console.Title = "OpenVINO Windows Demo Tool - Console Connector";
+            Console.WriteLine("This process runs between OpenVINO Windows Demo Tool and system");
+            
+            string input = "";
+            while (!input.Equals("Exit"))
+            {
+                Console.WriteLine("\r\nPress E to Force Exit this console ...");
+                input = Console.ReadLine().ToString();
+            }
+            
         }
 
         /// <summary>
@@ -131,6 +137,14 @@ namespace ConsoleConnector
         private static void command(string value_str)
         {
             Console.WriteLine("[INFO] Command: " + value_str);
+            switch (value_str)
+            {
+                case "Close":
+                    Environment.Exit(0);
+                    break;
+                default:
+                    break;
+            }
         }
         private static void Home_Page(AppServiceRequestReceivedEventArgs args, string value_str)
         {
@@ -183,7 +197,7 @@ namespace ConsoleConnector
                         ProcessStartInfo processStartInfo = new ProcessStartInfo()
                         {
                             FileName = "cmd.exe",
-                            Arguments = "/C \"dir \"C:\\Program Files(x86)\\IntelSWTools\\\" |find \"openvino\"\"",
+                            Arguments = "/C \"dir \"C:\\Program Files (x86)\\IntelSWTools\\\" |find \"openvino\"\"",
                             UseShellExecute = false,
                             RedirectStandardOutput = true,
                             CreateNoWindow = true
@@ -198,6 +212,8 @@ namespace ConsoleConnector
                             var line = process.StandardOutput.ReadLine();
                             if (line.Contains("["))
                             {
+                                line = line.Substring(0,line.LastIndexOf("\\"));
+                                line = line.Substring(line.LastIndexOf("\\")+1);
                                 Console.WriteLine("[INFO] Get OpenVINO info:" + line);
                                 send_message(args, "OpenVINO", line);
                             }
@@ -209,6 +225,90 @@ namespace ConsoleConnector
                             }
 
                         }
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(e.Message);
+                    }
+                    break;
+                case "SampleDemo_check":
+                    try
+                    {
+                        ProcessStartInfo processStartInfo = new ProcessStartInfo()
+                        {
+                            FileName = "cmd.exe",
+                            Arguments = "/C \"dir %USERPROFILE%\\Documents\\Intel\\OpenVINO /B /S |find \".exe\" \"",
+                            UseShellExecute = false,
+                            RedirectStandardOutput = true,
+                            CreateNoWindow = true
+                        };
+                        var process = new Process()
+                        {
+                            StartInfo = processStartInfo
+                        };
+                        process.Start();
+                        string message = "";
+                        while (!process.StandardOutput.EndOfStream)
+                        {
+                            var line = process.StandardOutput.ReadLine();
+                            if (line.Contains(".exe"))
+                            {
+                                line = line.Substring(line.LastIndexOf("\\") + 1);
+                                Console.WriteLine("[INFO] Get SampleDemo info:" + line);
+                                message += line + "\n";
+                                
+                            }
+                            else
+                            {
+#if (DEBUG)
+                                Console.WriteLine("[DEBUG] " + processStartInfo.Arguments + ":" + line.Substring(line.LastIndexOf("\\") + 1) + "\n");
+#endif
+                            }
+
+                        }
+                        send_message(args, "SampleDemo", message);
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(e.Message);
+                    }
+                    break;
+                case "OMZ_Model_check":
+                    try
+                    {
+                        ProcessStartInfo processStartInfo = new ProcessStartInfo()
+                        {
+                            FileName = "cmd.exe",
+                            Arguments = "/C \"dir %USERPROFILE%\\Documents\\Intel\\OpenVINO\\openvino_models /B /S |find \".xml\" \"",
+                            UseShellExecute = false,
+                            RedirectStandardOutput = true,
+                            CreateNoWindow = true
+                        };
+                        var process = new Process()
+                        {
+                            StartInfo = processStartInfo
+                        };
+                        process.Start();
+                        string message = "";
+                        while (!process.StandardOutput.EndOfStream)
+                        {
+                            var line = process.StandardOutput.ReadLine();
+                            if (line.Contains(".xml"))
+                            {
+                                line = line.Substring(line.LastIndexOf("\\") + 1);
+                                Console.WriteLine("[INFO] Get OMZ_model info:" + line);
+                                message += line + "\n";
+
+                            }
+                            else
+                            {
+#if (DEBUG)
+                                Console.WriteLine("[DEBUG] " + processStartInfo.Arguments + ":" + line.Substring(line.LastIndexOf("\\") + 1) + "\n");
+#endif
+                            }
+
+                        }
+                        send_message(args, "OMZ_Model", message);
                     }
                     catch (Exception e)
                     {
