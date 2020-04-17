@@ -117,7 +117,7 @@ namespace OpenVINO_Windows_Demo
 
         AppServiceConnection Connection = null;
         BackgroundTaskDeferral appServiceDeferral = null;
-        private async void APPLaunch()
+        public async void APPLaunch()
         {
             await FullTrustProcessLauncher.LaunchFullTrustProcessForCurrentAppAsync();
         }

@@ -41,156 +41,212 @@ namespace OpenVINO_Windows_Demo
             return string.Format("{0}.{1}.{2}.{3}", version.Major, version.Minor, version.Build, version.Revision);
         }
 
-        private async void Environment_check(string check)
+        private async System.Threading.Tasks.Task Environment_check(string check)
         {
             var localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
-            try
+            bool pass = false;
+            switch (check)
             {
-                switch (check)
-                {
-                    case "CPU":
-                        Hardware_info_border.BorderBrush = new SolidColorBrush(Colors.Yellow);
-                        Hardware_info_border.BorderThickness = new Thickness(1);
-                        SampleDemo_info.Text = "Checking...";
-                        await ((App)Application.Current).SendRequestToConsoleConnector("Home_Page", "CPU_check");
+                case "connector":
+                    int connector_counter = 0;
+                    
+                    while (connector_counter != -1)
+                    {
+                        Env_check_info.Text = "Checking Console Connector...";
+                        connector_counter++;
                         try
                         {
-                            Hardware_info.Text = localSettings.Values["CPU"].ToString();
-                            if (Hardware_info.Text.Contains("Intel"))
-                            {
-                                Hardware_Checking_sign.Fill = new SolidColorBrush(Colors.Green);
-                                Hardware_info_border.BorderBrush = new SolidColorBrush(Colors.Green);
-                            }
-                            else
-                            {
-                                Hardware_Checking_sign.Fill = new SolidColorBrush(Colors.Red);
-                                Hardware_info_border.BorderBrush = new SolidColorBrush(Colors.Red);
-                            }
+                            await ((App)Application.Current).SendRequestToConsoleConnector("Home_Page", "ECHO");
+                            pass = true;
+                            break;
                         }
                         catch (Exception e)
                         {
-                            Hardware_info.Text = "ERROR!";
-                        }
-                        break;
-                    case "OpenVINO":
-                        OpenVINO_info_border.BorderBrush = new SolidColorBrush(Colors.Yellow);
-                        OpenVINO_info_border.BorderThickness = new Thickness(1);
-                        OpenVINO_info.Text = "Checking...";
-                        await ((App)Application.Current).SendRequestToConsoleConnector("Home_Page", "OpenVINO_check");
-                        try
-                        {
-                            OpenVINO_info.Text = localSettings.Values["OpenVINO"].ToString();
-                            if (OpenVINO_info.Text.Contains("openvino_2020.1"))
+                            if (connector_counter == 3)
                             {
-                                OpenVINO_Checking_sign.Fill = new SolidColorBrush(Colors.Green);
-                                OpenVINO_info_border.BorderBrush = new SolidColorBrush(Colors.Green);
+                                Env_check_info.Text = "Try to Reopen Console Connector...";
+                                ((App)Application.Current).APPLaunch();
+                                System.Threading.Tasks.Task.Delay(10).Wait();
+                                //await ((App)Application.Current).SendRequestToConsoleConnector("Command", "Reopen");
                             }
-                            else
+                            if (connector_counter > 10)
                             {
-                                OpenVINO_Checking_sign.Fill = new SolidColorBrush(Colors.Red);
-                                OpenVINO_info_border.BorderBrush = new SolidColorBrush(Colors.Red);
+                                pass = false;
+                                break;
                             }
+                            continue;
                         }
-                        catch (Exception e)
+                    }
+                    if (!pass)
+                    {
+                        Env_check_info.Text = "ERROR! Console Connector is not ready!!";
+                    }
+                    else
+                    {
+                        Env_check_info.Text = "";
+                    }
+                    break;
+                case "CPU":
+                    Hardware_info_border.BorderBrush = new SolidColorBrush(Colors.Yellow);
+                    Hardware_info_border.BorderThickness = new Thickness(1);
+                    SampleDemo_info.Text = "Checking...";
+                    await ((App)Application.Current).SendRequestToConsoleConnector("Home_Page", "CPU_check");
+                    try
+                    {
+                        Hardware_info.Text = localSettings.Values["CPU"].ToString();
+                        if (Hardware_info.Text.Contains("Intel"))
                         {
-                            OpenVINO_info.Text = "ERROR!";
+                            Hardware_Checking_sign.Fill = new SolidColorBrush(Colors.Green);
+                            Hardware_info_border.BorderBrush = new SolidColorBrush(Colors.Green);
                         }
-                        break;
-                    case "SampleDemo":
-                        SampleDemo_info_border.BorderBrush = new SolidColorBrush(Colors.Yellow);
-                        SampleDemo_info_border.BorderThickness = new Thickness(1);
-                        SampleDemo_info.Text = "Checking...";
-                        await ((App)Application.Current).SendRequestToConsoleConnector("Home_Page", "SampleDemo_check");
-                        try
+                        else
                         {
+                            Hardware_Checking_sign.Fill = new SolidColorBrush(Colors.Red);
+                            Hardware_info_border.BorderBrush = new SolidColorBrush(Colors.Red);
+                        }
+                        pass = true;
+                    }
+                    catch (Exception e)
+                    {
+                        pass = false;
+                        Hardware_info.Text = "ERROR!";
+                    }
+                    break;
+                case "OpenVINO":
+                    OpenVINO_info_border.BorderBrush = new SolidColorBrush(Colors.Yellow);
+                    OpenVINO_info_border.BorderThickness = new Thickness(1);
+                    OpenVINO_info.Text = "Checking...";
+                    await ((App)Application.Current).SendRequestToConsoleConnector("Home_Page", "OpenVINO_check");
+                    try
+                    {
+                        OpenVINO_info.Text = localSettings.Values["OpenVINO"].ToString();
+                        if (OpenVINO_info.Text.Contains("openvino_2020.1"))
+                        {
+                            OpenVINO_Checking_sign.Fill = new SolidColorBrush(Colors.Green);
+                            OpenVINO_info_border.BorderBrush = new SolidColorBrush(Colors.Green);
+                        }
+                        else
+                        {
+                            OpenVINO_info.Text += "\nPlease install OpenVINO v2020.1";
+                            OpenVINO_Checking_sign.Fill = new SolidColorBrush(Colors.Red);
+                            OpenVINO_info_border.BorderBrush = new SolidColorBrush(Colors.Red);
+                        }
+                        pass = true;
+                    }
+                    catch (Exception e)
+                    {
+                        OpenVINO_info.Text = "ERROR!";
+                        pass = false;
+                    }
+                    break;
+                case "SampleDemo":
+                    SampleDemo_info_border.BorderBrush = new SolidColorBrush(Colors.Yellow);
+                    SampleDemo_info_border.BorderThickness = new Thickness(1);
+                    SampleDemo_info.Text = "Checking...";
+                    await ((App)Application.Current).SendRequestToConsoleConnector("Home_Page", "SampleDemo_check");
+                    try
+                    {
 
-                            if (localSettings.Values["SampleDemo"].ToString().Contains(".exe"))
-                            {
-                                SampleDemo_Checking_sign.Fill = new SolidColorBrush(Colors.Green);
-                                SampleDemo_info_border.BorderBrush = new SolidColorBrush(Colors.Green);
-                                SampleDemo_info.Text = "OK";
-                            }
-                            else
-                            {
-                                SampleDemo_Checking_sign.Fill = new SolidColorBrush(Colors.Red);
-                                SampleDemo_info_border.BorderBrush = new SolidColorBrush(Colors.Red);
-                                SampleDemo_info.Text = "NOT FOUND";
-                            }
-                        }
-                        catch (Exception e)
+                        if (localSettings.Values["SampleDemo"].ToString().Contains(".exe"))
                         {
-                            SampleDemo_info.Text = "ERROR!" + e.ToString();
+                            SampleDemo_Checking_sign.Fill = new SolidColorBrush(Colors.Green);
+                            SampleDemo_info_border.BorderBrush = new SolidColorBrush(Colors.Green);
+                            SampleDemo_info.Text = "OK";
                         }
-                        break;
-                    case "OMZ_Model":
-                        OMZ_Model_info_border.BorderBrush = new SolidColorBrush(Colors.Yellow);
-                        OMZ_Model_info_border.BorderThickness = new Thickness(1);
-                        OMZ_Model_info.Text = "Checking...";
-                        await ((App)Application.Current).SendRequestToConsoleConnector("Home_Page", "OMZ_Model_check");
-                        try
+                        else
                         {
+                            SampleDemo_Checking_sign.Fill = new SolidColorBrush(Colors.Red);
+                            SampleDemo_info_border.BorderBrush = new SolidColorBrush(Colors.Red);
+                            SampleDemo_info.Text = "NOT FOUND";
+                        }
+                        pass = true;
+                    }
+                    catch (Exception e)
+                    {
+                        SampleDemo_info.Text = "ERROR!" + e.ToString();
+                        pass = false;
+                    }
+                    break;
+                case "OMZ_Model":
+                    OMZ_Model_info_border.BorderBrush = new SolidColorBrush(Colors.Yellow);
+                    OMZ_Model_info_border.BorderThickness = new Thickness(1);
+                    OMZ_Model_info.Text = "Checking...";
+                    await ((App)Application.Current).SendRequestToConsoleConnector("Home_Page", "OMZ_Model_check");
+                    try
+                    {
 
-                            if (localSettings.Values["OMZ_Model"].ToString().Contains(".xml"))
+                        if (localSettings.Values["OMZ_Model"].ToString().Contains(".xml"))
+                        {
+                            int counter = 0;
+                            string temp = localSettings.Values["OMZ_Model"].ToString();
+                            while (counter != -1)
                             {
-                                int counter = 0;
-                                string temp = localSettings.Values["OMZ_Model"].ToString();
-                                while (counter != -1)
+                                try
                                 {
-                                    try
+                                    if (temp.LastIndexOf(".xml") == -1)
                                     {
-                                        if (temp.LastIndexOf(".xml") == -1)
-                                        {
-                                            break;
-                                        }
-                                        temp = temp.Substring(temp.IndexOf(".xml") + ".xml".Length);
-                                        counter++;
+                                        break;
                                     }
-                                    catch
-                                    {
-                                        counter = -1;
-                                    }
-
+                                    temp = temp.Substring(temp.IndexOf(".xml") + ".xml".Length);
+                                    counter++;
                                 }
-                                OMZ_Model_Checking_sign.Fill = new SolidColorBrush(Colors.Green);
-                                OMZ_Model_info_border.BorderBrush = new SolidColorBrush(Colors.Green);
-                                OMZ_Model_info.Text = counter.ToString() + " IR Models have been found.";
+                                catch
+                                {
+                                    counter = -1;
+                                }
 
                             }
-                            else
-                            {
-                                OMZ_Model_info_border.BorderBrush = new SolidColorBrush(Colors.Red);
-                                OMZ_Model_Checking_sign.Fill = new SolidColorBrush(Colors.Red);
-                                OMZ_Model_info.Text = "NOT FOUND";
-                            }
+                            OMZ_Model_Checking_sign.Fill = new SolidColorBrush(Colors.Green);
+                            OMZ_Model_info_border.BorderBrush = new SolidColorBrush(Colors.Green);
+                            OMZ_Model_info.Text = counter.ToString() + " IR Models have been found.";
+
                         }
-                        catch (Exception e)
+                        else
                         {
-                            OMZ_Model_info.Text = "ERROR!" + e.ToString();
+                            OMZ_Model_info_border.BorderBrush = new SolidColorBrush(Colors.Red);
+                            OMZ_Model_Checking_sign.Fill = new SolidColorBrush(Colors.Red);
+                            OMZ_Model_info.Text = "NOT FOUND";
                         }
-                        break;
-                    default:
-                        break;
-                }
+                        pass = true;
+                    }
+                    catch (Exception e)
+                    {
+                        OMZ_Model_info.Text = "ERROR!" + e.ToString();
+                        pass = false;
+                    }
+                    break;
+                default:
+                    break;
             }
-            catch (Exception e)
-            {
-                MessageDialog messageDialogs = new MessageDialog("ERROR! (" + e.ToString() + ")");
-                messageDialogs.ShowAsync();
-            }
-            
-
-            
-
-
         }
 
-        private void Page_Loaded(object sender, RoutedEventArgs e)
+        private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
             version_textbox.Text = "Version " + GetAppVersion();
-            Environment_check("CPU");
-            Environment_check("OpenVINO");
-            Environment_check("SampleDemo");
-            Environment_check("OMZ_Model");
+            int counter = 0;
+            do
+            {
+                await Environment_check("connector");
+                counter++;
+            } while (Env_check_info.Text.Contains("ERROR") && counter <= 0);
+            try
+            {
+                await Environment_check("CPU");
+                await Environment_check("OpenVINO");
+                await Environment_check("SampleDemo");
+                await Environment_check("OMZ_Model");
+            }
+            catch (Exception ex)
+            {
+                MessageDialog messageDialogs = new MessageDialog("Console Connector is not ready!!");
+                messageDialogs.Title = "Console Connetor Problem";
+                await messageDialogs.ShowAsync();
+                Page_Loaded(sender, e);
+            }
+
+            
         }
+
+
     }
 }

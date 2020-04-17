@@ -153,6 +153,9 @@ namespace ConsoleConnector
 #endif
             switch (value_str)
             {
+                case "ECHO":
+                    send_message(args, "command", "ECHO");
+                    break;
                 case "CPU_check":
                     try
                     {
