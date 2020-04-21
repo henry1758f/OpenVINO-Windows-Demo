@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -16,6 +17,7 @@ namespace ConsoleConnector
     class Program
     {
         static AppServiceConnection connection = null;
+        static string App_path = "";
 
         static string openvino_install_dir = @"C:\Program Files (x86)\IntelSWTools\openvino\";
         static string setupvars_path = openvino_install_dir + @"bin\setupvars.bat";
@@ -121,6 +123,10 @@ namespace ConsoleConnector
                     Face_Recognition_Demo_Azure_Iot_Page(value);
                     send_message(args, "command", "ECHO");
                     break;
+                case "App_Path":
+                    App_path = value;
+                    send_message(args, "command", "ECHO");
+                    break;
                 default:
                     send_message(args, "command", "ECHO");
                     break;
@@ -141,6 +147,27 @@ namespace ConsoleConnector
             {
                 case "Close":
                     Environment.Exit(0);
+                    break;
+                case "Sample_Build":
+                    string path = Directory.GetCurrentDirectory();
+                    ProcessStartInfo processStartInfo = new ProcessStartInfo()
+                    {
+                        FileName = "cmd.exe",
+                        //Arguments = "/C \"\"" + App_path + "\\Demos\\autobuildAgent.bat\" & PAUSE\"",
+                        Arguments = "/C \"\"" + App_path + "\\Demos\\autobuildAgent.bat\" ",
+                        //UseShellExecute = true,
+                        //RedirectStandardOutput = true,
+                        //CreateNoWindow = false,
+                        WindowStyle = ProcessWindowStyle.Normal
+            };
+                    var process = new Process()
+                    {
+                        StartInfo = processStartInfo
+                    };
+#if (DEBUG)
+                    Console.WriteLine("[DEBUG] RUNNING:" + value_str);
+#endif
+                    process.Start();
                     break;
                 default:
                     break;

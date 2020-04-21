@@ -103,6 +103,7 @@ namespace OpenVINO_Windows_Demo
                         {
                             Hardware_Checking_sign.Fill = new SolidColorBrush(Colors.Red);
                             Hardware_info_border.BorderBrush = new SolidColorBrush(Colors.Red);
+                            Fix_Hardware.Visibility = Visibility.Visible;
                         }
                         pass = true;
                     }
@@ -124,12 +125,15 @@ namespace OpenVINO_Windows_Demo
                         {
                             OpenVINO_Checking_sign.Fill = new SolidColorBrush(Colors.Green);
                             OpenVINO_info_border.BorderBrush = new SolidColorBrush(Colors.Green);
+                            // DEBUG
+                            //Fix_OpenVINO.Visibility = Visibility.Visible;
                         }
                         else
                         {
                             OpenVINO_info.Text += "\nPlease install OpenVINO v2020.1";
                             OpenVINO_Checking_sign.Fill = new SolidColorBrush(Colors.Red);
                             OpenVINO_info_border.BorderBrush = new SolidColorBrush(Colors.Red);
+                            Fix_OpenVINO.Visibility = Visibility.Visible;
                         }
                         pass = true;
                     }
@@ -152,12 +156,15 @@ namespace OpenVINO_Windows_Demo
                             SampleDemo_Checking_sign.Fill = new SolidColorBrush(Colors.Green);
                             SampleDemo_info_border.BorderBrush = new SolidColorBrush(Colors.Green);
                             SampleDemo_info.Text = "OK";
+                            // DEBUG
+                            //Fix_SampleDemo.Visibility = Visibility.Visible;
                         }
                         else
                         {
                             SampleDemo_Checking_sign.Fill = new SolidColorBrush(Colors.Red);
                             SampleDemo_info_border.BorderBrush = new SolidColorBrush(Colors.Red);
                             SampleDemo_info.Text = "NOT FOUND";
+                            Fix_SampleDemo.Visibility = Visibility.Visible;
                         }
                         pass = true;
                     }
@@ -206,6 +213,7 @@ namespace OpenVINO_Windows_Demo
                             OMZ_Model_info_border.BorderBrush = new SolidColorBrush(Colors.Red);
                             OMZ_Model_Checking_sign.Fill = new SolidColorBrush(Colors.Red);
                             OMZ_Model_info.Text = "NOT FOUND";
+                            Fix_OMZ_Model.Visibility = Visibility.Visible;
                         }
                         pass = true;
                     }
@@ -247,6 +255,50 @@ namespace OpenVINO_Windows_Demo
             
         }
 
+        private async void Fix_Hardware_Click(object sender, RoutedEventArgs e)
+        {
+            string UriToSYNNEX = @"http://synnex-iotsolutions.com/";
+            var uri = new Uri(UriToSYNNEX);
+            var success = await Windows.System.Launcher.LaunchUriAsync(uri);
+            if (success)
+            {
 
+            }
+            else
+            {
+                MessageDialog messageDialogs = new MessageDialog("Cannot launch the website !!");
+                messageDialogs.Title = "Hardware Purcase page";
+                await messageDialogs.ShowAsync();
+            }
+        }
+
+        private async void Fix_OpenVINO_Click(object sender, RoutedEventArgs e)
+        {
+            string UriToOpenVINO = @"https://software.seek.intel.com/openvino-toolkit?os=windows";
+            var uri = new Uri(UriToOpenVINO);
+            var success = await Windows.System.Launcher.LaunchUriAsync(uri);
+            if (success)
+            {
+
+            }
+            else
+            {
+                MessageDialog messageDialogs = new MessageDialog("Cannot launch the website !!");
+                messageDialogs.Title = "OpenVINO Download page";
+                await messageDialogs.ShowAsync();
+            }
+        }
+
+        private async void Fix_SampleDemo_Click(object sender, RoutedEventArgs e)
+        {
+            string path = Directory.GetCurrentDirectory();
+            await ((App)Application.Current).SendRequestToConsoleConnector("App_Path", path);
+            await ((App)Application.Current).SendRequestToConsoleConnector("Command", "Sample_Build");
+        }
+
+        private void Fix_OMZ_Model_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }
