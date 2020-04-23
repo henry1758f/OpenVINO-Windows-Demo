@@ -6,9 +6,46 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+    Loading="Page_Loading">
 
+    <Page.Resources>
+        <DataTemplate x:Key="ModelItemTemplate" x:DataType="local:Models">
+        <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Column="0" VerticalAlignment="Center" >
+                    <TextBlock Margin="0,0,0,4" Text="{x:Bind name}" TextWrapping="NoWrap"  Style="{StaticResource SubtitleTextBlockStyle}" />
+                    <TextBlock Margin="0,0,0,4" Text="{x:Bind task_type}" TextWrapping="WrapWholeWords"/>
+                    <ToolTipService.ToolTip>
+                        <TextBlock Text="{x:Bind description}" Width="Auto" TextWrapping="WrapWholeWords"/>
+                    </ToolTipService.ToolTip>
+                    <!-- <TextBlock Margin="0,0,0,4" Text="{x:Bind details}" Style="{StaticResource SubtitleTextBlockStyle}"/> -->
+                </StackPanel>
+            </Grid>
+        </DataTemplate>
+    </Page.Resources>
+    
     <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="10"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <TextBlock Grid.Column="0" Grid.Row="0" Text="TITLE" Grid.ColumnSpan="3" />
+        <TextBlock Grid.Column="1" Grid.Row="1" Text="Open Model Zoo Model List" VerticalAlignment="Center" HorizontalAlignment="Center" />
+        <ListView Grid.Column="1" Grid.Row="2" ItemTemplate="{StaticResource ModelItemTemplate}" ItemsSource="{x:Bind Total_Models}" IsItemClickEnabled="True" x:Name="Total_Models_List" IsMultiSelectCheckBoxEnabled="True" SelectionMode="Multiple"/>
+        <Button Grid.Column="2" Grid.Row="1" x:Name="Download_All_Button" Content="Download All Model (20GB)" HorizontalAlignment="Center"/>
+        <TextBlock Grid.Column="3" Grid.Row="1" Text="Downloaded Model List" VerticalAlignment="Center" HorizontalAlignment="Center" />
+        <ListView Grid.Column="3" Grid.Row="2" ItemTemplate="{StaticResource ModelItemTemplate}" ItemsSource="{x:Bind Available_Models}" IsItemClickEnabled="True"  IsMultiSelectCheckBoxEnabled="True"/>
 
     </Grid>
 </Page>

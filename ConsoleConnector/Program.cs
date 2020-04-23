@@ -127,6 +127,12 @@ namespace ConsoleConnector
                     App_path = value;
                     send_message(args, "command", "ECHO");
                     break;
+                case "Downloader":
+                    Downloader_Page(args, value);
+                    break;
+                case "print_model_info":
+                    Print_Model_info(args, value);
+                    break;
                 default:
                     send_message(args, "command", "ECHO");
                     break;
@@ -168,6 +174,135 @@ namespace ConsoleConnector
                     Console.WriteLine("[DEBUG] RUNNING:" + value_str);
 #endif
                     process.Start();
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        private static void Print_Model_info(AppServiceRequestReceivedEventArgs args, string value_str)
+        {
+#if (DEBUG)
+            Console.WriteLine("[DEBUG] Print_Model_info:" + value_str);
+#endif
+
+            try
+            {
+                ProcessStartInfo processStartInfo = new ProcessStartInfo()
+                {
+                    FileName = "cmd.exe",
+                    Arguments = "/C \"C:\\Program Files (x86)\\IntelSWTools\\openvino\\deployment_tools\\tools\\model_downloader\\info_dumper.py\" --name " + value_str,
+                    UseShellExecute = false,
+                    RedirectStandardOutput = true,
+                    CreateNoWindow = true
+                };
+                var process = new Process()
+                {
+                    StartInfo = processStartInfo
+                };
+                process.Start();
+                string message = "";
+                while (!process.StandardOutput.EndOfStream)
+                {
+                    var line = process.StandardOutput.ReadLine();
+                    Console.WriteLine("[INFO] Get " + value_str + " info:\n" + line);
+                    message += line + "\n";
+                }
+                send_message(args, "Model_Info", message);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+                    
+        }
+        private static int Get_All_Model_info_json()
+        {
+            const int SUCCESS = 0;
+            const int FAILURE = 1;
+            try
+            {
+                ProcessStartInfo processStartInfo = new ProcessStartInfo()
+                {
+                    FileName = "cmd.exe",
+                    Arguments = "/C \"C:\\Program Files (x86)\\IntelSWTools\\openvino\\deployment_tools\\tools\\model_downloader\\info_dumper.py\" --all",
+                    UseShellExecute = false,
+                    RedirectStandardOutput = true,
+                    CreateNoWindow = true
+                };
+                var process = new Process()
+                {
+                    StartInfo = processStartInfo
+                };
+                process.Start();
+                string message = "";
+                Console.WriteLine("[INFO] Get All JSON model info :\n");
+                while (!process.StandardOutput.EndOfStream)
+                {
+                    var line = process.StandardOutput.ReadLine();
+                    Console.WriteLine(line + "\n");
+                    message += line + "\n";
+                }
+                File.WriteAllText(App_path + "\\models_info.json", message);
+                
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return FAILURE;
+            }
+            return SUCCESS;
+        }
+
+        private static void Downloader_Page(AppServiceRequestReceivedEventArgs args, string value_str)
+        {
+#if (DEBUG)
+            Console.WriteLine("[DEBUG] DOWNLOADER_PAGE:" + value_str);
+#endif
+            switch (value_str)
+            {
+                case "print_all_model_name":
+                    try
+                    {
+                        ProcessStartInfo processStartInfo = new ProcessStartInfo()
+                        {
+                            FileName = "cmd.exe",
+                            Arguments = "/C \"C:\\Program Files (x86)\\IntelSWTools\\openvino\\deployment_tools\\tools\\model_downloader\\info_dumper.py\" --print_all",
+                            UseShellExecute = false,
+                            RedirectStandardOutput = true,
+                            CreateNoWindow = true
+                        };
+                        var process = new Process()
+                        {
+                            StartInfo = processStartInfo
+                        };
+                        process.Start();
+                        string message = "";
+                        while (!process.StandardOutput.EndOfStream)
+                        {
+                            var line = process.StandardOutput.ReadLine();
+                            line = line.Substring(line.LastIndexOf("\\") + 1);
+                            Console.WriteLine("[INFO] Get All_model name:\n" + line);
+                            message += line + "\n";
+
+
+                        }
+                        send_message(args, "All_Model_Name", message);
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(e.Message);
+                    }
+                    break;
+                case "Get_All_Model_info_json":
+                    if (Get_All_Model_info_json().Equals(1))
+                    {
+                        send_message(args, "Get_All_Model_info_json", "FAILED");
+                    }
+                    else
+                    {
+                        send_message(args, "Get_All_Model_info_json", "SUCCESS");
+                    }
                     break;
                 default:
                     break;
