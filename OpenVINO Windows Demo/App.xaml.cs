@@ -213,6 +213,12 @@ namespace OpenVINO_Windows_Demo
                 var localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
                 localSettings.Values["Get_All_Model_info_json"] = OpenVINO_info;
             }
+            else if (response.Message.Keys.Contains("Get_All_Model_info_json"))
+            {
+                string OpenVINO_info = response.Message["Downloaded_Model_Name"] as string;
+                var localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
+                localSettings.Values["Downloaded_Model_Name"] = OpenVINO_info;
+            }
             else
             {
                 

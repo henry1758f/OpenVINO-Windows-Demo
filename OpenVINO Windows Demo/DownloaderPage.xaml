@@ -11,20 +11,24 @@
 
     <Page.Resources>
         <DataTemplate x:Key="ModelItemTemplate" x:DataType="local:Models">
-        <Grid>
+        <Grid Width="Auto">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition />
                 </Grid.ColumnDefinitions>
                 <StackPanel Grid.Column="0" VerticalAlignment="Center" >
-                    <TextBlock Margin="0,0,0,4" Text="{x:Bind name}" TextWrapping="NoWrap"  Style="{StaticResource SubtitleTextBlockStyle}" />
-                    <TextBlock Margin="0,0,0,4" Text="{x:Bind task_type}" TextWrapping="WrapWholeWords"/>
+                    <TextBlock Margin="0,0,0,4" Text="{x:Bind name}" TextWrapping="Wrap"  Style="{StaticResource SubtitleTextBlockStyle}" />
+                    <TextBlock Margin="0,0,0,4" Text="{x:Bind task_type}" TextWrapping="WrapWholeWords" HorizontalAlignment="Left"/>
+                    <TextBlock Margin="0,0,0,4" Text="{x:Bind memo_str}" TextWrapping="NoWrap" HorizontalAlignment="Left" FontStyle="Italic"/>
+
                     <ToolTipService.ToolTip>
                         <TextBlock Text="{x:Bind description}" Width="Auto" TextWrapping="WrapWholeWords"/>
                     </ToolTipService.ToolTip>
                     <!-- <TextBlock Margin="0,0,0,4" Text="{x:Bind details}" Style="{StaticResource SubtitleTextBlockStyle}"/> -->
                 </StackPanel>
+                <Border BorderThickness="1" BorderBrush="DimGray" VerticalAlignment="Bottom" Width="500"/>
             </Grid>
+            
         </DataTemplate>
     </Page.Resources>
     
@@ -40,12 +44,35 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <TextBlock Grid.Column="0" Grid.Row="0" Text="TITLE" Grid.ColumnSpan="3" />
+        <TextBlock Grid.Column="0" Grid.Row="0" Text="TITLE" Grid.ColumnSpan="3" Style="{StaticResource TitleTextBlockStyle}" />
         <TextBlock Grid.Column="1" Grid.Row="1" Text="Open Model Zoo Model List" VerticalAlignment="Center" HorizontalAlignment="Center" />
-        <ListView Grid.Column="1" Grid.Row="2" ItemTemplate="{StaticResource ModelItemTemplate}" ItemsSource="{x:Bind Total_Models}" IsItemClickEnabled="True" x:Name="Total_Models_List" IsMultiSelectCheckBoxEnabled="True" SelectionMode="Multiple"/>
-        <Button Grid.Column="2" Grid.Row="1" x:Name="Download_All_Button" Content="Download All Model (20GB)" HorizontalAlignment="Center"/>
+        <ListView Grid.Column="1" Grid.Row="2" ItemTemplate="{StaticResource ModelItemTemplate}" ItemsSource="{x:Bind Total_Models}" IsItemClickEnabled="True" x:Name="Total_Models_List" IsMultiSelectCheckBoxEnabled="True" SelectionMode="Multiple" />
+        <Button Grid.Column="2" Grid.Row="1" x:Name="Download_All_Button" Content="Download All Model (20GB)" HorizontalAlignment="Center" Click="Download_All_Button_Click"/>
+        <RelativePanel Grid.Column="2" Grid.Row="2" Margin="0,10,0,0">
+            <Button RelativePanel.AlignTopWithPanel="True" x:Name="Download_Selected_Button" Content="Download Selected Models" HorizontalAlignment="Center" VerticalAlignment="Top"  Click="Download_Selected_Button_Click"/>
+            <TextBlock RelativePanel.Below="Download_Selected_Button" x:Name="Download_Status_Textblock" Text="Loading....." VerticalAlignment="Top" TextWrapping="WrapWholeWords" RelativePanel.AlignHorizontalCenterWithPanel="True"/>
+            <TextBlock RelativePanel.Below="Download_Status_Textblock" x:Name="Download_Info_Textblock" Text="Informations" VerticalAlignment="Top" Visibility="Collapsed" TextWrapping="WrapWholeWords" RelativePanel.AlignHorizontalCenterWithPanel="True"/>
+            <ProgressBar RelativePanel.Below="Download_Info_Textblock" x:Name="Download_Progress" IsIndeterminate="True" VerticalAlignment="Top" Visibility="Visible" Margin="0,10,0,0" RelativePanel.AlignLeftWith="Download_Selected_Button" RelativePanel.AlignRightWith="Download_Selected_Button"/>
+        </RelativePanel>
+        
         <TextBlock Grid.Column="3" Grid.Row="1" Text="Downloaded Model List" VerticalAlignment="Center" HorizontalAlignment="Center" />
-        <ListView Grid.Column="3" Grid.Row="2" ItemTemplate="{StaticResource ModelItemTemplate}" ItemsSource="{x:Bind Available_Models}" IsItemClickEnabled="True"  IsMultiSelectCheckBoxEnabled="True"/>
+        <ListView Grid.Column="3" Grid.Row="2" ItemTemplate="{StaticResource ModelItemTemplate}" ItemsSource="{x:Bind Available_Models}" IsItemClickEnabled="True" x:Name="Downloaded_Model_List" IsMultiSelectCheckBoxEnabled="True"/>
+        <Grid Grid.Column="1" Grid.Row="2" HorizontalAlignment="Center" VerticalAlignment="Top">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <ProgressRing Grid.Column="0" Width="60" Height="60" IsActive="True" Visibility="Visible" Margin="5" x:Name="Load_All_Model_ProgressRing"  VerticalAlignment="Top"/>
+            <TextBlock Grid.Column="1" Text="Loading..." VerticalAlignment="Center" Margin="5" x:Name="Load_All_Model_TextBlock" />
+        </Grid>
+        <Grid Grid.Column="3" Grid.Row="2" HorizontalAlignment="Center" VerticalAlignment="Top">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <ProgressRing Grid.Column="0" Width="60" Height="60" IsActive="True" Visibility="Visible" Margin="5" x:Name="Load_Downloaded_Model_ProgressRing"  VerticalAlignment="Top"/>
+            <TextBlock Grid.Column="1" Text="Loading..." VerticalAlignment="Center" Margin="5" x:Name="Load_Downloaded_Model_TextBlock" />
+        </Grid>
 
     </Grid>
 </Page>

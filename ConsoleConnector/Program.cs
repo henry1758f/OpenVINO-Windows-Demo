@@ -24,6 +24,11 @@ namespace ConsoleConnector
         static string demo_Path = @"%USERPROFILE%\Documents\Intel\OpenVINO\omz_demos_build\intel64\Release\";
         static string python_demo_path = openvino_install_dir + @"deployment_tools\open_model_zoo\demos\python_demos\";
 
+        static string model_path = @"%USERPROFILE%\Documents\Intel\openvino\openvino_models\models";
+        static string model_cache = @"%USERPROFILE%\Documents\Intel\openvino\openvino_models\cache";
+        static string irs_path = @"%USERPROFILE%\Documents\Intel\openvino\openvino_models\ir";
+
+
         static void Main(string[] args)
         {
             new Thread(ThreadProc).Start();
@@ -304,7 +309,116 @@ namespace ConsoleConnector
                         send_message(args, "Get_All_Model_info_json", "SUCCESS");
                     }
                     break;
+                case "Downloaded_Model_Name":
+                    try
+                    {
+                        Home_Page(args, "OMZ_Model_check");
+                        /*ProcessStartInfo processStartInfo = new ProcessStartInfo()
+                        {
+                            FileName = "cmd.exe",
+                            Arguments = "/C \"\"",
+                            UseShellExecute = false,
+                            RedirectStandardOutput = true,
+                            CreateNoWindow = true
+                        };
+                        var process = new Process()
+                        {
+                            StartInfo = processStartInfo
+                        };
+                        process.Start();
+                        string message = "";
+                        Console.WriteLine("[INFO] Get Downloaded_model name:\n");
+                        while (!process.StandardOutput.EndOfStream)
+                        {
+                            var line = process.StandardOutput.ReadLine();
+                            line = line.Substring(line.LastIndexOf("\\") + 1);
+                            Console.WriteLine(line);
+                            message += line + "\n";
+                        }
+                        send_message(args, "Downloaded_Model_Name", message);*/
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(e.Message);
+                    }
+                    break;
                 default:
+                    if (value_str.Contains("DOWNLOAD "))
+                    {
+                        string model = value_str.Substring(value_str.IndexOf(" ")+1);
+                        Console.WriteLine("[INFO] Downloading " + model + " !\n");
+                        try
+                        {
+                            ProcessStartInfo processStartInfo = new ProcessStartInfo()
+                            {
+                                FileName = "cmd.exe",
+                                Arguments = "/C \"\"C:\\Program Files (x86)\\IntelSWTools\\openvino\\deployment_tools\\tools\\model_downloader\\downloader.py\" --name \"" + model + "\" --output_dir \"" + model_path + "\" --cache_dir \"" + model_cache + "\"\"",
+                                UseShellExecute = false,
+                                RedirectStandardOutput = true,
+                                CreateNoWindow = false,
+                                WindowStyle = ProcessWindowStyle.Minimized
+                            };
+                        var process = new Process()
+                            {
+                                StartInfo = processStartInfo
+                            };
+#if (DEBUG)
+                            Console.WriteLine("[DEBUG] DOWNLOAD:" + processStartInfo.Arguments);
+#endif
+                            process.Start();
+                            string message = "";
+                            while (!process.StandardOutput.EndOfStream)
+                            {
+                                var line = process.StandardOutput.ReadLine();
+                                line = line.Substring(line.LastIndexOf("\\") + 1);
+                                Console.WriteLine(line);
+                            }
+                            Console.WriteLine("[INFO] Download " + model + " Completed!");
+                            send_message(args, "command", "ECHO");
+                            process.Close();
+
+                        }
+                        catch (Exception e)
+                        {
+                            Console.WriteLine(e.Message);
+                        }
+                        try
+                        {
+                            ProcessStartInfo processStartInfo_MO = new ProcessStartInfo()
+                            {
+                                FileName = "cmd.exe",
+                                Arguments = "/C \"\"" + setupvars_path + "\" & python \"C:\\Program Files (x86)\\IntelSWTools\\openvino\\deployment_tools\\tools\\model_downloader\\converter.py\" --mo \"" + openvino_install_dir + "deployment_tools\\model_optimizer\\mo.py\" --name \"" + model + "\" -d \"" + model_path + "\" -o \"" + irs_path + "\" --precisions \"FP32\"\"",
+                                UseShellExecute = false,
+                                RedirectStandardOutput = true,
+                                CreateNoWindow = false,
+                                WindowStyle = ProcessWindowStyle.Minimized
+                            };
+                            var process_MO = new Process()
+                            {
+                                StartInfo = processStartInfo_MO
+                            };
+    #if (DEBUG)
+                            Console.WriteLine("[DEBUG] DOWNLOAD:" + processStartInfo_MO.Arguments);
+    #endif
+                            process_MO.Start();
+                            string message = "";
+                            while (!process_MO.StandardOutput.EndOfStream)
+                            {
+                                var line = process_MO.StandardOutput.ReadLine();
+                                line = line.Substring(line.LastIndexOf("\\") + 1);
+                                Console.WriteLine(line);
+                            }
+                            Console.WriteLine("[INFO] MO to FP32 : " + model + " Completed!");
+                            send_message(args, "command", "ECHO");
+                            process_MO.Close();
+
+                        }
+                        catch (Exception e)
+                        {
+                            Console.WriteLine(e.Message);
+                        }
+                        
+                    }
                     break;
             }
         }
@@ -455,15 +569,20 @@ namespace ConsoleConnector
                         };
                         process.Start();
                         string message = "";
+                        int counter = 0;
                         while (!process.StandardOutput.EndOfStream)
                         {
                             var line = process.StandardOutput.ReadLine();
                             if (line.Contains(".xml"))
                             {
-                                line = line.Substring(line.LastIndexOf("\\") + 1);
-                                Console.WriteLine("[INFO] Get OMZ_model info:" + line);
-                                message += line + "\n";
+                                //string temp = line.Substring(0,line.LastIndexOf("\\"));
+                                //temp = temp.Substring(temp.LastIndexOf("\\") + 1);
 
+                                //line = line.Substring(line.LastIndexOf("\\") + 1);
+                                //Console.WriteLine("[INFO] Get OMZ_model info:" + line + " [" + temp + "] ");
+                                //message += temp + "\\" + line + "\n";
+                                message += line + "\n";
+                                counter++;
                             }
                             else
                             {
@@ -473,7 +592,9 @@ namespace ConsoleConnector
                             }
 
                         }
-                        send_message(args, "OMZ_Model", message);
+                        Console.WriteLine(message);
+                        File.WriteAllText(App_path + "\\downloaded_models_list.inf", message);
+                        send_message(args, "OMZ_Model", counter.ToString());
                     }
                     catch (Exception e)
                     {
