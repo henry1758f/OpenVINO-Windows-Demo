@@ -100,7 +100,7 @@ namespace OpenVINO_Windows_Demo
             }
             else if (item.Name == "Human Pose Estimation C++ Demo")
             {
-                messageDialog.ShowAsync();
+                //messageDialog.ShowAsync();
                 this.Frame.Navigate(typeof(Demos.Human_Pose_Estimation_Demo_Page), null);
             }
             else if (item.Name == "Gaze Estimation Demo")

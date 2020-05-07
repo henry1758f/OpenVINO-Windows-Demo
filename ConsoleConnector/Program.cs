@@ -21,7 +21,7 @@ namespace ConsoleConnector
 
         static string openvino_install_dir = @"C:\Program Files (x86)\IntelSWTools\openvino\";
         static string setupvars_path = openvino_install_dir + @"bin\setupvars.bat";
-        static string demo_Path = @"%USERPROFILE%\Documents\Intel\OpenVINO\omz_demos_build\intel64\Release\";
+        static string demo_Path = @"%USERPROFILE%\Documents\Intel\OpenVINO\inference_engine_demos_build\intel64\Release\";
         static string python_demo_path = openvino_install_dir + @"deployment_tools\open_model_zoo\demos\python_demos\";
 
         static string model_path = @"%USERPROFILE%\Documents\Intel\openvino\openvino_models\models";
@@ -612,7 +612,7 @@ namespace ConsoleConnector
             ProcessStartInfo processStartInfo = new ProcessStartInfo();
             processStartInfo.FileName = "cmd.exe";
             processStartInfo.Arguments = "/C \"" + setupvars_path + "\" & " + demo_Path + "interactive_face_detection_demo.exe " + value_str + " ";
-            //processStartInfo.Arguments = "/C \"" + setupvars_path + "\" &  %USERPROFILE%\\Documents\\Intel\\OpenVINO\\omz_demos_build\\intel64\\Release\\interactive_face_detection_demo.exe" +
+            //processStartInfo.Arguments = "/C \"" + setupvars_path + "\" &  %USERPROFILE%\\Documents\\Intel\\OpenVINO\\inference_engine_demos_build\\intel64\\Release\\interactive_face_detection_demo.exe" +
             //    " -m D:\\Intel\\openvino_models\\models\\SYNNEX_demo\\intel\\face-detection-adas-binary-0001\\FP32-INT1\\face-detection-adas-binary-0001.xml -i cam & PAUSE";
             //processStartInfo.Arguments = "/C \"" + setupvars_path + "\" & PAUSE";
 
