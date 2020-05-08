@@ -117,14 +117,48 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="allow_grow_toggle.Header" xml:space="preserve">
+    <value>Allow growing the face database</value>
+  </data>
+  <data name="Camera_Access_Denied_info" xml:space="preserve">
+    <value>The app was denied access to the camera</value>
+  </data>
   <data name="Camera_Preview_Button.Content" xml:space="preserve">
     <value>Click me to see Camera preview</value>
+  </data>
+  <data name="Cannot_read" xml:space="preserve">
+    <value>Can not read </value>
+  </data>
+  <data name="Crossroad_Camera_Demo_Intro.Text" xml:space="preserve">
+    <value>This demo provides an inference pipeline for persons' detection, recognition and reidentification. The demo uses Person Detection network followed by the Person Attributes Recognition and Person Reidentification Retail networks applied on top of the detection results.</value>
+  </data>
+  <data name="Crossroad_Camera_Demo_Title.Text" xml:space="preserve">
+    <value>Crossroad Camera Demo</value>
+  </data>
+  <data name="Debug" xml:space="preserve">
+    <value>Debug</value>
   </data>
   <data name="Demos_Run_Button.Content" xml:space="preserve">
     <value>RUN with Setttings as Below</value>
   </data>
   <data name="Demos_Target_Device.PlaceholderText" xml:space="preserve">
     <value>Pick your Target Device</value>
+  </data>
+  <data name="Error" xml:space="preserve">
+    <value>Error</value>
+  </data>
+  <data name="Face_Recognition_Demo_Intro.Text" xml:space="preserve">
+    <value>This example demonstrates an approach to create interactive applications for video processing. It shows the basic architecture for building model pipelines supporting model placement on different devices and simultaneous parallel or sequential execution using OpenVINO library in Python. 
+In particular, this demo uses 3 models to build a pipeline able to detect faces on videos, their keypoints (aka \"landmarks\"), and recognize persons using the provided faces database (the gallery).</value>
+  </data>
+  <data name="Face_Recognition_Demo_Title.Text" xml:space="preserve">
+    <value>Face Recognition Demo</value>
+  </data>
+  <data name="Gaze_Estimation_Demo_Intro.Text" xml:space="preserve">
+    <value>This demo showcases the work of gaze estimation model.</value>
+  </data>
+  <data name="Gaze_Estimation_Demo_Title.Text" xml:space="preserve">
+    <value>Gaze Estimation Demo</value>
   </data>
   <data name="Human_Pose_Estimation_C++_Demo_Intro.Text" xml:space="preserve">
     <value>This demo showcases the work of multi-person 2D pose estimation algorithm. The task is to predict a pose: body skeleton, which consists of keypoints and connections between them, for every person in an input video.
@@ -135,10 +169,81 @@ The pose may contain up to 18 keypoints: ears, eyes, nose, neck, shoulders, elbo
     <value>Human Pose Estimation C++ Demo</value>
     <comment>The Title of the Human Pose Estimation C++ Demo.</comment>
   </data>
+  <data name="Interactive_Face_Detection_Demo_Intro.Text" xml:space="preserve">
+    <value>This demo showcases Object Detection task applied for face recognition using sequence of neural networks. 
+Async API can improve overall frame-rate of the application, because rather than wait for inference to complete, the application can continue operating on the host while accelerator is busy. 
+This demo executes four parallel infer requests for the Age/Gender Recognition, Head Pose Estimation, Emotions Recognition, and Facial Landmarks Detection networks that run simultaneously.</value>
+  </data>
+  <data name="Interactive_Face_Detection_Demo_Title.Text" xml:space="preserve">
+    <value>Interactive Face Detection Demo</value>
+  </data>
+  <data name="Models_Info_Read_Failed" xml:space="preserve">
+    <value>Failed to Get Models Information </value>
+  </data>
+  <data name="Path_without_space_inform" xml:space="preserve">
+    <value>Please choose a file that without space character in the file path.</value>
+  </data>
+  <data name="run_detector_toggle.Header" xml:space="preserve">
+    <value>Use Face Detection model to find faces on the face images</value>
+  </data>
+  <data name="Selected_File_Empty" xml:space="preserve">
+    <value>No files have been selected.</value>
+  </data>
+  <data name="Selection_AgeGender_Recognition_model.Text" xml:space="preserve">
+    <value>Select a trained Age/Gender Recognition model</value>
+  </data>
+  <data name="Selection_Emotions Recognition_model.Text" xml:space="preserve">
+    <value>Select a trained Emotions Recognition network</value>
+  </data>
+  <data name="Selection_Face_Detection_model.Text" xml:space="preserve">
+    <value>Select a trained Face Detection model</value>
+  </data>
+  <data name="Selection_Face_Reidentification_model.Text" xml:space="preserve">
+    <value>Select a trained Face Reidentification model</value>
+  </data>
+  <data name="Selection_Facial_Landmarks_Estimation_model.Text" xml:space="preserve">
+    <value>Select a trained Facial Landmarks Estimation model</value>
+  </data>
+  <data name="Selection_Facial_Landmarks_Regression_model.Text" xml:space="preserve">
+    <value>Select a trained Facial Landmarks Regression model</value>
+  </data>
+  <data name="Selection_Gaze_Estimation_model.Text" xml:space="preserve">
+    <value>Select a trained Gaze Estimation model</value>
+  </data>
+  <data name="Selection_Head_Pose_Estimation_model.Text" xml:space="preserve">
+    <value>Select a trained Head Pose Estimation model</value>
+  </data>
+  <data name="Selection_Human_Pose_Estimation_model.Text" xml:space="preserve">
+    <value>Select a trained Human-Pose Estimation model</value>
+  </data>
+  <data name="Selection_Personvehiclebike_Detection_model.Text" xml:space="preserve">
+    <value>Select a trained Person/vehicle/bike Detection model</value>
+  </data>
+  <data name="Selection_Person_Attributes_Recognition_model.Text" xml:space="preserve">
+    <value>Select a Person Attributes Recognition model</value>
+  </data>
+  <data name="Selection_Person_Reidentification_model.Text" xml:space="preserve">
+    <value>Select a trained Person Reidentification model</value>
+  </data>
   <data name="Setting_Your_Inference_Source.Text" xml:space="preserve">
     <value>Setting Your Inference Source</value>
   </data>
   <data name="Setting_Your_Models.Text" xml:space="preserve">
     <value>Setting Your Models</value>
+  </data>
+  <data name="Set_Face_Gallery.Text" xml:space="preserve">
+    <value>Set a Folder as your Face Gallery</value>
+  </data>
+  <data name="String3" xml:space="preserve">
+    <value>Disable</value>
+  </data>
+  <data name="String4" xml:space="preserve">
+    <value>Enable</value>
+  </data>
+  <data name="Warning" xml:space="preserve">
+    <value>Warning</value>
+  </data>
+  <data name="You_have_to" xml:space="preserve">
+    <value>You have to </value>
   </data>
 </root>

@@ -79,7 +79,7 @@ namespace OpenVINO_Windows_Demo
             var messageDialog = new MessageDialog(item.details);
             if(item.Name == "Interactive Face Detection C++ Demo")
             {
-                messageDialog.ShowAsync();
+                //messageDialog.ShowAsync();
                 //var frame = (Frame)Window.Current.Content;
                 //frame.Navigate(typeof(Demos.Interactive_Face_Detection_Demo_Page));
 
@@ -90,12 +90,12 @@ namespace OpenVINO_Windows_Demo
             }
             else if (item.Name == "Crossroad Camera C++ Demo")
             {
-                messageDialog.ShowAsync();
+                //messageDialog.ShowAsync();
                 this.Frame.Navigate(typeof(Demos.Crossroad_Camera_Demo_Page), null);
             }
             else if (item.Name == "Face Recognition Demo")
             {
-                messageDialog.ShowAsync();
+                //messageDialog.ShowAsync();
                 this.Frame.Navigate(typeof(Demos.Face_Recognition_Demo_Page), null);
             }
             else if (item.Name == "Human Pose Estimation C++ Demo")
@@ -105,12 +105,12 @@ namespace OpenVINO_Windows_Demo
             }
             else if (item.Name == "Gaze Estimation Demo")
             {
-                messageDialog.ShowAsync();
+                //messageDialog.ShowAsync();
                 this.Frame.Navigate(typeof(Demos.Gaze_Estimation_Demo_Page), null);
             }
             else if (item.Name == "Face Recognition Demo Azure IoT Showcase")
             {
-                messageDialog.ShowAsync();
+                //messageDialog.ShowAsync();
                 this.Frame.Navigate(typeof(Demos.Face_Recognition_Demo_Azure_Iot_Page), null);
             }
         }

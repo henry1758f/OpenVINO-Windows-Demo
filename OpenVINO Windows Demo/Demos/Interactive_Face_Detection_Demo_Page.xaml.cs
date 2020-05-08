@@ -6,9 +6,14 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Graphics.Display;
+using Windows.Media.Capture;
+using Windows.System.Display;
+using Windows.UI.Core;
 using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -17,18 +22,8 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
-using Windows.ApplicationModel;
-using Windows.ApplicationModel.Activation;
-using Windows.ApplicationModel.AppService;
-using Windows.ApplicationModel.Background;
-using System.Threading.Tasks;
-using Windows.Devices.Enumeration;
-using Windows.Media.Capture;
-using Windows.Media.Capture.Frames;
-using Windows.System.Display;
-using Windows.Graphics.Display;
-using Windows.UI.Core;
-using Windows.UI.Xaml.Media.Imaging;
+using Windows.Storage;
+using Newtonsoft.Json;
 
 // 空白頁項目範本已記錄在 https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -39,115 +34,207 @@ namespace OpenVINO_Windows_Demo.Demos
     /// </summary>
     public sealed partial class Interactive_Face_Detection_Demo_Page : Page
     {
-        private static string Model_rootPath = @"D:\Intel\openvino_models\";
-
-        private class model_dataList
+        List<Models> Total_models = new List<Models>();
+        //List<Models> Downloaded_models = new List<Models>();
+        //List<Models> model0_list = new List<Models>();
+        List<Combobox_models> combobox0_Models = new List<Combobox_models>();
+        List<string> filter_model0 = new List<string> { "face-detection" };
+        List<string> filter_filter_model0 = new List<string> { };
+        const string model0_arg_parse = "";
+        List<Combobox_models> combobox1_Models = new List<Combobox_models>();
+        List<string> filter_model1 = new List<string> { "age-gender-recognition" };
+        List<string> filter_filter_model1 = new List<string> { /*"face-detection-0105", "face-detection-0106"*/ };
+        const string model1_arg_parse = "_ag";
+        List<Combobox_models> combobox2_Models = new List<Combobox_models>();
+        List<string> filter_model2 = new List<string> { "head-pose-estimation" };
+        List<string> filter_filter_model2 = new List<string> { };
+        const string model2_arg_parse = "_hp";
+        List<Combobox_models> combobox3_Models = new List<Combobox_models>();
+        List<string> filter_model3 = new List<string> { "emotions-recognition" };
+        List<string> filter_filter_model3 = new List<string> { };
+        const string model3_arg_parse = "_em";
+        List<Combobox_models> combobox4_Models = new List<Combobox_models>();
+        List<string> filter_model4 = new List<string> { "facial-landmarks-35-adas" };
+        List<string> filter_filter_model4 = new List<string> { };
+        const string model4_arg_parse = "_lm";
+        private static string Model_rootPath = UserDataPaths.GetDefault().Documents + @"\Intel\openvino_models\";
+        private class Combobox_models
         {
-            public string Model_Name { get; set; }
-            public string Model_Path { get; set; }
-            public string[] Model_precision_Support { get; set; }
-            public string Model_framework { get; set; }
-            public string Model_detail { get; set; }
+            public string model_path { get; set; }
+            public string model_name { get; set; }
+            public string model_name_show { get; set; }
+            public string model_preprecisions { get; set; }
+            public Combobox_models(string path)
+            {
+                model_path = path;
+                string precision = model_path.Substring(0, model_path.LastIndexOf("\\"));
+                precision = precision.Substring(precision.LastIndexOf("\\") + 1);
+                model_name = model_path.Substring(model_path.LastIndexOf("\\") + 1);
+                model_preprecisions = precision;
+                model_name_show = model_name + "\t [" + model_preprecisions + "] ";
+            }
         }
-        private static List<model_dataList> model0_list = new List<model_dataList>()
-        {
-            new model_dataList{
-                Model_Name = "face-detection-adas-0001",
-                Model_Path = @"models\SYNNEX_demo\intel\",
-                Model_precision_Support = new string[]{"FP32","FP16", "FP32-INT8" },
-                Model_framework = "dldt"
-            },
-            new model_dataList{
-                Model_Name = "face-detection-adas-binary-0001",
-                Model_Path = @"models\SYNNEX_demo\intel\",
-                Model_precision_Support = new string[]{"FP32-INT1" },
-                Model_framework = "dldt"
-            }
-        };
-        private static List<model_dataList> model1_list = new List<model_dataList>()
-        {
-            new model_dataList{
-                Model_Name = "age-gender-recognition-retail-0013",
-                Model_Path = @"models\SYNNEX_demo\intel\",
-                Model_precision_Support = new string[]{"FP32","FP16", "FP32-INT8" },
-                Model_framework = "dldt"
-            }
-        };
-        private static List<model_dataList> model2_list = new List<model_dataList>()
-        {
-            new model_dataList{
-                Model_Name = "head-pose-estimation-adas-0001",
-                Model_Path = @"models\SYNNEX_demo\intel\",
-                Model_precision_Support = new string[]{"FP32","FP16", "FP32-INT8" },
-                Model_framework = "dldt"
-            }
-        };
-        private static List<model_dataList> model3_list = new List<model_dataList>()
-        {
-            new model_dataList{
-                Model_Name = "emotions-recognition-retail-0003",
-                Model_Path = @"models\SYNNEX_demo\intel\",
-                Model_precision_Support = new string[]{"FP32","FP16", "FP32-INT8" },
-                Model_framework = "dldt"
-            }
-        };
-        private static List<model_dataList> model4_list = new List<model_dataList>()
-        {
-            new model_dataList{
-                Model_Name = "facial-landmarks-35-adas-0002",
-                Model_Path = @"models\SYNNEX_demo\intel\",
-                Model_precision_Support = new string[]{"FP32","FP16", "FP32-INT8" },
-                Model_framework = "dldt"
-            }
-        };
 
-        /*
-        private readonly List<(string Model_Name,string Model_Path)> _model0_list = new List<(string Model_Name, string Model_Path)>
-        {
-            ("face-detection-adas-0001 [FP32]", @"models\SYNNEX_demo\intel\face-detection-adas-0001\FP32\face-detection-adas-0001.xml"),
-            ("face-detection-adas-0001 [FP16]", @"models\SYNNEX_demo\intel\face-detection-adas-0001\FP16\face-detection-adas-0001.xml"),
-            ("face-detection-adas-0001 [FP32-INT8]", @"models\SYNNEX_demo\intel\face-detection-adas-0001\FP32-INT8\face-detection-adas-0001.xml"),
-            ("face-detection-adas-binary-0001 [FP32-INT1]",@"models\SYNNEX_demo\intel\face-detection-adas-binary-0001\FP32-INT1\face-detection-adas-binary-0001.xml")
-        };
-        private readonly List<(string Model_Name, string Model_Path)> _model1_list = new List<(string Model_Name, string Model_Path)>
-        {
-            ("age-gender-recognition-retail-0013 [FP32]", @"models\SYNNEX_demo\intel\age-gender-recognition-retail-0013\FP32\age-gender-recognition-retail-0013.xml"),
-            ("age-gender-recognition-retail-0013 [FP16]", @"models\SYNNEX_demo\intel\age-gender-recognition-retail-0013\FP16\age-gender-recognition-retail-0013.xml"),
-            ("age-gender-recognition-retail-0013 [FP32-INT8]", @"models\SYNNEX_demo\intel\age-gender-recognition-retail-0013\FP32-INT8\age-gender-recognition-retail-0013.xml")
-        };
-        private readonly List<(string Model_Name, string Model_Path)> _model2_list = new List<(string Model_Name, string Model_Path)>
-        {
-            ("head-pose-estimation-adas-0001 [FP32]", @"models\SYNNEX_demo\intel\head-pose-estimation-adas-0001\FP32\head-pose-estimation-adas-0001.xml"),
-            ("head-pose-estimation-adas-0001 [FP16]", @"models\SYNNEX_demo\intel\head-pose-estimation-adas-0001\FP16\head-pose-estimation-adas-0001.xml"),
-            ("head-pose-estimation-adas-0001 [FP32-INT8]", @"models\SYNNEX_demo\intel\head-pose-estimation-adas-0001\FP32-INT8\head-pose-estimation-adas-0001.xml")
-        };
-        private readonly List<(string Model_Name, string Model_Path)> _model3_list = new List<(string Model_Name, string Model_Path)>
-        {
-            ("emotions-recognition-retail-0003 [FP32]", @"models\SYNNEX_demo\intel\emotions-recognition-retail-0003\FP32\emotions-recognition-retail-0003.xml"),
-            ("emotions-recognition-retail-0003 [FP16]", @"models\SYNNEX_demo\intel\emotions-recognition-retail-0003\FP16\emotions-recognition-retail-0003.xml"),
-            ("emotions-recognition-retail-0003 [FP32-INT8]", @"models\SYNNEX_demo\intel\emotions-recognition-retail-0003\FP32-INT8\emotions-recognition-retail-0003.xml")
-        };
-        private readonly List<(string Model_Name, string Model_Path)> _model4_list = new List<(string Model_Name, string Model_Path)>
-        {
-            ("facial-landmarks-35-adas-0002 [FP32]", @"models\SYNNEX_demo\intel\facial-landmarks-35-adas-0002\FP32\facial-landmarks-35-adas-0002.xml"),
-            ("facial-landmarks-35-adas-0002 [FP16]", @"models\SYNNEX_demo\intel\facial-landmarks-35-adas-0002\FP16\facial-landmarks-35-adas-0002.xml"),
-            ("facial-landmarks-35-adas-0002 [FP32-INT8]", @"models\SYNNEX_demo\intel\facial-landmarks-35-adas-0002\FP32-INT8\facial-landmarks-35-adas-0002.xml")
-        };
-        */
-        const string user_source_select_inform = "select a picture/video";
         string[] Target_device_list = new string[] { "CPU", "GPU", "MYRIAD" };
-        string[] Input_Source = new string[] { "cam", user_source_select_inform };
-        string[] Input_Source_subname_support = new string[] { ".jpg", ".jpeg", ".png" , ".mp4"};
+        string[] Input_Source_subname_support = new string[] { ".jpg", ".jpeg", ".png", ".mp4" };
+        const string connector_commandstr = "Interactive_face_detection_demo";
+
+        private async void get_all_and_downloaded_models()
+        {
+            var resourceLoader = Windows.ApplicationModel.Resources.ResourceLoader.GetForCurrentView();
+            try
+            {
+                StorageFolder rootFolder = await StorageFolder.GetFolderFromPathAsync(Windows.ApplicationModel.Package.Current.InstalledLocation.Path);
+                string inf_file_name = "downloaded_models_list.inf";
+                string json_file_name = "models_info.json";
+                if (await rootFolder.TryGetItemAsync(json_file_name) != null)
+                {
+                    StorageFile jsonFile = await rootFolder.GetFileAsync(json_file_name);
+                    string json_string = await FileIO.ReadTextAsync(jsonFile);
+
+                    List<Models> models = new List<Models>();
+                    Total_models = JsonConvert.DeserializeObject<List<Models>>(json_string);
+                }
+                else
+                {
+                    MessageDialog messageDialogs = new MessageDialog(resourceLoader.GetString("Models_Info_Read_Failed") + "\n" + resourceLoader.GetString("Cannot_read") + rootFolder.Path + "\\" + json_file_name + " !!", resourceLoader.GetString("Error") + " !");
+                    await messageDialogs.ShowAsync();
+                }
+
+                if (await rootFolder.TryGetItemAsync(inf_file_name) != null)
+                {
+                    StorageFile infFile = await rootFolder.GetFileAsync(inf_file_name);
+                    string inf_string = await FileIO.ReadTextAsync(infFile);
+                    List<string> model = inf_string.Split("\n").ToList();
+                    //List<Models> models = new List<Models>();
+                    foreach (string model_path in model)
+                    {
+                        if (model_path.Length <= 0)
+                        {
+                            continue;
+                        }
+                        Combobox_models _Models = new Combobox_models(model_path);
+                        foreach (string filter_word in filter_model0)
+                        {
+                            if (_Models.model_name.Contains(filter_word))
+                            {
+                                bool filter_filter_trigger = false;
+                                foreach (string filter_filter_word in filter_filter_model0)
+                                {
+                                    if (_Models.model_name.Contains(filter_filter_word))
+                                    {
+                                        filter_filter_trigger = true;
+                                    }
+                                }
+                                if (!filter_filter_trigger)
+                                {
+                                    combobox0_Models.Add(_Models);
+                                }
+                            }
+                        }
+                        foreach (string filter_word in filter_model1)
+                        {
+                            if (_Models.model_name.Contains(filter_word))
+                            {
+                                bool filter_filter_trigger = false;
+                                foreach (string filter_filter_word in filter_filter_model1)
+                                {
+                                    if (_Models.model_name.Contains(filter_filter_word))
+                                    {
+                                        filter_filter_trigger = true;
+                                    }
+                                }
+                                if (!filter_filter_trigger)
+                                {
+                                    combobox1_Models.Add(_Models);
+                                }
+                            }
+                        }
+                        foreach (string filter_word in filter_model2)
+                        {
+                            if (_Models.model_name.Contains(filter_word))
+                            {
+                                bool filter_filter_trigger = false;
+                                foreach (string filter_filter_word in filter_filter_model2)
+                                {
+                                    if (_Models.model_name.Contains(filter_filter_word))
+                                    {
+                                        filter_filter_trigger = true;
+                                    }
+                                }
+                                if (!filter_filter_trigger)
+                                {
+                                    combobox2_Models.Add(_Models);
+                                }
+                            }
+                        }
+                        foreach (string filter_word in filter_model3)
+                        {
+                            if (_Models.model_name.Contains(filter_word))
+                            {
+                                bool filter_filter_trigger = false;
+                                foreach (string filter_filter_word in filter_filter_model3)
+                                {
+                                    if (_Models.model_name.Contains(filter_filter_word))
+                                    {
+                                        filter_filter_trigger = true;
+                                    }
+                                }
+                                if (!filter_filter_trigger)
+                                {
+                                    combobox3_Models.Add(_Models);
+                                }
+                            }
+                        }
+                        foreach (string filter_word in filter_model4)
+                        {
+                            if (_Models.model_name.Contains(filter_word))
+                            {
+                                bool filter_filter_trigger = false;
+                                foreach (string filter_filter_word in filter_filter_model4)
+                                {
+                                    if (_Models.model_name.Contains(filter_filter_word))
+                                    {
+                                        filter_filter_trigger = true;
+                                    }
+                                }
+                                if (!filter_filter_trigger)
+                                {
+                                    combobox4_Models.Add(_Models);
+                                }
+                            }
+                        }
+                    }
+                }
+                model0_name.ItemsSource = combobox0_Models;
+                model0_name.DisplayMemberPath = "model_name_show";
+                model1_name.ItemsSource = combobox1_Models;
+                model1_name.DisplayMemberPath = "model_name_show";
+                model2_name.ItemsSource = combobox2_Models;
+                model2_name.DisplayMemberPath = "model_name_show";
+                model3_name.ItemsSource = combobox3_Models;
+                model3_name.DisplayMemberPath = "model_name_show";
+                model4_name.ItemsSource = combobox4_Models;
+                model4_name.DisplayMemberPath = "model_name_show";
+
+            }
+            catch (Exception e)
+            {
+                MessageDialog messageDialogs = new MessageDialog(e.Message, resourceLoader.GetString("Debug"));
+                await messageDialogs.ShowAsync();
+            }
+        }
 
         #region CameraPreview
         MediaCapture mediaCapture;
-        bool isPreviewing,cam_init = false, previewing = false;
+        bool isPreviewing, cam_init = false, previewing = false;
         DisplayRequest displayRequest = new DisplayRequest();
         MediaCapture mediaCaptureMgr = new MediaCapture();
 
 
         private async Task StartPreviewAsync()
         {
+            var resourceLoader = Windows.ApplicationModel.Resources.ResourceLoader.GetForCurrentView();
             try
             {
 
@@ -160,7 +247,7 @@ namespace OpenVINO_Windows_Demo.Demos
             catch (UnauthorizedAccessException)
             {
                 // This will be thrown if the user denied access to the camera in privacy settings
-                var messageDialog = new MessageDialog("The app was denied access to the camera");
+                var messageDialog = new MessageDialog(resourceLoader.GetString("Camera_Access_Denied_info"), resourceLoader.GetString("Error") + " !");
                 await messageDialog.ShowAsync();
                 return;
             }
@@ -179,9 +266,10 @@ namespace OpenVINO_Windows_Demo.Demos
         }
         private async void _mediaCapture_CaptureDeviceExclusiveControlStatusChanged(MediaCapture sender, MediaCaptureDeviceExclusiveControlStatusChangedEventArgs args)
         {
+            var resourceLoader = Windows.ApplicationModel.Resources.ResourceLoader.GetForCurrentView();
             if (args.Status == MediaCaptureDeviceExclusiveControlStatus.SharedReadOnlyAvailable)
             {
-                var messageDialog = new MessageDialog("The camera preview can't be displayed because another app has exclusive access");
+                var messageDialog = new MessageDialog(resourceLoader.GetString("Camera_Access_Denied_info"), resourceLoader.GetString("Error") + " !");
                 await messageDialog.ShowAsync();
             }
             else if (args.Status == MediaCaptureDeviceExclusiveControlStatus.ExclusiveControlAvailable && !isPreviewing)
@@ -232,81 +320,32 @@ namespace OpenVINO_Windows_Demo.Demos
         }
         #endregion
 
-
-        public Interactive_Face_Detection_Demo_Page()
+        private async void Source_select_button_Click(object sender, RoutedEventArgs e)
         {
-            this.InitializeComponent();
-            Application.Current.Suspending += Application_Suspending;
-
-            foreach (model_dataList model_DataList in model0_list)
+            var resourceLoader = Windows.ApplicationModel.Resources.ResourceLoader.GetForCurrentView();
+            var picker = new Windows.Storage.Pickers.FileOpenPicker();
+            picker.ViewMode = Windows.Storage.Pickers.PickerViewMode.Thumbnail;
+            picker.SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.PicturesLibrary;
+            foreach (string type in Input_Source_subname_support)
             {
-                foreach (string precision in model_DataList.Model_precision_Support)
-                {
-                    model0_name.Items.Add(model_DataList.Model_Name + " [" + precision + "]");
-                }
+                picker.FileTypeFilter.Add(type);
             }
-            foreach (model_dataList model_DataList in model1_list)
+            StorageFile file = await picker.PickSingleFileAsync();
+            if (file != null)
             {
-                foreach (string precision in model_DataList.Model_precision_Support)
-                {
-                    model1_name.Items.Add(model_DataList.Model_Name + " [" + precision + "]");
-                }
+                // Application now has read/write access to the picked file
+                Source.Text = file.Path;
             }
-            foreach (model_dataList model_DataList in model2_list)
+            else
             {
-                foreach (string precision in model_DataList.Model_precision_Support)
-                {
-                    model2_name.Items.Add(model_DataList.Model_Name + " [" + precision + "]");
-                }
-            }
-            foreach (model_dataList model_DataList in model3_list)
-            {
-                foreach (string precision in model_DataList.Model_precision_Support)
-                {
-                    model3_name.Items.Add(model_DataList.Model_Name + " [" + precision + "]");
-                }
-            }
-            foreach (model_dataList model_DataList in model4_list)
-            {
-                foreach (string precision in model_DataList.Model_precision_Support)
-                {
-                    model4_name.Items.Add(model_DataList.Model_Name + " [" + precision + "]");
-                }
-            }
-            foreach (string str in Input_Source)
-            {
-                Source.Items.Add(str);
-            }
-        }
-
-        private async void Source_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (Source.SelectedItem.ToString().Equals(user_source_select_inform))
-            {
-                var picker = new Windows.Storage.Pickers.FileOpenPicker();
-                picker.ViewMode = Windows.Storage.Pickers.PickerViewMode.Thumbnail;
-                picker.SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.PicturesLibrary;
-                foreach (string type in Input_Source_subname_support)
-                {
-                    picker.FileTypeFilter.Add(type);
-                }
-                Windows.Storage.StorageFile file = await picker.PickSingleFileAsync();
-                if (file != null)
-                {
-                    // Application now has read/write access to the picked file
-                    Source.Items.Add(file.Path);
-                    Source.SelectedItem = file.Path;
-                }
-                else
-                {
-                    MessageDialog messageDialogs = new MessageDialog("No File been selected!");
-                    messageDialogs.ShowAsync();
-                }
+                MessageDialog messageDialogs = new MessageDialog(resourceLoader.GetString("Selected_File_Empty"), resourceLoader.GetString("Warning") + " !");
+                messageDialogs.ShowAsync();
             }
         }
 
         private async void Button_Click(object sender, RoutedEventArgs e)
         {
+            var resourceLoader = Windows.ApplicationModel.Resources.ResourceLoader.GetForCurrentView();
             string Parameter = "";
             // Close camera and resource 
             if (cam_init && previewing)
@@ -319,136 +358,97 @@ namespace OpenVINO_Windows_Demo.Demos
             // Build Parameter String
             if (model0_name.SelectedItem == null)
             {
-                MessageDialog messageDialogs = new MessageDialog("You have to " + model0_TextBlock.Text, "ERROR!");
+                MessageDialog messageDialogs = new MessageDialog(resourceLoader.GetString("You_have_to") + model0_TextBlock.Text, resourceLoader.GetString("Error") + " !");
                 messageDialogs.ShowAsync();
                 return;
             }
             else
             {
-                foreach (model_dataList model_DataList in model0_list)
+                Combobox_models model = (Combobox_models)model0_name.SelectedItem;
+                Parameter += " -m" + model0_arg_parse + " " + model.model_path + " ";
+                if (model0_target.SelectedItem != null)
                 {
-                    foreach (string precision in model_DataList.Model_precision_Support)
-                    {
-                        if (model0_name.SelectedItem.ToString().Contains(precision) && model0_name.SelectedItem.ToString().Contains(model_DataList.Model_Name))
-                        {
-                            
-                            if (model0_target.SelectedItem != null)
-                                Parameter = " -m " + Model_rootPath + model_DataList.Model_Path + model_DataList.Model_Name + @"\" + precision + @"\" + model_DataList.Model_Name + ".xml -d " + model0_target.SelectedItem.ToString() + " ";
-                            else
-                                Parameter = " -m " + Model_rootPath + model_DataList.Model_Path + model_DataList.Model_Name + @"\" + precision + @"\" + model_DataList.Model_Name + ".xml ";
-                        }
-                    }
+                    Parameter += " -d" + model0_arg_parse + " " + model0_target.SelectedItem.ToString() + " ";
                 }
             }
-
             if (model1_name.SelectedItem == null)
             {
-                MessageDialog messageDialogs = new MessageDialog("You have to " + model1_TextBlock.Text, "ERROR!");
+                MessageDialog messageDialogs = new MessageDialog(resourceLoader.GetString("You_have_to") + model1_TextBlock.Text, resourceLoader.GetString("Error") + " !");
                 messageDialogs.ShowAsync();
                 return;
             }
             else
             {
-                foreach (model_dataList model_DataList in model1_list)
+                Combobox_models model = (Combobox_models)model1_name.SelectedItem;
+                Parameter += " -m" + model1_arg_parse + " " + model.model_path + " ";
+                if (model1_target.SelectedItem != null)
                 {
-                    foreach (string precision in model_DataList.Model_precision_Support)
-                    {
-                        if (model1_name.SelectedItem.ToString().Contains(precision) && model1_name.SelectedItem.ToString().Contains(model_DataList.Model_Name))
-                        {
-
-                            if (model1_target.SelectedItem != null)
-                                Parameter += " -m_ag " + Model_rootPath + model_DataList.Model_Path + model_DataList.Model_Name + @"\" + precision + @"\" + model_DataList.Model_Name + ".xml -d_ag " + model1_target.SelectedItem.ToString() + " ";
-                            else
-                                Parameter += " -m_ag " + Model_rootPath + model_DataList.Model_Path + model_DataList.Model_Name + @"\" + precision + @"\" + model_DataList.Model_Name + ".xml ";
-                        }
-                    }
+                    Parameter += " -d" + model1_arg_parse + " " + model1_target.SelectedItem.ToString() + " ";
                 }
             }
             if (model2_name.SelectedItem == null)
             {
-                MessageDialog messageDialogs = new MessageDialog("You have to " + model2_TextBlock.Text, "ERROR!");
+                MessageDialog messageDialogs = new MessageDialog(resourceLoader.GetString("You_have_to") + model2_TextBlock.Text, resourceLoader.GetString("Error") + " !");
                 messageDialogs.ShowAsync();
                 return;
             }
             else
             {
-                foreach (model_dataList model_DataList in model2_list)
+                Combobox_models model = (Combobox_models)model2_name.SelectedItem;
+                Parameter += " -m" + model2_arg_parse + " " + model.model_path + " ";
+                if (model2_target.SelectedItem != null)
                 {
-                    foreach (string precision in model_DataList.Model_precision_Support)
-                    {
-                        if (model2_name.SelectedItem.ToString().Contains(precision) && model2_name.SelectedItem.ToString().Contains(model_DataList.Model_Name))
-                        {
-
-                            if (model2_target.SelectedItem != null)
-                                Parameter += " -m_hp " + Model_rootPath + model_DataList.Model_Path + model_DataList.Model_Name + @"\" + precision + @"\" + model_DataList.Model_Name + ".xml -d_hp " + model2_target.SelectedItem.ToString() + " ";
-                            else
-                                Parameter += " -m_hp " + Model_rootPath + model_DataList.Model_Path + model_DataList.Model_Name + @"\" + precision + @"\" + model_DataList.Model_Name + ".xml ";
-                        }
-                    }
+                    Parameter += " -d" + model2_arg_parse + " " + model2_target.SelectedItem.ToString() + " ";
                 }
             }
             if (model3_name.SelectedItem == null)
             {
-                MessageDialog messageDialogs = new MessageDialog("You have to " + model3_TextBlock.Text, "ERROR!");
+                MessageDialog messageDialogs = new MessageDialog(resourceLoader.GetString("You_have_to") + model3_TextBlock.Text, resourceLoader.GetString("Error") + " !");
                 messageDialogs.ShowAsync();
                 return;
             }
             else
             {
-                foreach (model_dataList model_DataList in model3_list)
+                Combobox_models model = (Combobox_models)model3_name.SelectedItem;
+                Parameter += " -m" + model3_arg_parse + " " + model.model_path + " ";
+                if (model3_target.SelectedItem != null)
                 {
-                    foreach (string precision in model_DataList.Model_precision_Support)
-                    {
-                        if (model3_name.SelectedItem.ToString().Contains(precision) && model3_name.SelectedItem.ToString().Contains(model_DataList.Model_Name))
-                        {
-
-                            if (model3_target.SelectedItem != null)
-                                Parameter += " -m_em " + Model_rootPath + model_DataList.Model_Path + model_DataList.Model_Name + @"\" + precision + @"\" + model_DataList.Model_Name + ".xml -d_em " + model3_target.SelectedItem.ToString() + " ";
-                            else
-                                Parameter += " -m_em " + Model_rootPath + model_DataList.Model_Path + model_DataList.Model_Name + @"\" + precision + @"\" + model_DataList.Model_Name + ".xml ";
-                        }
-                    }
+                    Parameter += " -d" + model3_arg_parse + " " + model3_target.SelectedItem.ToString() + " ";
                 }
             }
             if (model4_name.SelectedItem == null)
             {
-                MessageDialog messageDialogs = new MessageDialog("You have to " + model4_TextBlock.Text, "ERROR!");
+                MessageDialog messageDialogs = new MessageDialog(resourceLoader.GetString("You_have_to") + model4_TextBlock.Text, resourceLoader.GetString("Error") + " !");
                 messageDialogs.ShowAsync();
                 return;
             }
             else
             {
-                foreach (model_dataList model_DataList in model4_list)
+                Combobox_models model = (Combobox_models)model4_name.SelectedItem;
+                Parameter += " -m" + model4_arg_parse + " " + model.model_path + " ";
+                if (model4_target.SelectedItem != null)
                 {
-                    foreach (string precision in model_DataList.Model_precision_Support)
-                    {
-                        if (model4_name.SelectedItem.ToString().Contains(precision) && model4_name.SelectedItem.ToString().Contains(model_DataList.Model_Name))
-                        {
-
-                            if (model4_target.SelectedItem != null)
-                                Parameter += " -m_lm " + Model_rootPath + model_DataList.Model_Path + model_DataList.Model_Name + @"\" + precision + @"\" + model_DataList.Model_Name + ".xml -d_lm " + model4_target.SelectedItem.ToString() + " ";
-                            else
-                                Parameter += " -m_lm " + Model_rootPath + model_DataList.Model_Path + model_DataList.Model_Name + @"\" + precision + @"\" + model_DataList.Model_Name + ".xml ";
-                        }
-                    }
+                    Parameter += " -d" + model4_arg_parse + " " + model4_target.SelectedItem.ToString() + " ";
                 }
             }
-            if (Source.SelectedItem == null || Source.SelectedItem == "cam")
+            if (Source.Text.Equals(null) || Source.Text.Equals("cam") || Source.Text.Equals(""))
             {
                 Parameter += " -i cam";
             }
-            else if (Source.SelectedItem.ToString().Contains(" "))
+            else if (Source.Text.Contains(" "))
             {
-                Parameter += " -i \"" + Source.SelectedItem.ToString() + "\" "; 
+                MessageDialog messageDialogs = new MessageDialog(resourceLoader.GetString("Path_without_space_inform"), resourceLoader.GetString("Error") + " !");
+                messageDialogs.ShowAsync();
+                //Parameter += " -i \"" + Source.Text.ToString() + "\" ";
+                return;
             }
             else
             {
-                Parameter += " -i " + Source.SelectedItem.ToString() + " ";
+                Parameter += " -i " + Source.Text + " ";
             }
             // Send Request to ConsoleConnector
-            await ((App)Application.Current).SendRequestToConsoleConnector("Interactive_face_detection_demo", Parameter + " ");
+            await ((App)Application.Current).SendRequestToConsoleConnector(connector_commandstr, Parameter);
         }
-
         private async void Preview_Button_Click(object sender, RoutedEventArgs e)
         {
             // Using Windows.Media.Capture.MediaCapture APIs 
@@ -467,10 +467,13 @@ namespace OpenVINO_Windows_Demo.Demos
                 await mediaCaptureMgr.StartPreviewAsync();
                 previewing = true;
             }
+        }
 
-            
-            
-            //await FullTrustProcessLauncher.LaunchFullTrustProcessForCurrentAppAsync();
+        public Interactive_Face_Detection_Demo_Page()
+        {
+            this.InitializeComponent();
+            //Application.Current.Suspending += Application_Suspending;
+            get_all_and_downloaded_models();
         }
     }
         

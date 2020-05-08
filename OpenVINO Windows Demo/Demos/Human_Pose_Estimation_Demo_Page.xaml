@@ -48,7 +48,7 @@
 
             <TextBlock Grid.Row="0" x:Uid="Setting_Your_Models" Style="{StaticResource TitleTextBlockStyle}" 
                    HorizontalAlignment="Left" VerticalAlignment="Center" />
-            <TextBlock Grid.Row="1" Text="Select a trained Human-Pose Estimation model" Margin="5" Style="{StaticResource SubtitleTextBlockStyle}" 
+            <TextBlock Grid.Row="1" x:Uid="Selection_Human_Pose_Estimation_model" Margin="5" Style="{StaticResource SubtitleTextBlockStyle}" 
                    HorizontalAlignment="Left" VerticalAlignment="Bottom" x:Name="model0_TextBlock"/>
             <RelativePanel  Grid.Row="2">
                 <ComboBox x:Name="model0_name" Width="600" RelativePanel.AlignLeftWithPanel="True" ItemsSource="{x:Bind combobox0_Models}"/>

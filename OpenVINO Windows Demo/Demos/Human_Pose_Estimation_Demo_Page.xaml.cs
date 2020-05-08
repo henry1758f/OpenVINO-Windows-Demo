@@ -32,8 +32,8 @@ namespace OpenVINO_Windows_Demo.Demos
     public sealed partial class Human_Pose_Estimation_Demo_Page : Page
     {
         List<Models> Total_models = new List<Models>();
-        List<Models> Downloaded_models = new List<Models>();
-        List<Models> model0_list = new List<Models>();
+        //List<Models> Downloaded_models = new List<Models>();
+        //List<Models> model0_list = new List<Models>();
         List<Combobox_models> combobox0_Models = new List<Combobox_models>();
         List<string> filter_model0 = new List<string> { "human-pose-estimation-0001" };
         List<string> filter_filter_model0 = new List<string> { "single-human-pose-estimation-0001" };
@@ -60,6 +60,7 @@ namespace OpenVINO_Windows_Demo.Demos
 
         private async void get_all_and_downloaded_models()
         {
+            var resourceLoader = Windows.ApplicationModel.Resources.ResourceLoader.GetForCurrentView();
             try
             {
                 StorageFolder rootFolder = await StorageFolder.GetFolderFromPathAsync(Windows.ApplicationModel.Package.Current.InstalledLocation.Path);
@@ -75,10 +76,8 @@ namespace OpenVINO_Windows_Demo.Demos
                 }
                 else
                 {
-                    MessageDialog messageDialogs = new MessageDialog("Cannot Read " + rootFolder.Path + "\\" + json_file_name + " !!");
-                    messageDialogs.Title = "Failed to Get Models Information";
+                    MessageDialog messageDialogs = new MessageDialog(resourceLoader.GetString("Models_Info_Read_Failed") + "\n" + resourceLoader.GetString("Cannot_read") + rootFolder.Path + "\\" + json_file_name + " !!" , resourceLoader.GetString("Error") + " !");
                     await messageDialogs.ShowAsync();
-                    
                 }
 
                 if (await rootFolder.TryGetItemAsync(inf_file_name) != null)
@@ -120,7 +119,8 @@ namespace OpenVINO_Windows_Demo.Demos
             }
             catch (Exception e)
             {
-
+                MessageDialog messageDialogs = new MessageDialog(e.Message , resourceLoader.GetString("Debug"));
+                await messageDialogs.ShowAsync();
             }
         }
         
@@ -139,9 +139,10 @@ namespace OpenVINO_Windows_Demo.Demos
 
         private async Task StartPreviewAsync()
         {
+            var resourceLoader = Windows.ApplicationModel.Resources.ResourceLoader.GetForCurrentView();
             try
             {
-
+                
                 mediaCapture = new MediaCapture();
                 await mediaCapture.InitializeAsync();
 
@@ -151,7 +152,7 @@ namespace OpenVINO_Windows_Demo.Demos
             catch (UnauthorizedAccessException)
             {
                 // This will be thrown if the user denied access to the camera in privacy settings
-                var messageDialog = new MessageDialog("The app was denied access to the camera");
+                var messageDialog = new MessageDialog(resourceLoader.GetString("Camera_Access_Denied_info"), resourceLoader.GetString("Error") + " !");
                 await messageDialog.ShowAsync();
                 return;
             }
@@ -170,9 +171,10 @@ namespace OpenVINO_Windows_Demo.Demos
         }
         private async void _mediaCapture_CaptureDeviceExclusiveControlStatusChanged(MediaCapture sender, MediaCaptureDeviceExclusiveControlStatusChangedEventArgs args)
         {
+            var resourceLoader = Windows.ApplicationModel.Resources.ResourceLoader.GetForCurrentView();
             if (args.Status == MediaCaptureDeviceExclusiveControlStatus.SharedReadOnlyAvailable)
             {
-                var messageDialog = new MessageDialog("The camera preview can't be displayed because another app has exclusive access");
+                var messageDialog = new MessageDialog(resourceLoader.GetString("Camera_Access_Denied_info"),resourceLoader.GetString("Error") + " !");
                 await messageDialog.ShowAsync();
             }
             else if (args.Status == MediaCaptureDeviceExclusiveControlStatus.ExclusiveControlAvailable && !isPreviewing)
@@ -225,6 +227,7 @@ namespace OpenVINO_Windows_Demo.Demos
 
         private async void Source_select_button_Click(object sender, RoutedEventArgs e)
         {
+            var resourceLoader = Windows.ApplicationModel.Resources.ResourceLoader.GetForCurrentView();
             var picker = new Windows.Storage.Pickers.FileOpenPicker();
             picker.ViewMode = Windows.Storage.Pickers.PickerViewMode.Thumbnail;
             picker.SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.PicturesLibrary;
@@ -240,13 +243,14 @@ namespace OpenVINO_Windows_Demo.Demos
             }
             else
             {
-                MessageDialog messageDialogs = new MessageDialog("No File been selected!");
+                MessageDialog messageDialogs = new MessageDialog(resourceLoader.GetString("Selected_File_Empty"),resourceLoader.GetString("Warning") + " !");
                 messageDialogs.ShowAsync();
             }
         }
 
         private async void Button_Click(object sender, RoutedEventArgs e)
         {
+            var resourceLoader = Windows.ApplicationModel.Resources.ResourceLoader.GetForCurrentView();
             string Parameter = "";
             // Close camera and resource 
             if (cam_init && previewing)
@@ -259,7 +263,7 @@ namespace OpenVINO_Windows_Demo.Demos
             // Build Parameter String
             if (model0_name.SelectedItem == null)
             {
-                MessageDialog messageDialogs = new MessageDialog("You have to " + model0_TextBlock.Text, "ERROR!");
+                MessageDialog messageDialogs = new MessageDialog(resourceLoader.GetString("You_have_to") + model0_TextBlock.Text, resourceLoader.GetString("Error") + " !") ;
                 messageDialogs.ShowAsync();
                 return;
             }
@@ -278,7 +282,7 @@ namespace OpenVINO_Windows_Demo.Demos
             }
             else if (Source.Text.Contains(" "))
             {
-                MessageDialog messageDialogs = new MessageDialog("Please done pick a file path contains space!");
+                MessageDialog messageDialogs = new MessageDialog(resourceLoader.GetString("Path_without_space_inform"), resourceLoader.GetString("Error") + " !");
                 messageDialogs.ShowAsync();
                 //Parameter += " -i \"" + Source.Text.ToString() + "\" ";
                 return;

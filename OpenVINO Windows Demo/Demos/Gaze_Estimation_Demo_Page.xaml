@@ -9,11 +9,24 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid>
-        <TextBlock Text="Gaze Estimation Demo Settings" Style="{StaticResource TitleTextBlockStyle}"/>
-        <StackPanel>
-            <Button Content="RUN with Setttings as Below" Margin="0,24" Click="Button_Click" HorizontalAlignment="Center"/>
-        </StackPanel>
-        <Grid HorizontalAlignment="Center" Margin="0,72,0,0" VerticalAlignment="Top">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <TextBlock x:Uid="Gaze_Estimation_Demo_Title" Style="{StaticResource TitleTextBlockStyle}" Grid.Row="0"/>
+            <TextBlock Margin="10" Style="{ThemeResource BaseTextBlockStyle}" Grid.Row="1" x:Uid="Gaze_Estimation_Demo_Intro"/>
+            <StackPanel Grid.Row="2">
+                <Button x:Uid="Demos_Run_Button" Click="Button_Click" HorizontalAlignment="Center"/>
+            </StackPanel>
+        </Grid>
+
+        <Grid HorizontalAlignment="Center" VerticalAlignment="Top" Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
@@ -34,55 +47,54 @@
                 <RowDefinition Height="auto" />
             </Grid.RowDefinitions>
 
-            <TextBlock Grid.Row="0" Text="Setting Your Models" Style="{StaticResource TitleTextBlockStyle}" 
+            <TextBlock Grid.Row="0" x:Uid="Setting_Your_Models" Style="{StaticResource TitleTextBlockStyle}" 
                    HorizontalAlignment="Left" VerticalAlignment="Center" />
-            <TextBlock Grid.Row="1" Text="Select a trained Gaze Estimation model" Margin="5" Style="{StaticResource SubtitleTextBlockStyle}" 
+            <TextBlock Grid.Row="1" x:Uid="Selection_Gaze_Estimation_model" Margin="5" Style="{StaticResource SubtitleTextBlockStyle}" 
                    HorizontalAlignment="Left" VerticalAlignment="Bottom" x:Name="model0_TextBlock"/>
             <RelativePanel  Grid.Row="2">
-                <ComboBox x:Name="model0_name" Width="600" RelativePanel.AlignLeftWithPanel="True" />
+                <ComboBox x:Name="model0_name" Width="600" RelativePanel.AlignLeftWithPanel="True" ItemsSource="{x:Bind combobox0_Models}"/>
                 <Button x:Name="model0_select_button" Content="..." RelativePanel.RightOf="model0_name" />
-                <ComboBox x:Name="model0_target" PlaceholderText="Pick your Target Device" Width="200" RelativePanel.RightOf="model0_select_button" Margin="10,0" ItemsSource="{x:Bind Target_device_list}">
+                <ComboBox x:Name="model0_target" x:Uid="Demos_Target_Device" Width="200" RelativePanel.RightOf="model0_select_button" Margin="10,0" ItemsSource="{x:Bind Target_device_list}" >
                 </ComboBox>
             </RelativePanel>
 
-            <TextBlock Grid.Row="3" Text="Select a trained Face Detection model" Margin="5" Style="{StaticResource SubtitleTextBlockStyle}" 
+            <TextBlock Grid.Row="3" x:Uid="Selection_Face_Detection_model" Margin="5" Style="{StaticResource SubtitleTextBlockStyle}" 
                    HorizontalAlignment="Left" VerticalAlignment="Bottom" x:Name="model1_TextBlock"/>
             <RelativePanel  Grid.Row="4">
-                <ComboBox x:Name="model1_name" Width="600" RelativePanel.AlignLeftWithPanel="True" />
+                <ComboBox x:Name="model1_name" Width="600" RelativePanel.AlignLeftWithPanel="True" ItemsSource="{x:Bind combobox1_Models}"/>
                 <Button x:Name="model1_select_button" Content="..." RelativePanel.RightOf="model1_name" />
-                <ComboBox x:Name="model1_target" PlaceholderText="Pick your Target Device" Width="200" RelativePanel.RightOf="model1_select_button" Margin="10,0"  ItemsSource="{x:Bind Target_device_list}">
+                <ComboBox x:Name="model1_target" x:Uid="Demos_Target_Device" Width="200" RelativePanel.RightOf="model1_select_button" Margin="10,0" ItemsSource="{x:Bind Target_device_list}" >
                 </ComboBox>
             </RelativePanel>
 
-            <TextBlock Grid.Row="5" Text="Select a trained Head Pose Estimation model" Margin="5" Style="{StaticResource SubtitleTextBlockStyle}" 
+            <TextBlock Grid.Row="5" x:Uid="Selection_Head_Pose_Estimation_model" Margin="5" Style="{StaticResource SubtitleTextBlockStyle}" 
                    HorizontalAlignment="Left" VerticalAlignment="Bottom" x:Name="model2_TextBlock"/>
             <RelativePanel  Grid.Row="6">
-                <ComboBox x:Name="model2_name" Width="600" RelativePanel.AlignLeftWithPanel="True" />
-                <Button x:Name="model2_select_button" Content="..." RelativePanel.RightOf="model2_name"  />
-                <ComboBox x:Name="model2_target" PlaceholderText="Pick your Target Device" Width="200" RelativePanel.RightOf="model2_select_button" Margin="10,0" ItemsSource="{x:Bind Target_device_list}">
+                <ComboBox x:Name="model2_name" Width="600" RelativePanel.AlignLeftWithPanel="True" ItemsSource="{x:Bind combobox2_Models}"/>
+                <Button x:Name="model2_select_button" Content="..." RelativePanel.RightOf="model2_name" />
+                <ComboBox x:Name="model2_target" x:Uid="Demos_Target_Device" Width="200" RelativePanel.RightOf="model2_select_button" Margin="10,0" ItemsSource="{x:Bind Target_device_list}" >
                 </ComboBox>
             </RelativePanel>
-            <TextBlock Grid.Row="7" Text="Select a trained Facial Landmarks Estimation model" Margin="5" Style="{StaticResource SubtitleTextBlockStyle}" 
+
+            <TextBlock Grid.Row="7" x:Uid="Selection_Facial_Landmarks_Estimation_model" Margin="5" Style="{StaticResource SubtitleTextBlockStyle}" 
                    HorizontalAlignment="Left" VerticalAlignment="Bottom" x:Name="model3_TextBlock"/>
             <RelativePanel  Grid.Row="8">
-                <ComboBox x:Name="model3_name" Width="600" RelativePanel.AlignLeftWithPanel="True" />
-                <Button x:Name="model3_select_button" Content="..." RelativePanel.RightOf="model3_name"  />
-                <ComboBox x:Name="model3_target" PlaceholderText="Pick your Target Device" Width="200" RelativePanel.RightOf="model3_select_button" Margin="10,0" ItemsSource="{x:Bind Target_device_list}">
+                <ComboBox x:Name="model3_name" Width="600" RelativePanel.AlignLeftWithPanel="True" ItemsSource="{x:Bind combobox3_Models}"/>
+                <Button x:Name="model3_select_button" Content="..." RelativePanel.RightOf="model3_name" />
+                <ComboBox x:Name="model3_target" x:Uid="Demos_Target_Device" Width="200" RelativePanel.RightOf="model3_select_button" Margin="10,0" ItemsSource="{x:Bind Target_device_list}" >
                 </ComboBox>
             </RelativePanel>
 
-            <TextBlock Grid.Row="11" Text="Setting Your Inference Source" Style="{StaticResource TitleTextBlockStyle}" 
+            <TextBlock Grid.Row="11" x:Uid="Setting_Your_Inference_Source" Style="{StaticResource TitleTextBlockStyle}" 
                    HorizontalAlignment="Left" VerticalAlignment="Center" />
             <RelativePanel  Grid.Row="12">
-                <ComboBox x:Name="Source" PlaceholderText="Choose your media" Width="400" RelativePanel.AlignLeftWithPanel="True" Margin="10,0" SelectionChanged="Source_SelectionChanged">
-                </ComboBox>
+                <TextBox x:Name="Source" PlaceholderText="cam" RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignRightWith="Source_select_button"/>
+                <Button x:Name="Source_select_button" Content="..." RelativePanel.AlignRightWithPanel="True" Click="Source_select_button_Click"/>
             </RelativePanel>
-            <StackPanel Grid.Row="13">
-                <Button Click="Preview_Button_Click">Click me to see Camera preview</Button>
-                <CaptureElement x:Name="PreviewControl"         
-                    Width="720"  Height="480"/>
-            </StackPanel>
+            <RelativePanel Grid.Row="13">
+                <Button Name="Preview_Button" Click="Preview_Button_Click" x:Uid="Camera_Preview_Button"/>
+                <CaptureElement x:Name="PreviewControl"  RelativePanel.Below="Preview_Button" />
+            </RelativePanel>
         </Grid>
-
     </Grid>
 </Page>
