@@ -129,6 +129,15 @@
   <data name="Cannot_read" xml:space="preserve">
     <value>Can not read </value>
   </data>
+  <data name="Connection_String_Error_Msg" xml:space="preserve">
+    <value>You have to Set the Connection String of Azure IoT Hub! Please Check if the connection string is correct or not.</value>
+  </data>
+  <data name="Connection_String_Hint_IoT_Hub.Text" xml:space="preserve">
+    <value>Paste Your Azure IoT Hub Connection String</value>
+  </data>
+  <data name="Connection_String_Hint_IoT_Storage.Text" xml:space="preserve">
+    <value>Paste Your Azure Storage Connection String</value>
+  </data>
   <data name="Crossroad_Camera_Demo_Intro.Text" xml:space="preserve">
     <value>This demo provides an inference pipeline for persons' detection, recognition and reidentification. The demo uses Person Detection network followed by the Person Attributes Recognition and Person Reidentification Retail networks applied on top of the detection results.</value>
   </data>
@@ -146,6 +155,13 @@
   </data>
   <data name="Error" xml:space="preserve">
     <value>Error</value>
+  </data>
+  <data name="Face_Recognition_Demo_Azure_IoT_Intro.Text" xml:space="preserve">
+    <value>This example demonstrates an approach to create interactive applications for video processing. It shows the basic architecture for building model pipelines supporting model placement on different devices and simultaneous parallel or sequential execution using OpenVINO library in Python. 
+In particular, this demo uses 3 models to build a pipeline able to detect faces on videos, their keypoints (aka \"landmarks\"), and recognize persons using the provided faces database (the gallery).</value>
+  </data>
+  <data name="Face_Recognition_Demo_Azure_IoT_Title.Text" xml:space="preserve">
+    <value>Face Recognition Demo Azure IoT Showcase</value>
   </data>
   <data name="Face_Recognition_Demo_Intro.Text" xml:space="preserve">
     <value>This example demonstrates an approach to create interactive applications for video processing. It shows the basic architecture for building model pipelines supporting model placement on different devices and simultaneous parallel or sequential execution using OpenVINO library in Python. 

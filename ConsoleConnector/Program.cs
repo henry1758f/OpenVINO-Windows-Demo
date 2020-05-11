@@ -23,6 +23,7 @@ namespace ConsoleConnector
         static string setupvars_path = openvino_install_dir + @"bin\setupvars.bat";
         static string demo_Path = @"%USERPROFILE%\Documents\Intel\OpenVINO\inference_engine_demos_build\intel64\Release\";
         static string python_demo_path = openvino_install_dir + @"deployment_tools\open_model_zoo\demos\python_demos\";
+        static string synnex_demo = @"%USERPROFILE%\Documents\Intel\OpenVINO\synnex_demos\";
 
         static string model_path = @"%USERPROFILE%\Documents\Intel\openvino\openvino_models\models";
         static string model_cache = @"%USERPROFILE%\Documents\Intel\openvino\openvino_models\cache";
@@ -641,13 +642,17 @@ namespace ConsoleConnector
         private static void Face_Recognition_Demo_Azure_Iot_Page(string value_str)
         {
             Console.WriteLine("[INFO] Face_Recognition_Demo_Azure_Iot_Page " + value_str);
+
             ProcessStartInfo processStartInfo = new ProcessStartInfo();
             processStartInfo.FileName = "cmd.exe";
             //processStartInfo.Arguments = "/C \"\"" + setupvars_path + "\" & python \"" + python_demo_path + "face_recognition_demo\\face_recognition_demo.py\"\" " + value_str + " & PAUSE ";
-            processStartInfo.Arguments = "/C \"\"" + setupvars_path + "\" & python \"D:\\Intel\\open_model_zoo\\demos\\python_demos\\face_recognition_demo_Azure_IoT\\face_recognition_demo.py\"\" " + value_str + " & PAUSE ";
+            //processStartInfo.Arguments = "/C \"\"" + setupvars_path + "\" & python \"" + synnex_demo + "face_recognition_demo_Azure_IoT\\face_recognition_demo.py\"\" " + value_str + " & PAUSE ";
+            processStartInfo.Arguments = "/C \"\"" + setupvars_path + "\" & python \"" + App_path + "\\Demos\\synnex_demos\\face_recognition_demo_Azure_IoT\\face_recognition_demo.py\"\" " + value_str + " & PAUSE ";
             Console.WriteLine("[DEBUG] " + processStartInfo.Arguments);
             processStartInfo.WindowStyle = ProcessWindowStyle.Normal;
             Process.Start(processStartInfo);
+
+            
 
 
             //Process.Start("cmd.exe", "/C \"" + openvino_install_dir + setupvars_path + "\" && PAUSE");

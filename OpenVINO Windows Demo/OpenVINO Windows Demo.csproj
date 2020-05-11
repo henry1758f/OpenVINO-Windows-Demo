@@ -177,6 +177,18 @@
   <ItemGroup>
     <Content Include="Assets\Interactive_Face_Detection_C++_Demo.png" />
     <Content Include="Demos\ConsoleConnector.exe" />
+    <Content Include="Demos\synnex_demos\face_recognition_demo_Azure_IoT\faces_database.py" />
+    <Content Include="Demos\synnex_demos\face_recognition_demo_Azure_IoT\face_detector.py" />
+    <Content Include="Demos\synnex_demos\face_recognition_demo_Azure_IoT\Face_gallery_sync.py" />
+    <Content Include="Demos\synnex_demos\face_recognition_demo_Azure_IoT\face_identifier.py" />
+    <Content Include="Demos\synnex_demos\face_recognition_demo_Azure_IoT\face_recognition_demo.py" />
+    <Content Include="Demos\synnex_demos\face_recognition_demo_Azure_IoT\ie_module.py" />
+    <Content Include="Demos\synnex_demos\face_recognition_demo_Azure_IoT\landmarks_detector.py" />
+    <Content Include="Demos\synnex_demos\face_recognition_demo_Azure_IoT\models.lst" />
+    <Content Include="Demos\synnex_demos\face_recognition_demo_Azure_IoT\requirements.txt" />
+    <Content Include="Demos\synnex_demos\face_recognition_demo_Azure_IoT\utils.py" />
+    <Content Include="Demos\synnex_demos\face_recognition_demo_Azure_IoT\__init__.py" />
+    <Content Include="Demos\synnex_demos\requirements.txt" />
     <Content Include="Properties\Default.rd.xml" />
     <Content Include="Assets\LockScreenLogo.scale-200.png" />
     <Content Include="Assets\SplashScreen.scale-200.png" />
@@ -267,9 +279,11 @@
     <None Include="Demos\autobuildAgent.bat">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="Demos\synnex_demos\face_recognition_demo_Azure_IoT\README.md" />
     <None Include="OpenVINO Windows Demo_TemporaryKey.pfx" />
     <PRIResource Include="Strings\en\Resources.resw" />
   </ItemGroup>
+  <ItemGroup />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>
