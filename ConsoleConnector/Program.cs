@@ -651,12 +651,6 @@ namespace ConsoleConnector
             Console.WriteLine("[DEBUG] " + processStartInfo.Arguments);
             processStartInfo.WindowStyle = ProcessWindowStyle.Normal;
             Process.Start(processStartInfo);
-
-            
-
-
-            //Process.Start("cmd.exe", "/C \"" + openvino_install_dir + setupvars_path + "\" && PAUSE");
-
         }
         private static void Crossroad_Camera_Demo_Page(string value_str)
         {
