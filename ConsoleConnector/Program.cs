@@ -18,6 +18,7 @@ namespace ConsoleConnector
     {
         static AppServiceConnection connection = null;
         static string App_path = "";
+        static string AppData_Path = "";
 
         static string openvino_install_dir = @"C:\Program Files (x86)\IntelSWTools\openvino\";
         static string setupvars_path = openvino_install_dir + @"bin\setupvars.bat";
@@ -133,6 +134,10 @@ namespace ConsoleConnector
                     App_path = value;
                     send_message(args, "command", "ECHO");
                     break;
+                case "AppData_Path":
+                    AppData_Path = value;
+                    send_message(args, "command", "ECHO");
+                    break;
                 case "Downloader":
                     Downloader_Page(args, value);
                     break;
@@ -155,31 +160,35 @@ namespace ConsoleConnector
         private static void command(string value_str)
         {
             Console.WriteLine("[INFO] Command: " + value_str);
+            ProcessStartInfo processStartInfo = new ProcessStartInfo();
             switch (value_str)
             {
+                
                 case "Close":
                     Environment.Exit(0);
                     break;
                 case "Sample_Build":
                     string path = Directory.GetCurrentDirectory();
-                    ProcessStartInfo processStartInfo = new ProcessStartInfo()
-                    {
-                        FileName = "cmd.exe",
-                        //Arguments = "/C \"\"" + App_path + "\\Demos\\autobuildAgent.bat\" & PAUSE\"",
-                        Arguments = "/C \"\"" + App_path + "\\Demos\\autobuildAgent.bat\" ",
-                        //UseShellExecute = true,
-                        //RedirectStandardOutput = true,
-                        //CreateNoWindow = false,
-                        WindowStyle = ProcessWindowStyle.Normal
-            };
-                    var process = new Process()
-                    {
-                        StartInfo = processStartInfo
-                    };
+                    processStartInfo.FileName = "cmd.exe";
+                    processStartInfo.Arguments = "/C \"\"" + App_path + "\\Demos\\autobuildAgent.bat\" ";
+                    processStartInfo.WindowStyle = ProcessWindowStyle.Normal;
+
 #if (DEBUG)
                     Console.WriteLine("[DEBUG] RUNNING:" + value_str);
 #endif
-                    process.Start();
+                    Process.Start(processStartInfo);
+                    break;
+                case "prerequest_DOWNLOADER":
+                    processStartInfo.FileName = "cmd.exe";
+                    processStartInfo.Arguments = "/C \"pip install -r \"C:\\Program Files (x86)\\IntelSWTools\\openvino\\deployment_tools\\tools\\model_downloader\\requirements.in\" & "+
+                        "pip install -r \"C:\\Program Files (x86)\\IntelSWTools\\openvino\\deployment_tools\\tools\\model_downloader\\requirements-caffe2.in\" & " +
+                        "pip install -r \"C:\\Program Files (x86)\\IntelSWTools\\openvino\\deployment_tools\\tools\\model_downloader\\requirements-pytorch.in\" \"";
+                    processStartInfo.WindowStyle = ProcessWindowStyle.Normal;
+
+#if (DEBUG)
+                    Console.WriteLine("[DEBUG] RUNNING:" + value_str);
+#endif
+                    Process.Start(processStartInfo);
                     break;
                 default:
                     break;
@@ -249,8 +258,9 @@ namespace ConsoleConnector
                     Console.WriteLine(line + "\n");
                     message += line + "\n";
                 }
-                File.WriteAllText(App_path + "\\models_info.json", message);
-                
+
+                //File.WriteAllText(App_path + "\\models_info.json", message);
+                File.WriteAllText(AppData_Path + "\\models_info.json", message);
             }
             catch (Exception e)
             {
@@ -594,7 +604,8 @@ namespace ConsoleConnector
 
                         }
                         Console.WriteLine(message);
-                        File.WriteAllText(App_path + "\\downloaded_models_list.inf", message);
+                        //File.WriteAllText(App_path + "\\downloaded_models_list.inf", message);
+                        File.WriteAllText(AppData_Path + "\\downloaded_models_list.inf", message);
                         send_message(args, "OMZ_Model", counter.ToString());
                     }
                     catch (Exception e)

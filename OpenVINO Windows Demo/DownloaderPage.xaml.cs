@@ -78,11 +78,11 @@ namespace OpenVINO_Windows_Demo
             await ((App)Application.Current).SendRequestToConsoleConnector("Downloader", "Downloaded_Model_Name");
             try
             {
-                StorageFolder rootFolder = await StorageFolder.GetFolderFromPathAsync(Windows.ApplicationModel.Package.Current.InstalledLocation.Path);
+                //StorageFolder rootFolder = await StorageFolder.GetFolderFromPathAsync(Windows.ApplicationModel.Package.Current.InstalledLocation.Path);
                 string inf_file_name = "downloaded_models_list.inf";
-                if (await rootFolder.TryGetItemAsync(inf_file_name) != null)
+                if (await ApplicationData.Current.LocalFolder.TryGetItemAsync(inf_file_name) != null)
                 {
-                    StorageFile infFile = await rootFolder.GetFileAsync(inf_file_name);
+                    StorageFile infFile = await ApplicationData.Current.LocalFolder.GetFileAsync(inf_file_name);
                     string inf_string = await FileIO.ReadTextAsync(infFile);
                     List<string> model = inf_string.Split("\n").ToList();
                     List<Models> models = new List<Models>();
@@ -150,7 +150,7 @@ namespace OpenVINO_Windows_Demo
                 }
                 else
                 {
-                    MessageDialog messageDialogs = new MessageDialog("Cannot Read " + rootFolder.Path + "\\" + inf_file_name + " !!");
+                    MessageDialog messageDialogs = new MessageDialog("Cannot Read " + ApplicationData.Current.LocalFolder.Path + "\\" + inf_file_name + " !!");
                     messageDialogs.Title = "Failed to Get Downloaded Models Information";
                     await messageDialogs.ShowAsync();
                 }
@@ -242,11 +242,11 @@ namespace OpenVINO_Windows_Demo
         private async void Model_info_Dumper()
         {
             Download_Status_Textblock.Text = "Getting Model Informations...";
-            StorageFolder rootFolder = await StorageFolder.GetFolderFromPathAsync(Windows.ApplicationModel.Package.Current.InstalledLocation.Path);
+            //StorageFolder rootFolder = await StorageFolder.GetFolderFromPathAsync(Windows.ApplicationModel.Package.Current.InstalledLocation.Path);
             string json_file_name = "models_info.json";
-            if (await rootFolder.TryGetItemAsync(json_file_name) != null)
+            if (await ApplicationData.Current.LocalFolder.TryGetItemAsync(json_file_name) != null)
             {
-                StorageFile jsonFile = await rootFolder.GetFileAsync(json_file_name);
+                StorageFile jsonFile = await ApplicationData.Current.LocalFolder.GetFileAsync(json_file_name);
                 string json_string = await FileIO.ReadTextAsync(jsonFile);
 
                 List<Models> models = new List<Models>();
@@ -271,7 +271,7 @@ namespace OpenVINO_Windows_Demo
             }
             else
             {
-                MessageDialog messageDialogs = new MessageDialog("Cannot Read " + rootFolder.Path + "\\" + json_file_name + " !!");
+                MessageDialog messageDialogs = new MessageDialog("Cannot Read " + ApplicationData.Current.LocalFolder.Path + "\\" + json_file_name + " !!");
                 messageDialogs.Title = "Failed to Get Models Information";
                 await messageDialogs.ShowAsync();
             }
@@ -355,6 +355,7 @@ namespace OpenVINO_Windows_Demo
                 //messageDialogs.Title = "Model Download and Convert";
                 //messageDialogs.Commands.Add(new UICommand("Accept"))
                 //await messageDialogs.ShowAsync();
+                await ((App)Application.Current).SendRequestToConsoleConnector("Command", "prerequest_DOWNLOADER");
                 foreach (Models item in Total_Models_List.SelectedItems)
                 {
                     model_name.Add(item.name);

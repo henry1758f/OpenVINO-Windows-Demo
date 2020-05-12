@@ -183,7 +183,9 @@ namespace OpenVINO_Windows_Demo
                     OMZ_Model_info_border.BorderThickness = new Thickness(1);
                     OMZ_Model_info.Text = "Checking...";
                     string path = Directory.GetCurrentDirectory();
+                    string appdata_path = ApplicationData.Current.LocalFolder.Path;
                     await ((App)Application.Current).SendRequestToConsoleConnector("App_Path", path);
+                    await ((App)Application.Current).SendRequestToConsoleConnector("AppData_Path", appdata_path);
                     await ((App)Application.Current).SendRequestToConsoleConnector("Home_Page", "OMZ_Model_check");
                     /*try
                     {
@@ -231,16 +233,17 @@ namespace OpenVINO_Windows_Demo
                     try
                     {
                         StorageFolder rootFolder = await StorageFolder.GetFolderFromPathAsync(Windows.ApplicationModel.Package.Current.InstalledLocation.Path);
+                        StorageFolder appdataFolder = ApplicationData.Current.LocalFolder;
 
                         string downloaded_models_list_inf_file_name = "downloaded_models_list.inf";
-                        if (await rootFolder.TryGetItemAsync(downloaded_models_list_inf_file_name) != null)
+                        if (await appdataFolder.TryGetItemAsync(downloaded_models_list_inf_file_name) != null)
                         {
-                            StorageFile infFile = await rootFolder.GetFileAsync(downloaded_models_list_inf_file_name);
+                            StorageFile infFile = await appdataFolder.GetFileAsync(downloaded_models_list_inf_file_name);
                             string inf_string = await FileIO.ReadTextAsync(infFile);
                             OMZ_Model_info.Text = "Find " + localSettings.Values["OMZ_Model"].ToString() + " IR models.";
                             OMZ_Model_Checking_sign.Fill = new SolidColorBrush(Colors.Green);
                             OMZ_Model_info_border.BorderBrush = new SolidColorBrush(Colors.Green);
-                            //MessageDialog messageDialogs = new MessageDialog("File " + rootFolder.Path + "\\" + json_file_name + " Exist !! Total " + models.Count.ToString() + " Models!");
+                            //MessageDialog messageDialogs = new MessageDialog("File " + appdataFolder.Path + "\\" + json_file_name + " Exist !! Total " + models.Count.ToString() + " Models!");
                             //messageDialogs.Title = "DEBUG";
                             //await messageDialogs.ShowAsync();
                             ;
@@ -253,7 +256,7 @@ namespace OpenVINO_Windows_Demo
                             OMZ_Model_Checking_sign.Fill = new SolidColorBrush(Colors.Red);
                             OMZ_Model_info.Text = "NOT FOUND";
                             Fix_OMZ_Model.Visibility = Visibility.Visible;
-                            MessageDialog messageDialogs = new MessageDialog("Cannot Read " + rootFolder.Path + "\\" + downloaded_models_list_inf_file_name + " !!");
+                            MessageDialog messageDialogs = new MessageDialog("Cannot Read " + appdataFolder.Path + "\\" + downloaded_models_list_inf_file_name + " !!");
                             messageDialogs.Title = "Failed to Get downloaded Models Information";
                             await messageDialogs.ShowAsync();
                         }
@@ -337,9 +340,12 @@ namespace OpenVINO_Windows_Demo
             await ((App)Application.Current).SendRequestToConsoleConnector("Command", "Sample_Build");
         }
 
-        private void Fix_OMZ_Model_Click(object sender, RoutedEventArgs e)
+        private async void Fix_OMZ_Model_Click(object sender, RoutedEventArgs e)
         {
-
+            MessageDialog messageDialogs = new MessageDialog("You donot have any model!!");
+            messageDialogs.Title = "OpenVINO Download page";
+            await messageDialogs.ShowAsync();
+            //MainPage.NavView_Navigate("downloader");
         }
     }
 }
