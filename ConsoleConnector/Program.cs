@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.AppService;
 using Windows.Foundation.Collections;
+using System.Runtime.InteropServices;
 
 namespace ConsoleConnector
 {
@@ -29,7 +30,14 @@ namespace ConsoleConnector
         static string model_path = @"%USERPROFILE%\Documents\Intel\openvino\openvino_models\models";
         static string model_cache = @"%USERPROFILE%\Documents\Intel\openvino\openvino_models\cache";
         static string irs_path = @"%USERPROFILE%\Documents\Intel\openvino\openvino_models\ir";
+        [DllImport("kernel32.dll")]
+        static extern IntPtr GetConsoleWindow();
 
+        [DllImport("user32.dll")]
+        static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+
+        const int SW_HIDE = 0;
+        const int SW_SHOW = 5;
 
         static void Main(string[] args)
         {
@@ -38,10 +46,21 @@ namespace ConsoleConnector
             Console.WriteLine("This process runs between OpenVINO Windows Demo Tool and system");
             
             string input = "";
+
+            var handle = GetConsoleWindow();
+            ShowWindow(handle, SW_HIDE);
+
+
             while (!input.Equals("Exit"))
             {
                 Console.WriteLine("\r\nPress E to Force Exit this console ...");
                 input = Console.ReadLine().ToString();
+
+                // Hide
+                ShowWindow(handle, SW_HIDE);
+
+                // Show
+                //ShowWindow(handle, SW_SHOW);
             }
             
         }
@@ -161,6 +180,7 @@ namespace ConsoleConnector
         {
             Console.WriteLine("[INFO] Command: " + value_str);
             ProcessStartInfo processStartInfo = new ProcessStartInfo();
+            var process = new Process();
             switch (value_str)
             {
                 
@@ -188,7 +208,61 @@ namespace ConsoleConnector
 #if (DEBUG)
                     Console.WriteLine("[DEBUG] RUNNING:" + value_str);
 #endif
-                    Process.Start(processStartInfo);
+                    process.StartInfo = processStartInfo;
+                    process.Start();
+                    if (process.WaitForExit(60000))
+                    {
+                        process.Close();
+                    }
+
+                    break;
+                case "prerequest_Python_demos":
+                    processStartInfo.FileName = "cmd.exe";
+                    processStartInfo.Arguments = "/C pip install -r \"C:\\Program Files (x86)\\IntelSWTools\\openvino\\inference_engine\\demos\\python_demos\\requirements.txt\" ";
+                    processStartInfo.WindowStyle = ProcessWindowStyle.Normal;
+
+#if (DEBUG)
+                    Console.WriteLine("[DEBUG] RUNNING:" + value_str);
+#endif
+                    process.StartInfo = processStartInfo;
+                    process.Start();
+                    if (process.WaitForExit(600000))
+                    {
+                        process.Close();
+                    }
+
+                    break;
+                case "prerequest_Face_recognition":
+                    processStartInfo.FileName = "cmd.exe";
+                    processStartInfo.Arguments = "/C pip install -r \"C:\\Program Files (x86)\\IntelSWTools\\openvino\\inference_engine\\demos\\python_demos\\face_recognition_demo\\requirements.txt\" ";
+                    processStartInfo.WindowStyle = ProcessWindowStyle.Normal;
+
+#if (DEBUG)
+                    Console.WriteLine("[DEBUG] RUNNING:" + value_str);
+#endif
+                    process.StartInfo = processStartInfo;
+                    process.Start();
+                    if (process.WaitForExit(600000))
+                    {
+                        process.Close();
+                    }
+
+                    break;
+                case "prerequest_Face_recognition_IOT":
+                    processStartInfo.FileName = "cmd.exe";
+                    processStartInfo.Arguments = "/C pip install -r synnex_demos\\face_recognition_demo_Azure_IoT\\requirements.txt ";
+                    processStartInfo.WindowStyle = ProcessWindowStyle.Normal;
+
+#if (DEBUG)
+                    Console.WriteLine("[DEBUG] RUNNING:" + value_str);
+#endif
+                    process.StartInfo = processStartInfo;
+                    process.Start();
+                    if (process.WaitForExit(600000))
+                    {
+                        process.Close();
+                    }
+
                     break;
                 default:
                     break;
@@ -200,13 +274,13 @@ namespace ConsoleConnector
 #if (DEBUG)
             Console.WriteLine("[DEBUG] Print_Model_info:" + value_str);
 #endif
-
+            command("prerequest_DOWNLOADER");
             try
             {
                 ProcessStartInfo processStartInfo = new ProcessStartInfo()
                 {
                     FileName = "cmd.exe",
-                    Arguments = "/C \"C:\\Program Files (x86)\\IntelSWTools\\openvino\\deployment_tools\\tools\\model_downloader\\info_dumper.py\" --name " + value_str,
+                    Arguments = "/C python \"C:\\Program Files (x86)\\IntelSWTools\\openvino\\deployment_tools\\tools\\model_downloader\\info_dumper.py\" --name " + value_str,
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
                     CreateNoWindow = true
@@ -235,12 +309,13 @@ namespace ConsoleConnector
         {
             const int SUCCESS = 0;
             const int FAILURE = 1;
+            command("prerequest_DOWNLOADER");
             try
             {
                 ProcessStartInfo processStartInfo = new ProcessStartInfo()
                 {
                     FileName = "cmd.exe",
-                    Arguments = "/C \"C:\\Program Files (x86)\\IntelSWTools\\openvino\\deployment_tools\\tools\\model_downloader\\info_dumper.py\" --all",
+                    Arguments = "/C python \"C:\\Program Files (x86)\\IntelSWTools\\openvino\\deployment_tools\\tools\\model_downloader\\info_dumper.py\" --all",
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
                     CreateNoWindow = true
@@ -283,7 +358,7 @@ namespace ConsoleConnector
                         ProcessStartInfo processStartInfo = new ProcessStartInfo()
                         {
                             FileName = "cmd.exe",
-                            Arguments = "/C \"C:\\Program Files (x86)\\IntelSWTools\\openvino\\deployment_tools\\tools\\model_downloader\\info_dumper.py\" --print_all",
+                            Arguments = "/C python \"C:\\Program Files (x86)\\IntelSWTools\\openvino\\deployment_tools\\tools\\model_downloader\\info_dumper.py\" --print_all",
                             UseShellExecute = false,
                             RedirectStandardOutput = true,
                             CreateNoWindow = true
@@ -363,7 +438,7 @@ namespace ConsoleConnector
                             ProcessStartInfo processStartInfo = new ProcessStartInfo()
                             {
                                 FileName = "cmd.exe",
-                                Arguments = "/C \"\"C:\\Program Files (x86)\\IntelSWTools\\openvino\\deployment_tools\\tools\\model_downloader\\downloader.py\" --name \"" + model + "\" --output_dir \"" + model_path + "\" --cache_dir \"" + model_cache + "\"\"",
+                                Arguments = "/C \"python \"C:\\Program Files (x86)\\IntelSWTools\\openvino\\deployment_tools\\tools\\model_downloader\\downloader.py\" --name \"" + model + "\" --output_dir \"" + model_path + "\" --cache_dir \"" + model_cache + "\"\"",
                                 UseShellExecute = false,
                                 RedirectStandardOutput = true,
                                 CreateNoWindow = false,
@@ -398,7 +473,7 @@ namespace ConsoleConnector
                             ProcessStartInfo processStartInfo_MO = new ProcessStartInfo()
                             {
                                 FileName = "cmd.exe",
-                                Arguments = "/C \"\"" + setupvars_path + "\" & python \"C:\\Program Files (x86)\\IntelSWTools\\openvino\\deployment_tools\\tools\\model_downloader\\converter.py\" --mo \"" + openvino_install_dir + "deployment_tools\\model_optimizer\\mo.py\" --name \"" + model + "\" -d \"" + model_path + "\" -o \"" + irs_path + "\" --precisions \"FP32\"\"",
+                                Arguments = "/C \"python \"" + setupvars_path + "\" & python \"C:\\Program Files (x86)\\IntelSWTools\\openvino\\deployment_tools\\tools\\model_downloader\\converter.py\" --mo \"" + openvino_install_dir + "deployment_tools\\model_optimizer\\mo.py\" --name \"" + model + "\" -d \"" + model_path + "\" -o \"" + irs_path + "\" --precisions \"FP32\"\"",
                                 UseShellExecute = false,
                                 RedirectStandardOutput = true,
                                 CreateNoWindow = false,
@@ -639,6 +714,9 @@ namespace ConsoleConnector
         private static void Face_Recognition_Demo_Page(string value_str)
         {
             Console.WriteLine("[INFO] Face_Recognition_Demo_Page " + value_str);
+            //command("prerequest_Python_demos");
+            command("prerequest_Python_demos");
+            command("prerequest_Face_recognition");
             ProcessStartInfo processStartInfo = new ProcessStartInfo();
             processStartInfo.FileName = "cmd.exe";
             processStartInfo.Arguments = "/C \"\"" + setupvars_path + "\" & python \"" + python_demo_path + "face_recognition_demo\\face_recognition_demo.py\"\" " + value_str + " & PAUSE ";
@@ -653,7 +731,8 @@ namespace ConsoleConnector
         private static void Face_Recognition_Demo_Azure_Iot_Page(string value_str)
         {
             Console.WriteLine("[INFO] Face_Recognition_Demo_Azure_Iot_Page " + value_str);
-
+            command("prerequest_Python_demos");
+            command("prerequest_Face_recognition_IOT");
             ProcessStartInfo processStartInfo = new ProcessStartInfo();
             processStartInfo.FileName = "cmd.exe";
             //processStartInfo.Arguments = "/C \"\"" + setupvars_path + "\" & python \"" + python_demo_path + "face_recognition_demo\\face_recognition_demo.py\"\" " + value_str + " & PAUSE ";

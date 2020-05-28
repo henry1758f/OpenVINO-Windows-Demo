@@ -84,12 +84,12 @@ namespace OpenVINO_Windows_Demo.Demos
             var resourceLoader = Windows.ApplicationModel.Resources.ResourceLoader.GetForCurrentView();
             try
             {
-                StorageFolder rootFolder = await StorageFolder.GetFolderFromPathAsync(Windows.ApplicationModel.Package.Current.InstalledLocation.Path);
+                //StorageFolder rootFolder = await StorageFolder.GetFolderFromPathAsync(Windows.ApplicationModel.Package.Current.InstalledLocation.Path);
                 string inf_file_name = "downloaded_models_list.inf";
                 string json_file_name = "models_info.json";
-                if (await rootFolder.TryGetItemAsync(json_file_name) != null)
+                if (await ApplicationData.Current.LocalFolder.TryGetItemAsync(json_file_name) != null)
                 {
-                    StorageFile jsonFile = await rootFolder.GetFileAsync(json_file_name);
+                    StorageFile jsonFile = await ApplicationData.Current.LocalFolder.GetFileAsync(json_file_name);
                     string json_string = await FileIO.ReadTextAsync(jsonFile);
 
                     List<Models> models = new List<Models>();
@@ -97,13 +97,13 @@ namespace OpenVINO_Windows_Demo.Demos
                 }
                 else
                 {
-                    MessageDialog messageDialogs = new MessageDialog(resourceLoader.GetString("Models_Info_Read_Failed") + "\n" + resourceLoader.GetString("Cannot_read") + rootFolder.Path + "\\" + json_file_name + " !!", resourceLoader.GetString("Error") + " !");
+                    MessageDialog messageDialogs = new MessageDialog(resourceLoader.GetString("Models_Info_Read_Failed") + "\n" + resourceLoader.GetString("Cannot_read") + ApplicationData.Current.LocalFolder.Path + "\\" + json_file_name + " !!", resourceLoader.GetString("Error") + " !");
                     await messageDialogs.ShowAsync();
                 }
 
-                if (await rootFolder.TryGetItemAsync(inf_file_name) != null)
+                if (await ApplicationData.Current.LocalFolder.TryGetItemAsync(inf_file_name) != null)
                 {
-                    StorageFile infFile = await rootFolder.GetFileAsync(inf_file_name);
+                    StorageFile infFile = await ApplicationData.Current.LocalFolder.GetFileAsync(inf_file_name);
                     string inf_string = await FileIO.ReadTextAsync(infFile);
                     List<string> model = inf_string.Split("\n").ToList();
                     //List<Models> models = new List<Models>();

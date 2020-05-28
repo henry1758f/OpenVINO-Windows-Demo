@@ -355,7 +355,7 @@ namespace OpenVINO_Windows_Demo
                 //messageDialogs.Title = "Model Download and Convert";
                 //messageDialogs.Commands.Add(new UICommand("Accept"))
                 //await messageDialogs.ShowAsync();
-                await ((App)Application.Current).SendRequestToConsoleConnector("Command", "prerequest_DOWNLOADER");
+                //await ((App)Application.Current).SendRequestToConsoleConnector("Command", "prerequest_DOWNLOADER");
                 foreach (Models item in Total_Models_List.SelectedItems)
                 {
                     model_name.Add(item.name);

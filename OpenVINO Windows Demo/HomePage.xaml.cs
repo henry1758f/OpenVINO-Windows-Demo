@@ -109,6 +109,9 @@ namespace OpenVINO_Windows_Demo
                     }
                     catch (Exception e)
                     {
+                        Hardware_Checking_sign.Fill = new SolidColorBrush(Colors.Red);
+                        Hardware_info_border.BorderBrush = new SolidColorBrush(Colors.Red);
+                        Fix_Hardware.Visibility = Visibility.Visible;
                         pass = false;
                         Hardware_info.Text = "ERROR!";
                     }
@@ -125,6 +128,7 @@ namespace OpenVINO_Windows_Demo
                         {
                             OpenVINO_Checking_sign.Fill = new SolidColorBrush(Colors.Green);
                             OpenVINO_info_border.BorderBrush = new SolidColorBrush(Colors.Green);
+                            Fix_OpenVINO.Visibility = Visibility.Collapsed;
                             // DEBUG
                             //Fix_OpenVINO.Visibility = Visibility.Visible;
                         }
@@ -141,7 +145,12 @@ namespace OpenVINO_Windows_Demo
                     }
                     catch (Exception e)
                     {
-                        OpenVINO_info.Text = "ERROR!";
+                        OpenVINO_info.Text += "No OpenVINO detected!\nPlease install OpenVINO v2020.2";
+                        OpenVINO_Checking_sign.Fill = new SolidColorBrush(Colors.Red);
+                        OpenVINO_info_border.BorderBrush = new SolidColorBrush(Colors.Red);
+                        Fix_OpenVINO.Visibility = Visibility.Visible;
+                        Fix_SampleDemo.IsEnabled = false;
+                        Fix_OMZ_Model.IsEnabled = false;
                         pass = false;
                     }
                     break;
@@ -149,34 +158,47 @@ namespace OpenVINO_Windows_Demo
                     SampleDemo_info_border.BorderBrush = new SolidColorBrush(Colors.Yellow);
                     SampleDemo_info_border.BorderThickness = new Thickness(1);
                     SampleDemo_info.Text = "Checking...";
-                    await ((App)Application.Current).SendRequestToConsoleConnector("Home_Page", "SampleDemo_check");
-                    try
+                    if (OpenVINO_info.Text.Contains("openvino_2020.2"))
                     {
-
-                        if (localSettings.Values["SampleDemo"].ToString().Contains(".exe"))
+                        await ((App)Application.Current).SendRequestToConsoleConnector("Home_Page", "SampleDemo_check");
+                        try
                         {
-                            SampleDemo_Checking_sign.Fill = new SolidColorBrush(Colors.Green);
-                            SampleDemo_info_border.BorderBrush = new SolidColorBrush(Colors.Green);
-                            SampleDemo_info.Text = "OK";
 
-                            // DEBUG
-                            //Fix_SampleDemo.Visibility = Visibility.Visible;
+                            if (localSettings.Values["SampleDemo"].ToString().Contains(".exe"))
+                            {
+                                SampleDemo_Checking_sign.Fill = new SolidColorBrush(Colors.Green);
+                                SampleDemo_info_border.BorderBrush = new SolidColorBrush(Colors.Green);
+                                SampleDemo_info.Text = "OK";
+                                Fix_SampleDemo.Visibility = Visibility.Collapsed;
+                                // DEBUG
+                                //Fix_SampleDemo.Visibility = Visibility.Visible;
+                            }
+                            else
+                            {
+                                SampleDemo_Checking_sign.Fill = new SolidColorBrush(Colors.Red);
+                                SampleDemo_info_border.BorderBrush = new SolidColorBrush(Colors.Red);
+                                SampleDemo_info.Text = "NOT FOUND";
+                                Fix_SampleDemo.Visibility = Visibility.Visible;
+                                Fix_SampleDemo.IsEnabled = true;
+
+                            }
+                            pass = true;
                         }
-                        else
+                        catch (Exception e)
                         {
-                            SampleDemo_Checking_sign.Fill = new SolidColorBrush(Colors.Red);
-                            SampleDemo_info_border.BorderBrush = new SolidColorBrush(Colors.Red);
-                            SampleDemo_info.Text = "NOT FOUND";
-                            Fix_SampleDemo.Visibility = Visibility.Visible;
-
+                            SampleDemo_info.Text = "ERROR!" + e.ToString();
+                            pass = false;
                         }
-                        pass = true;
                     }
-                    catch (Exception e)
+                    else
                     {
-                        SampleDemo_info.Text = "ERROR!" + e.ToString();
-                        pass = false;
+                        SampleDemo_info.Text = "Please Install the OpenVINO Toolkits.";
+                        SampleDemo_Checking_sign.Fill = new SolidColorBrush(Colors.Red);
+                        SampleDemo_info_border.BorderBrush = new SolidColorBrush(Colors.Red);
+                        Fix_SampleDemo.Visibility = Visibility.Visible;
+                        Fix_SampleDemo.IsEnabled = false;
                     }
+                    
                     break;
                 case "OMZ_Model":
                     OMZ_Model_info_border.BorderBrush = new SolidColorBrush(Colors.Yellow);
@@ -187,49 +209,6 @@ namespace OpenVINO_Windows_Demo
                     await ((App)Application.Current).SendRequestToConsoleConnector("App_Path", path);
                     await ((App)Application.Current).SendRequestToConsoleConnector("AppData_Path", appdata_path);
                     await ((App)Application.Current).SendRequestToConsoleConnector("Home_Page", "OMZ_Model_check");
-                    /*try
-                    {
-
-                        if (localSettings.Values["OMZ_Model"].ToString().Contains(".xml"))
-                        {
-                            int counter = 0;
-                            string temp = localSettings.Values["OMZ_Model"].ToString();
-                            while (counter != -1)
-                            {
-                                try
-                                {
-                                    if (temp.LastIndexOf(".xml") == -1)
-                                    {
-                                        break;
-                                    }
-                                    temp = temp.Substring(temp.IndexOf(".xml") + ".xml".Length);
-                                    counter++;
-                                }
-                                catch
-                                {
-                                    counter = -1;
-                                }
-
-                            }
-                            OMZ_Model_Checking_sign.Fill = new SolidColorBrush(Colors.Green);
-                            OMZ_Model_info_border.BorderBrush = new SolidColorBrush(Colors.Green);
-                            OMZ_Model_info.Text = counter.ToString() + " IR Models have been found.";
-
-                        }
-                        else
-                        {
-                            OMZ_Model_info_border.BorderBrush = new SolidColorBrush(Colors.Red);
-                            OMZ_Model_Checking_sign.Fill = new SolidColorBrush(Colors.Red);
-                            OMZ_Model_info.Text = "NOT FOUND";
-                            Fix_OMZ_Model.Visibility = Visibility.Visible;
-                        }
-                        pass = true;
-                    }
-                    catch (Exception e)
-                    {
-                        OMZ_Model_info.Text = "ERROR!" + e.ToString();
-                        pass = false;
-                    }*/
                     try
                     {
                         StorageFolder rootFolder = await StorageFolder.GetFolderFromPathAsync(Windows.ApplicationModel.Package.Current.InstalledLocation.Path);
@@ -243,22 +222,28 @@ namespace OpenVINO_Windows_Demo
                             OMZ_Model_info.Text = "Find " + localSettings.Values["OMZ_Model"].ToString() + " IR models.";
                             OMZ_Model_Checking_sign.Fill = new SolidColorBrush(Colors.Green);
                             OMZ_Model_info_border.BorderBrush = new SolidColorBrush(Colors.Green);
+                            Fix_OMZ_Model.Visibility = Visibility.Collapsed;
                             //MessageDialog messageDialogs = new MessageDialog("File " + appdataFolder.Path + "\\" + json_file_name + " Exist !! Total " + models.Count.ToString() + " Models!");
                             //messageDialogs.Title = "DEBUG";
                             //await messageDialogs.ShowAsync();
                             ;
-
-
                         }
                         else
                         {
                             OMZ_Model_info_border.BorderBrush = new SolidColorBrush(Colors.Red);
                             OMZ_Model_Checking_sign.Fill = new SolidColorBrush(Colors.Red);
-                            OMZ_Model_info.Text = "NOT FOUND";
+                            OMZ_Model_info.Text = "ERROR!";
                             Fix_OMZ_Model.Visibility = Visibility.Visible;
                             MessageDialog messageDialogs = new MessageDialog("Cannot Read " + appdataFolder.Path + "\\" + downloaded_models_list_inf_file_name + " !!");
                             messageDialogs.Title = "Failed to Get downloaded Models Information";
                             await messageDialogs.ShowAsync();
+                        }
+                        if (localSettings.Values["OMZ_Model"].ToString().Equals("0"))
+                        {
+                            OMZ_Model_info_border.BorderBrush = new SolidColorBrush(Colors.Yellow);
+                            OMZ_Model_Checking_sign.Fill = new SolidColorBrush(Colors.Yellow);
+                            Fix_OMZ_Model.Visibility = Visibility.Visible;
+                            Fix_OMZ_Model.IsEnabled = true;
                         }
                     }
                     catch (Exception e)
@@ -274,7 +259,9 @@ namespace OpenVINO_Windows_Demo
 
         private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
+            Refresh_Button.IsEnabled = false;
             version_textbox.Text = "Version " + GetAppVersion();
+            //Environment_check_process(sender,e);
             int counter = 0;
             do
             {
@@ -295,8 +282,7 @@ namespace OpenVINO_Windows_Demo
                 await messageDialogs.ShowAsync();
                 Page_Loaded(sender, e);
             }
-
-            
+            Refresh_Button.IsEnabled = true;
         }
 
         private async void Fix_Hardware_Click(object sender, RoutedEventArgs e)
@@ -346,6 +332,13 @@ namespace OpenVINO_Windows_Demo
             messageDialogs.Title = "OpenVINO Download page";
             await messageDialogs.ShowAsync();
             //MainPage.NavView_Navigate("downloader");
+        }
+
+        private void Button_refresh_Click(object sender, RoutedEventArgs e)
+        {
+            Refresh_Button.IsEnabled = false;
+            Page_Loaded(sender, e);
+            
         }
     }
 }

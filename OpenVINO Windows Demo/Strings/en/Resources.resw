@@ -117,6 +117,12 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AboutApp.Text" xml:space="preserve">
+    <value>Introduction of this Application.....</value>
+  </data>
+  <data name="AboutApp_title.Text" xml:space="preserve">
+    <value>About This Application</value>
+  </data>
   <data name="allow_grow_toggle.Header" xml:space="preserve">
     <value>Allow growing the face database</value>
   </data>
@@ -153,6 +159,9 @@
   <data name="Demos_Target_Device.PlaceholderText" xml:space="preserve">
     <value>Pick your Target Device</value>
   </data>
+  <data name="Environment_check.Text" xml:space="preserve">
+    <value>Environment Checking :</value>
+  </data>
   <data name="Error" xml:space="preserve">
     <value>Error</value>
   </data>
@@ -176,6 +185,9 @@ In particular, this demo uses 3 models to build a pipeline able to detect faces 
   <data name="Gaze_Estimation_Demo_Title.Text" xml:space="preserve">
     <value>Gaze Estimation Demo</value>
   </data>
+  <data name="Hardware_ckeck.Text" xml:space="preserve">
+    <value>Hardware Checking</value>
+  </data>
   <data name="Human_Pose_Estimation_C++_Demo_Intro.Text" xml:space="preserve">
     <value>This demo showcases the work of multi-person 2D pose estimation algorithm. The task is to predict a pose: body skeleton, which consists of keypoints and connections between them, for every person in an input video.
 The pose may contain up to 18 keypoints: ears, eyes, nose, neck, shoulders, elbows, wrists, hips, knees, and ankles. Some of potential use cases of the algorithm are action recognition and behavior understanding.</value>
@@ -196,11 +208,20 @@ This demo executes four parallel infer requests for the Age/Gender Recognition, 
   <data name="Models_Info_Read_Failed" xml:space="preserve">
     <value>Failed to Get Models Information </value>
   </data>
+  <data name="Model_download.Text" xml:space="preserve">
+    <value>Open Model Zoo Download</value>
+  </data>
+  <data name="OpenVINO_install.Text" xml:space="preserve">
+    <value>OpenVINO Installation</value>
+  </data>
   <data name="Path_without_space_inform" xml:space="preserve">
     <value>Please choose a file that without space character in the file path.</value>
   </data>
   <data name="run_detector_toggle.Header" xml:space="preserve">
     <value>Use Face Detection model to find faces on the face images</value>
+  </data>
+  <data name="Sample_build.Text" xml:space="preserve">
+    <value>OpenVINO Sample and Demo Compilation</value>
   </data>
   <data name="Selected_File_Empty" xml:space="preserve">
     <value>No files have been selected.</value>
