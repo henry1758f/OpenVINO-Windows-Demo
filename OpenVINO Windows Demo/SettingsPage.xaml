@@ -9,6 +9,8 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid>
-
+        <ToggleSwitch x:Name="connector_show_toggle" x:Uid="connector_show_toggle"
+                              OffContent="Disable"
+                              OnContent="Enable" Toggled="connector_show_toggle_Toggled"/>
     </Grid>
 </Page>

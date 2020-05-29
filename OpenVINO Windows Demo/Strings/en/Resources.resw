@@ -144,6 +144,9 @@
   <data name="Connection_String_Hint_IoT_Storage.Text" xml:space="preserve">
     <value>Paste Your Azure Storage Connection String</value>
   </data>
+  <data name="connector_show_toggle.Header" xml:space="preserve">
+    <value>Show the console connector message for debug or command reference.</value>
+  </data>
   <data name="Crossroad_Camera_Demo_Intro.Text" xml:space="preserve">
     <value>This demo provides an inference pipeline for persons' detection, recognition and reidentification. The demo uses Person Detection network followed by the Person Attributes Recognition and Person Reidentification Retail networks applied on top of the detection results.</value>
   </data>

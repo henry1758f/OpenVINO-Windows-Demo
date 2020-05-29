@@ -26,5 +26,17 @@ namespace OpenVINO_Windows_Demo
         {
             this.InitializeComponent();
         }
+
+        private async void connector_show_toggle_Toggled(object sender, RoutedEventArgs e)
+        {
+            if (connector_show_toggle.IsOn)
+            {
+                await ((App)Application.Current).SendRequestToConsoleConnector("Command", "connector_SHOW");
+            }
+            else
+            {
+                await ((App)Application.Current).SendRequestToConsoleConnector("Command", "connector_HIDE");
+            }
+        }
     }
 }

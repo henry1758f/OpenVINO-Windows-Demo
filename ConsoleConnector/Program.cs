@@ -39,6 +39,8 @@ namespace ConsoleConnector
         const int SW_HIDE = 0;
         const int SW_SHOW = 5;
 
+        bool terminal_show = false;
+
         static void Main(string[] args)
         {
             new Thread(ThreadProc).Start();
@@ -181,6 +183,7 @@ namespace ConsoleConnector
             Console.WriteLine("[INFO] Command: " + value_str);
             ProcessStartInfo processStartInfo = new ProcessStartInfo();
             var process = new Process();
+            var handle = GetConsoleWindow();
             switch (value_str)
             {
                 
@@ -262,6 +265,23 @@ namespace ConsoleConnector
                     {
                         process.Close();
                     }
+
+                    break;
+                case "connector_SHOW":
+
+#if (DEBUG)
+                    Console.WriteLine("[DEBUG] RUNNING:" + value_str);
+#endif
+                    
+                    ShowWindow(handle, SW_SHOW);
+
+                    break;
+                case "connector_HIDE":
+
+#if (DEBUG)
+                    Console.WriteLine("[DEBUG] RUNNING:" + value_str);
+#endif
+                    ShowWindow(handle, SW_HIDE);
 
                     break;
                 default:
