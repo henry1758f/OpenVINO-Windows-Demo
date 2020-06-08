@@ -12,15 +12,18 @@ import numpy as np
 # Azure IoT
 import random
 import time
+import threading
+import datetime
 # Using the Python Device SDK for IoT Hub:
 #   https://github.com/Azure/azure-iot-sdk-python
 # The sample connects to a device-specific MQTT endpoint on your IoT Hub.
-from azure.iot.device import IoTHubDeviceClient, Message
+from azure.iot.device import IoTHubDeviceClient, Message, MethodResponse
 # The device connection string to authenticate the device with your IoT hub.
 # Using the Azure CLI:
 # az iot hub device-identity show-connection-string --hub-name {YourIoTHubName} --device-id MyNodeDevice --output table
 
 CONNECTION_STRING = "AZURE_IOT_HUB_CONNECTION_STRING"
+devID = "face-001"
 
 from openvino.inference_engine import IENetwork
 from ie_module import InferenceContext
@@ -35,7 +38,7 @@ MATCH_ALGO = ['HUNGARIAN', 'MIN_DIST']
 
 azure_delay_counter = 0
 AZURE_DELAY_LIMIT = 100
-MSG_TXT = '{{"employeeID": "{person}","accuracy": {accuracy}}}'
+MSG_TXT = '{{"deviceID": "{deviceID}","employeeID": "{person}","accuracy": {accuracy}}}'
 
 
 def build_argparser():
@@ -463,10 +466,10 @@ class Visualizer:
 
     # Azure IoT
 
-    def iothub_client_init():
-        # Create an IoT Hub client
-        client = IoTHubDeviceClient.create_from_connection_string(CONNECTION_STRING)
-        return client
+    
+
+
+    
 
     def iothub_client_telemetry_sample_run(self, frame, roi, identity):
         try:
@@ -486,7 +489,7 @@ class Visualizer:
 
 
             # Build the message with simulated telemetry values.
-            msg_txt_formatted = MSG_TXT.format(person=label, accuracy=acc)
+            msg_txt_formatted = MSG_TXT.format(deviceID=devID, person=label, accuracy=acc)
             message = Message(msg_txt_formatted)
 
             if identity.id != FaceIdentifier.UNKNOWN_ID:
@@ -504,7 +507,36 @@ class Visualizer:
 
 
 
+def iothub_client_reboot_listener(client):
+    log.info("Reboot Listener Thread Start!")
+    while True:
+        # Receive the direct method request
+        method_request = client.receive_method_request()  # blocking call
 
+        # Act on the method by rebooting the device...
+        print( "Method called : \n\t methodName = {method_name}\n\t payload = {payload} ".format(
+            method_name=method_request.name,
+            payload=method_request.payload)  
+            )
+        #time.sleep(20)
+        #print( "Device rebooted")
+
+        # ...and patching the reported properties
+        current_time = str(datetime.datetime.now())
+        reported_props = {"rebootTime": current_time}
+        client.patch_twin_reported_properties(reported_props)
+        #print( "Device twins updated with latest rebootTime")
+
+        # Send a method response indicating the method request was resolved
+        resp_status = 200
+        resp_payload = {"Response": "This is the response from the device"}
+        method_response = MethodResponse(method_request.request_id, resp_status, resp_payload)
+        client.send_method_response(method_response)
+
+def iothub_client_init(CONNECTION_STRING):
+        # Create an IoT Hub client
+        client = IoTHubDeviceClient.create_from_connection_string(CONNECTION_STRING)
+        return client
 
 
 def main():
@@ -520,7 +552,11 @@ def main():
 
     try:
             global client
-            client = IoTHubDeviceClient.create_from_connection_string(CONNECTION_STRING)
+            client = iothub_client_init(CONNECTION_STRING)
+            # Start a thread listening for "rebootDevice" direct method invocations
+            reboot_listener_thread = threading.Thread(target=iothub_client_reboot_listener, args=(client,))
+            reboot_listener_thread.daemon = True
+            reboot_listener_thread.start()
             print ( "IoT Hub device sending periodic messages, press Ctrl-C to exit" )
     except KeyboardInterrupt:
             print ( "IoTHubClient sample stopped" )
