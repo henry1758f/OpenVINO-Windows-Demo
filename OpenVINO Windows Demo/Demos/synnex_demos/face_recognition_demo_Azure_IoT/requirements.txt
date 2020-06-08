@@ -1,0 +1,5 @@
+opencv-python>=3.4.0
+numpy>=1.11.0
+scipy>=1.1.0
+azure-iot-device
+azure-storage-blob

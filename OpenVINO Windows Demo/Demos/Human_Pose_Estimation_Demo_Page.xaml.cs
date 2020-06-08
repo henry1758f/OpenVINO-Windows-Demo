@@ -19,6 +19,8 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using Windows.Storage;
+using Newtonsoft.Json;
 
 // 空白頁項目範本已記錄在 https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -29,45 +31,103 @@ namespace OpenVINO_Windows_Demo.Demos
     /// </summary>
     public sealed partial class Human_Pose_Estimation_Demo_Page : Page
     {
-        const string user_source_select_inform = "select a picture/video";
+        List<Models> Total_models = new List<Models>();
+        //List<Models> Downloaded_models = new List<Models>();
+        //List<Models> model0_list = new List<Models>();
+        List<Combobox_models> combobox0_Models = new List<Combobox_models>();
+        List<string> filter_model0 = new List<string> { "human-pose-estimation-0001" };
+        List<string> filter_filter_model0 = new List<string> { "single-human-pose-estimation-0001" };
+        private static string Model_rootPath = UserDataPaths.GetDefault().Documents + @"\Intel\openvino_models\";
+        private class Combobox_models
+        {
+            public string model_path { get; set; }
+            public string model_name { get; set; }
+            public string model_name_show { get; set; }
+            public string model_preprecisions { get; set; }
+            public Combobox_models(string path)
+            {
+                model_path = path;
+                string precision = model_path.Substring(0, model_path.LastIndexOf("\\"));
+                precision = precision.Substring(precision.LastIndexOf("\\") + 1);
+                model_name = model_path.Substring(model_path.LastIndexOf("\\") + 1);
+                model_preprecisions = precision;
+                model_name_show = model_name + "\t [" + model_preprecisions + "] ";
+            }
+        }
+
         string[] Target_device_list = new string[] { "CPU", "GPU", "MYRIAD" };
-        string[] Input_Source = new string[] { "cam", user_source_select_inform };
         string[] Input_Source_subname_support = new string[] { ".jpg", ".jpeg", ".png", ".mp4" };
 
-        private static string Model_rootPath = @"D:\Intel\openvino_models\";
+        private async void get_all_and_downloaded_models()
+        {
+            var resourceLoader = Windows.ApplicationModel.Resources.ResourceLoader.GetForCurrentView();
+            try
+            {
+                //StorageFolder rootFolder = await StorageFolder.GetFolderFromPathAsync(Windows.ApplicationModel.Package.Current.InstalledLocation.Path);
+                string inf_file_name = "downloaded_models_list.inf";
+                string json_file_name = "models_info.json";
+                if (await ApplicationData.Current.LocalFolder.TryGetItemAsync(json_file_name) != null)
+                {
+                    StorageFile jsonFile = await ApplicationData.Current.LocalFolder.GetFileAsync(json_file_name);
+                    string json_string = await FileIO.ReadTextAsync(jsonFile);
 
-        private class model_dataList
-        {
-            public string Model_Name { get; set; }
-            public string Model_Path { get; set; }
-            public string[] Model_precision_Support { get; set; }
-            public string Model_framework { get; set; }
-            public string Model_detail { get; set; }
-        }
-        private static List<model_dataList> model0_list = new List<model_dataList>()
-        {
-            new model_dataList{
-                Model_Name = "human-pose-estimation-0001",
-                Model_Path = @"models\SYNNEX_demo\intel\",
-                Model_precision_Support = new string[]{"FP32","FP16", "FP32-INT8" },
-                Model_framework = "dldt"
+                    List<Models> models = new List<Models>();
+                    Total_models = JsonConvert.DeserializeObject<List<Models>>(json_string);
+                }
+                else
+                {
+                    MessageDialog messageDialogs = new MessageDialog(resourceLoader.GetString("Models_Info_Read_Failed") + "\n" + resourceLoader.GetString("Cannot_read") + ApplicationData.Current.LocalFolder.Path + "\\" + json_file_name + " !!" , resourceLoader.GetString("Error") + " !");
+                    await messageDialogs.ShowAsync();
+                }
+
+                if (await ApplicationData.Current.LocalFolder.TryGetItemAsync(inf_file_name) != null)
+                {
+                    StorageFile infFile = await ApplicationData.Current.LocalFolder.GetFileAsync(inf_file_name);
+                    string inf_string = await FileIO.ReadTextAsync(infFile);
+                    List<string> model = inf_string.Split("\n").ToList();
+                    //List<Models> models = new List<Models>();
+                    foreach (string model_path in model)
+                    {
+                        if (model_path.Length <=0)
+                        {
+                            continue;
+                        }
+                        Combobox_models _Models = new Combobox_models(model_path);
+                        foreach (string filter_word in filter_model0)
+                        {
+                            if (_Models.model_name.Contains(filter_word))
+                            {
+                                bool filter_filter_trigger = false;
+                                foreach (string filter_filter_word in filter_filter_model0)
+                                {
+                                    if(_Models.model_name.Contains(filter_filter_word))
+                                    {
+                                        filter_filter_trigger = true;
+                                    }
+                                }
+                                if (!filter_filter_trigger)
+                                {
+                                    combobox0_Models.Add(_Models);
+                                }
+                            }
+                        }
+                    }
+                }
+                model0_name.ItemsSource = combobox0_Models;
+                model0_name.DisplayMemberPath = "model_name_show";
+                
             }
-        };
+            catch (Exception e)
+            {
+                MessageDialog messageDialogs = new MessageDialog(e.Message , resourceLoader.GetString("Debug"));
+                await messageDialogs.ShowAsync();
+            }
+        }
         
         public Human_Pose_Estimation_Demo_Page()
         {
             this.InitializeComponent();
-            foreach (model_dataList model_DataList in model0_list)
-            {
-                foreach (string precision in model_DataList.Model_precision_Support)
-                {
-                    model0_name.Items.Add(model_DataList.Model_Name + " [" + precision + "]");
-                }
-            }
-            foreach (string str in Input_Source)
-            {
-                Source.Items.Add(str);
-            }
+            get_all_and_downloaded_models();
         }
 
         #region CameraPreview
@@ -79,9 +139,10 @@ namespace OpenVINO_Windows_Demo.Demos
 
         private async Task StartPreviewAsync()
         {
+            var resourceLoader = Windows.ApplicationModel.Resources.ResourceLoader.GetForCurrentView();
             try
             {
-
+                
                 mediaCapture = new MediaCapture();
                 await mediaCapture.InitializeAsync();
 
@@ -91,7 +152,7 @@ namespace OpenVINO_Windows_Demo.Demos
             catch (UnauthorizedAccessException)
             {
                 // This will be thrown if the user denied access to the camera in privacy settings
-                var messageDialog = new MessageDialog("The app was denied access to the camera");
+                var messageDialog = new MessageDialog(resourceLoader.GetString("Camera_Access_Denied_info"), resourceLoader.GetString("Error") + " !");
                 await messageDialog.ShowAsync();
                 return;
             }
@@ -110,9 +171,10 @@ namespace OpenVINO_Windows_Demo.Demos
         }
         private async void _mediaCapture_CaptureDeviceExclusiveControlStatusChanged(MediaCapture sender, MediaCaptureDeviceExclusiveControlStatusChangedEventArgs args)
         {
+            var resourceLoader = Windows.ApplicationModel.Resources.ResourceLoader.GetForCurrentView();
             if (args.Status == MediaCaptureDeviceExclusiveControlStatus.SharedReadOnlyAvailable)
             {
-                var messageDialog = new MessageDialog("The camera preview can't be displayed because another app has exclusive access");
+                var messageDialog = new MessageDialog(resourceLoader.GetString("Camera_Access_Denied_info"),resourceLoader.GetString("Error") + " !");
                 await messageDialog.ShowAsync();
             }
             else if (args.Status == MediaCaptureDeviceExclusiveControlStatus.ExclusiveControlAvailable && !isPreviewing)
@@ -163,33 +225,32 @@ namespace OpenVINO_Windows_Demo.Demos
         }
         #endregion
 
-        private async void Source_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private async void Source_select_button_Click(object sender, RoutedEventArgs e)
         {
-            if (Source.SelectedItem.ToString().Equals(user_source_select_inform))
+            var resourceLoader = Windows.ApplicationModel.Resources.ResourceLoader.GetForCurrentView();
+            var picker = new Windows.Storage.Pickers.FileOpenPicker();
+            picker.ViewMode = Windows.Storage.Pickers.PickerViewMode.Thumbnail;
+            picker.SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.PicturesLibrary;
+            foreach (string type in Input_Source_subname_support)
             {
-                var picker = new Windows.Storage.Pickers.FileOpenPicker();
-                picker.ViewMode = Windows.Storage.Pickers.PickerViewMode.Thumbnail;
-                picker.SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.PicturesLibrary;
-                foreach (string type in Input_Source_subname_support)
-                {
-                    picker.FileTypeFilter.Add(type);
-                }
-                Windows.Storage.StorageFile file = await picker.PickSingleFileAsync();
-                if (file != null)
-                {
-                    // Application now has read/write access to the picked file
-                    Source.Items.Add(file.Path);
-                    Source.SelectedItem = file.Path;
-                }
-                else
-                {
-                    MessageDialog messageDialogs = new MessageDialog("No File been selected!");
-                    messageDialogs.ShowAsync();
-                }
+                picker.FileTypeFilter.Add(type);
+            }
+            StorageFile file = await picker.PickSingleFileAsync();
+            if (file != null)
+            {
+                // Application now has read/write access to the picked file
+                Source.Text = file.Path;
+            }
+            else
+            {
+                MessageDialog messageDialogs = new MessageDialog(resourceLoader.GetString("Selected_File_Empty"),resourceLoader.GetString("Warning") + " !");
+                messageDialogs.ShowAsync();
             }
         }
+
         private async void Button_Click(object sender, RoutedEventArgs e)
         {
+            var resourceLoader = Windows.ApplicationModel.Resources.ResourceLoader.GetForCurrentView();
             string Parameter = "";
             // Close camera and resource 
             if (cam_init && previewing)
@@ -202,41 +263,34 @@ namespace OpenVINO_Windows_Demo.Demos
             // Build Parameter String
             if (model0_name.SelectedItem == null)
             {
-                MessageDialog messageDialogs = new MessageDialog("You have to " + model0_TextBlock.Text, "ERROR!");
+                MessageDialog messageDialogs = new MessageDialog(resourceLoader.GetString("You_have_to") + model0_TextBlock.Text, resourceLoader.GetString("Error") + " !") ;
                 messageDialogs.ShowAsync();
                 return;
             }
             else
             {
-                foreach (model_dataList model_DataList in model0_list)
+                Combobox_models model = (Combobox_models)model0_name.SelectedItem;
+                Parameter = " -m " + model.model_path + " ";
+                if(model0_target.SelectedItem != null)
                 {
-                    foreach (string precision in model_DataList.Model_precision_Support)
-                    {
-                        if (model0_name.SelectedItem.ToString().Contains(precision) && model0_name.SelectedItem.ToString().Contains(model_DataList.Model_Name))
-                        {
-
-                            if (model0_target.SelectedItem != null)
-                                Parameter = " -m " + Model_rootPath + model_DataList.Model_Path + model_DataList.Model_Name + @"\" + precision + @"\" + model_DataList.Model_Name + ".xml -d " + model0_target.SelectedItem.ToString() + " ";
-                            else
-                                Parameter = " -m " + Model_rootPath + model_DataList.Model_Path + model_DataList.Model_Name + @"\" + precision + @"\" + model_DataList.Model_Name + ".xml ";
-                        }
-                    }
+                    Parameter += " -d " + model0_target.SelectedItem.ToString() + " ";
                 }
             }
-
-            /*
-            if (Source.SelectedItem == null || Source.SelectedItem == "cam")
+            if (Source.Text.Equals(null) || Source.Text.Equals("cam") || Source.Text.Equals(""))
             {
                 Parameter += " -i cam";
             }
-            else if (Source.SelectedItem.ToString().Contains(" "))
+            else if (Source.Text.Contains(" "))
             {
-                Parameter += " -i \"" + Source.SelectedItem.ToString() + "\" ";
+                MessageDialog messageDialogs = new MessageDialog(resourceLoader.GetString("Path_without_space_inform"), resourceLoader.GetString("Error") + " !");
+                messageDialogs.ShowAsync();
+                //Parameter += " -i \"" + Source.Text.ToString() + "\" ";
+                return;
             }
             else
             {
-                Parameter += " -i " + Source.SelectedItem.ToString() + " ";
-            }*/
+                Parameter += " -i " + Source.Text + " ";
+            }
             // Send Request to ConsoleConnector
             await ((App)Application.Current).SendRequestToConsoleConnector("Human_Pose_Estimation_Demo_Page", Parameter);
         }
@@ -258,10 +312,6 @@ namespace OpenVINO_Windows_Demo.Demos
                 await mediaCaptureMgr.StartPreviewAsync();
                 previewing = true;
             }
-
-
-
-            //await FullTrustProcessLauncher.LaunchFullTrustProcessForCurrentAppAsync();
         }
     }
 }

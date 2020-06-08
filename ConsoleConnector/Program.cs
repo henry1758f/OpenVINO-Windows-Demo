@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -10,25 +11,60 @@ using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.AppService;
 using Windows.Foundation.Collections;
+using System.Runtime.InteropServices;
 
 namespace ConsoleConnector
 {
     class Program
     {
         static AppServiceConnection connection = null;
+        static string App_path = "";
+        static string AppData_Path = "";
 
         static string openvino_install_dir = @"C:\Program Files (x86)\IntelSWTools\openvino\";
         static string setupvars_path = openvino_install_dir + @"bin\setupvars.bat";
-        static string demo_Path = @"%USERPROFILE%\Documents\Intel\OpenVINO\omz_demos_build\intel64\Release\";
+        static string demo_Path = @"%USERPROFILE%\Documents\Intel\OpenVINO\inference_engine_demos_build\intel64\Release\";
         static string python_demo_path = openvino_install_dir + @"deployment_tools\open_model_zoo\demos\python_demos\";
+        static string synnex_demo = @"%USERPROFILE%\Documents\Intel\OpenVINO\synnex_demos\";
+
+        static string model_path = @"%USERPROFILE%\Documents\Intel\openvino\openvino_models\models";
+        static string model_cache = @"%USERPROFILE%\Documents\Intel\openvino\openvino_models\cache";
+        static string irs_path = @"%USERPROFILE%\Documents\Intel\openvino\openvino_models\ir";
+        [DllImport("kernel32.dll")]
+        static extern IntPtr GetConsoleWindow();
+
+        [DllImport("user32.dll")]
+        static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+
+        const int SW_HIDE = 0;
+        const int SW_SHOW = 5;
+
+        bool terminal_show = false;
 
         static void Main(string[] args)
         {
             new Thread(ThreadProc).Start();
-            Console.Title = "Hello World";
-            Console.WriteLine("This process runs at the full privileges of the user and has access to the entire public desktop API surface");
-            Console.WriteLine("\r\nPress any key to exit ...");
-            Console.ReadLine();
+            Console.Title = "OpenVINO Windows Demo Tool - Console Connector";
+            Console.WriteLine("This process runs between OpenVINO Windows Demo Tool and system");
+            
+            string input = "";
+
+            var handle = GetConsoleWindow();
+            ShowWindow(handle, SW_HIDE);
+
+
+            while (!input.Equals("Exit"))
+            {
+                Console.WriteLine("\r\nPress E to Force Exit this console ...");
+                input = Console.ReadLine().ToString();
+
+                // Hide
+                ShowWindow(handle, SW_HIDE);
+
+                // Show
+                //ShowWindow(handle, SW_SHOW);
+            }
+            
         }
 
         /// <summary>
@@ -86,41 +122,595 @@ namespace ConsoleConnector
             {
                 case "Command":
                     command(value);
+                    send_message(args, "command", "ECHO");
+                    break;
+                case "Home_Page":
+                    Home_Page(args, value);
                     break;
                 case "Interactive_face_detection_demo":
                     Interactive_face_detection_demo(value);
+                    send_message(args, "command", "ECHO");
                     break;
                 case "Face_Recognition_Demo_Page":
                     Face_Recognition_Demo_Page(value);
+                    send_message(args, "command", "ECHO");
                     break;
                 case "Crossroad_Camera_Demo_Page":
                     Crossroad_Camera_Demo_Page(value);
+                    send_message(args, "command", "ECHO");
                     break;
                 case "Human_Pose_Estimation_Demo_Page":
                     Human_Pose_Estimation_Demo_Page(value);
+                    send_message(args, "command", "ECHO");
                     break;
                 case "Gaze_Estimation_Demo_Page":
                     Gaze_Estimation_Demo_Page(value);
+                    send_message(args, "command", "ECHO");
                     break;
                 case "Face_Recognition_Demo_Azure_Iot_Page":
                     Face_Recognition_Demo_Azure_Iot_Page(value);
+                    send_message(args, "command", "ECHO");
+                    break;
+                case "App_Path":
+                    App_path = value;
+                    send_message(args, "command", "ECHO");
+                    break;
+                case "AppData_Path":
+                    AppData_Path = value;
+                    send_message(args, "command", "ECHO");
+                    break;
+                case "Downloader":
+                    Downloader_Page(args, value);
+                    break;
+                case "print_model_info":
+                    Print_Model_info(args, value);
                     break;
                 default:
+                    send_message(args, "command", "ECHO");
                     break;
             }
-
+        }
+        private static void send_message(AppServiceRequestReceivedEventArgs args, string key_str,string value_str)
+        {
             ValueSet valueSet = new ValueSet();
-
-
-            valueSet.Add("serialNumber", "12345");
-
+            valueSet.Add(key_str, value_str);
             //Send back message to UWP
             args.Request.SendResponseAsync(valueSet).Completed += delegate { };
-            Console.WriteLine(DateTime.Now.TimeOfDay.ToString() + "\tMessage to UWP has been sent!!");
+            Console.WriteLine(DateTime.Now.TimeOfDay.ToString() + "\tMessage to UWP has been sent (" + key_str + " , " + value_str + ")");
         }
         private static void command(string value_str)
         {
             Console.WriteLine("[INFO] Command: " + value_str);
+            ProcessStartInfo processStartInfo = new ProcessStartInfo();
+            var process = new Process();
+            var handle = GetConsoleWindow();
+            switch (value_str)
+            {
+                
+                case "Close":
+                    Environment.Exit(0);
+                    break;
+                case "Sample_Build":
+                    string path = Directory.GetCurrentDirectory();
+                    processStartInfo.FileName = "cmd.exe";
+                    processStartInfo.Arguments = "/C \"\"" + App_path + "\\Demos\\autobuildAgent.bat\" ";
+                    processStartInfo.WindowStyle = ProcessWindowStyle.Normal;
+
+#if (DEBUG)
+                    Console.WriteLine("[DEBUG] RUNNING:" + value_str);
+#endif
+                    Process.Start(processStartInfo);
+                    break;
+                case "prerequest_DOWNLOADER":
+                    processStartInfo.FileName = "cmd.exe";
+                    processStartInfo.Arguments = "/C \"pip install -r \"C:\\Program Files (x86)\\IntelSWTools\\openvino\\deployment_tools\\tools\\model_downloader\\requirements.in\" & "+
+                        "pip install -r \"C:\\Program Files (x86)\\IntelSWTools\\openvino\\deployment_tools\\tools\\model_downloader\\requirements-caffe2.in\" & " +
+                        "pip install -r \"C:\\Program Files (x86)\\IntelSWTools\\openvino\\deployment_tools\\tools\\model_downloader\\requirements-pytorch.in\" \"";
+                    processStartInfo.WindowStyle = ProcessWindowStyle.Normal;
+
+#if (DEBUG)
+                    Console.WriteLine("[DEBUG] RUNNING:" + value_str);
+#endif
+                    process.StartInfo = processStartInfo;
+                    process.Start();
+                    if (process.WaitForExit(60000))
+                    {
+                        process.Close();
+                    }
+
+                    break;
+                case "prerequest_Python_demos":
+                    processStartInfo.FileName = "cmd.exe";
+                    processStartInfo.Arguments = "/C pip install -r \"C:\\Program Files (x86)\\IntelSWTools\\openvino\\inference_engine\\demos\\python_demos\\requirements.txt\" ";
+                    processStartInfo.WindowStyle = ProcessWindowStyle.Normal;
+
+#if (DEBUG)
+                    Console.WriteLine("[DEBUG] RUNNING:" + value_str);
+#endif
+                    process.StartInfo = processStartInfo;
+                    process.Start();
+                    if (process.WaitForExit(600000))
+                    {
+                        process.Close();
+                    }
+
+                    break;
+                case "prerequest_Face_recognition":
+                    processStartInfo.FileName = "cmd.exe";
+                    processStartInfo.Arguments = "/C pip install -r \"C:\\Program Files (x86)\\IntelSWTools\\openvino\\inference_engine\\demos\\python_demos\\face_recognition_demo\\requirements.txt\" ";
+                    processStartInfo.WindowStyle = ProcessWindowStyle.Normal;
+
+#if (DEBUG)
+                    Console.WriteLine("[DEBUG] RUNNING:" + value_str);
+#endif
+                    process.StartInfo = processStartInfo;
+                    process.Start();
+                    if (process.WaitForExit(600000))
+                    {
+                        process.Close();
+                    }
+
+                    break;
+                case "prerequest_Face_recognition_IOT":
+                    processStartInfo.FileName = "cmd.exe";
+                    processStartInfo.Arguments = "/C pip install -r synnex_demos\\face_recognition_demo_Azure_IoT\\requirements.txt ";
+                    processStartInfo.WindowStyle = ProcessWindowStyle.Normal;
+
+#if (DEBUG)
+                    Console.WriteLine("[DEBUG] RUNNING:" + value_str);
+#endif
+                    process.StartInfo = processStartInfo;
+                    process.Start();
+                    if (process.WaitForExit(600000))
+                    {
+                        process.Close();
+                    }
+
+                    break;
+                case "connector_SHOW":
+
+#if (DEBUG)
+                    Console.WriteLine("[DEBUG] RUNNING:" + value_str);
+#endif
+                    
+                    ShowWindow(handle, SW_SHOW);
+
+                    break;
+                case "connector_HIDE":
+
+#if (DEBUG)
+                    Console.WriteLine("[DEBUG] RUNNING:" + value_str);
+#endif
+                    ShowWindow(handle, SW_HIDE);
+
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        private static void Print_Model_info(AppServiceRequestReceivedEventArgs args, string value_str)
+        {
+#if (DEBUG)
+            Console.WriteLine("[DEBUG] Print_Model_info:" + value_str);
+#endif
+            command("prerequest_DOWNLOADER");
+            try
+            {
+                ProcessStartInfo processStartInfo = new ProcessStartInfo()
+                {
+                    FileName = "cmd.exe",
+                    Arguments = "/C python \"C:\\Program Files (x86)\\IntelSWTools\\openvino\\deployment_tools\\tools\\model_downloader\\info_dumper.py\" --name " + value_str,
+                    UseShellExecute = false,
+                    RedirectStandardOutput = true,
+                    CreateNoWindow = true
+                };
+                var process = new Process()
+                {
+                    StartInfo = processStartInfo
+                };
+                process.Start();
+                string message = "";
+                while (!process.StandardOutput.EndOfStream)
+                {
+                    var line = process.StandardOutput.ReadLine();
+                    Console.WriteLine("[INFO] Get " + value_str + " info:\n" + line);
+                    message += line + "\n";
+                }
+                send_message(args, "Model_Info", message);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+                    
+        }
+        private static int Get_All_Model_info_json()
+        {
+            const int SUCCESS = 0;
+            const int FAILURE = 1;
+            command("prerequest_DOWNLOADER");
+            try
+            {
+                ProcessStartInfo processStartInfo = new ProcessStartInfo()
+                {
+                    FileName = "cmd.exe",
+                    Arguments = "/C python \"C:\\Program Files (x86)\\IntelSWTools\\openvino\\deployment_tools\\tools\\model_downloader\\info_dumper.py\" --all",
+                    UseShellExecute = false,
+                    RedirectStandardOutput = true,
+                    CreateNoWindow = true
+                };
+                var process = new Process()
+                {
+                    StartInfo = processStartInfo
+                };
+                process.Start();
+                string message = "";
+                Console.WriteLine("[INFO] Get All JSON model info :\n");
+                while (!process.StandardOutput.EndOfStream)
+                {
+                    var line = process.StandardOutput.ReadLine();
+                    Console.WriteLine(line + "\n");
+                    message += line + "\n";
+                }
+
+                //File.WriteAllText(App_path + "\\models_info.json", message);
+                File.WriteAllText(AppData_Path + "\\models_info.json", message);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return FAILURE;
+            }
+            return SUCCESS;
+        }
+
+        private static void Downloader_Page(AppServiceRequestReceivedEventArgs args, string value_str)
+        {
+#if (DEBUG)
+            Console.WriteLine("[DEBUG] DOWNLOADER_PAGE:" + value_str);
+#endif
+            switch (value_str)
+            {
+                case "print_all_model_name":
+                    try
+                    {
+                        ProcessStartInfo processStartInfo = new ProcessStartInfo()
+                        {
+                            FileName = "cmd.exe",
+                            Arguments = "/C python \"C:\\Program Files (x86)\\IntelSWTools\\openvino\\deployment_tools\\tools\\model_downloader\\info_dumper.py\" --print_all",
+                            UseShellExecute = false,
+                            RedirectStandardOutput = true,
+                            CreateNoWindow = true
+                        };
+                        var process = new Process()
+                        {
+                            StartInfo = processStartInfo
+                        };
+                        process.Start();
+                        string message = "";
+                        while (!process.StandardOutput.EndOfStream)
+                        {
+                            var line = process.StandardOutput.ReadLine();
+                            line = line.Substring(line.LastIndexOf("\\") + 1);
+                            Console.WriteLine("[INFO] Get All_model name:\n" + line);
+                            message += line + "\n";
+
+
+                        }
+                        send_message(args, "All_Model_Name", message);
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(e.Message);
+                    }
+                    break;
+                case "Get_All_Model_info_json":
+                    if (Get_All_Model_info_json().Equals(1))
+                    {
+                        send_message(args, "Get_All_Model_info_json", "FAILED");
+                    }
+                    else
+                    {
+                        send_message(args, "Get_All_Model_info_json", "SUCCESS");
+                    }
+                    break;
+                case "Downloaded_Model_Name":
+                    try
+                    {
+                        Home_Page(args, "OMZ_Model_check");
+                        /*ProcessStartInfo processStartInfo = new ProcessStartInfo()
+                        {
+                            FileName = "cmd.exe",
+                            Arguments = "/C \"\"",
+                            UseShellExecute = false,
+                            RedirectStandardOutput = true,
+                            CreateNoWindow = true
+                        };
+                        var process = new Process()
+                        {
+                            StartInfo = processStartInfo
+                        };
+                        process.Start();
+                        string message = "";
+                        Console.WriteLine("[INFO] Get Downloaded_model name:\n");
+                        while (!process.StandardOutput.EndOfStream)
+                        {
+                            var line = process.StandardOutput.ReadLine();
+                            line = line.Substring(line.LastIndexOf("\\") + 1);
+                            Console.WriteLine(line);
+                            message += line + "\n";
+                        }
+                        send_message(args, "Downloaded_Model_Name", message);*/
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(e.Message);
+                    }
+                    break;
+                default:
+                    if (value_str.Contains("DOWNLOAD "))
+                    {
+                        string model = value_str.Substring(value_str.IndexOf(" ")+1);
+                        Console.WriteLine("[INFO] Downloading " + model + " !\n");
+                        try
+                        {
+                            ProcessStartInfo processStartInfo = new ProcessStartInfo()
+                            {
+                                FileName = "cmd.exe",
+                                Arguments = "/C \"python \"C:\\Program Files (x86)\\IntelSWTools\\openvino\\deployment_tools\\tools\\model_downloader\\downloader.py\" --name \"" + model + "\" --output_dir \"" + model_path + "\" --cache_dir \"" + model_cache + "\"\"",
+                                UseShellExecute = false,
+                                RedirectStandardOutput = true,
+                                CreateNoWindow = false,
+                                WindowStyle = ProcessWindowStyle.Minimized
+                            };
+                        var process = new Process()
+                            {
+                                StartInfo = processStartInfo
+                            };
+#if (DEBUG)
+                            Console.WriteLine("[DEBUG] DOWNLOAD:" + processStartInfo.Arguments);
+#endif
+                            process.Start();
+                            string message = "";
+                            while (!process.StandardOutput.EndOfStream)
+                            {
+                                var line = process.StandardOutput.ReadLine();
+                                line = line.Substring(line.LastIndexOf("\\") + 1);
+                                Console.WriteLine(line);
+                            }
+                            Console.WriteLine("[INFO] Download " + model + " Completed!");
+                            send_message(args, "command", "ECHO");
+                            process.Close();
+
+                        }
+                        catch (Exception e)
+                        {
+                            Console.WriteLine(e.Message);
+                        }
+                        try
+                        {
+                            ProcessStartInfo processStartInfo_MO = new ProcessStartInfo()
+                            {
+                                FileName = "cmd.exe",
+                                Arguments = "/C \"python \"" + setupvars_path + "\" & python \"C:\\Program Files (x86)\\IntelSWTools\\openvino\\deployment_tools\\tools\\model_downloader\\converter.py\" --mo \"" + openvino_install_dir + "deployment_tools\\model_optimizer\\mo.py\" --name \"" + model + "\" -d \"" + model_path + "\" -o \"" + irs_path + "\" --precisions \"FP32\"\"",
+                                UseShellExecute = false,
+                                RedirectStandardOutput = true,
+                                CreateNoWindow = false,
+                                WindowStyle = ProcessWindowStyle.Minimized
+                            };
+                            var process_MO = new Process()
+                            {
+                                StartInfo = processStartInfo_MO
+                            };
+    #if (DEBUG)
+                            Console.WriteLine("[DEBUG] DOWNLOAD:" + processStartInfo_MO.Arguments);
+    #endif
+                            process_MO.Start();
+                            string message = "";
+                            while (!process_MO.StandardOutput.EndOfStream)
+                            {
+                                var line = process_MO.StandardOutput.ReadLine();
+                                line = line.Substring(line.LastIndexOf("\\") + 1);
+                                Console.WriteLine(line);
+                            }
+                            Console.WriteLine("[INFO] MO to FP32 : " + model + " Completed!");
+                            send_message(args, "command", "ECHO");
+                            process_MO.Close();
+
+                        }
+                        catch (Exception e)
+                        {
+                            Console.WriteLine(e.Message);
+                        }
+                        
+                    }
+                    break;
+            }
+        }
+        private static void Home_Page(AppServiceRequestReceivedEventArgs args, string value_str)
+        {
+#if (DEBUG)
+            Console.WriteLine("[DEBUG] HOME_PAGE:" + value_str);
+#endif
+            switch (value_str)
+            {
+                case "ECHO":
+                    send_message(args, "command", "ECHO");
+                    break;
+                case "CPU_check":
+                    try
+                    {
+                        ProcessStartInfo processStartInfo = new ProcessStartInfo()
+                        {
+                            FileName = "cmd.exe",
+                            Arguments = "/C \"wmic cpu get Name\"",
+                            UseShellExecute = false,
+                            RedirectStandardOutput = true,
+                            CreateNoWindow = true
+                        };
+                        var process = new Process()
+                        {
+                            StartInfo = processStartInfo
+                        };
+                        process.Start();
+                        while (!process.StandardOutput.EndOfStream)
+                        {
+                            var line = process.StandardOutput.ReadLine();
+                            if (line.Contains("CPU"))
+                            {
+                                Console.WriteLine("[INFO] Get CPU info:" + line);
+                                send_message(args, "CPU", line);
+                            }
+                            else
+                            {
+#if (DEBUG)
+                                Console.WriteLine("[DEBUG] " + processStartInfo.Arguments + ":" + line);
+#endif
+                            }
+                            
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(e.Message);
+                    }
+                    break;
+                case "OpenVINO_check":
+                    try
+                    {
+                        ProcessStartInfo processStartInfo = new ProcessStartInfo()
+                        {
+                            FileName = "cmd.exe",
+                            Arguments = "/C \"dir \"C:\\Program Files (x86)\\IntelSWTools\\\" |find \"openvino\"\"",
+                            UseShellExecute = false,
+                            RedirectStandardOutput = true,
+                            CreateNoWindow = true
+                        };
+                        var process = new Process()
+                        {
+                            StartInfo = processStartInfo
+                        };
+                        process.Start();
+                        while (!process.StandardOutput.EndOfStream)
+                        {
+                            var line = process.StandardOutput.ReadLine();
+                            if (line.Contains("["))
+                            {
+                                line = line.Substring(0,line.LastIndexOf("\\"));
+                                line = line.Substring(line.LastIndexOf("\\")+1);
+                                Console.WriteLine("[INFO] Get OpenVINO info:" + line);
+                                send_message(args, "OpenVINO", line);
+                            }
+                            else
+                            {
+#if (DEBUG)
+                                Console.WriteLine("[DEBUG] " + processStartInfo.Arguments + ":" + line);
+#endif
+                            }
+
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(e.Message);
+                    }
+                    break;
+                case "SampleDemo_check":
+                    try
+                    {
+                        ProcessStartInfo processStartInfo = new ProcessStartInfo()
+                        {
+                            FileName = "cmd.exe",
+                            Arguments = "/C \"dir %USERPROFILE%\\Documents\\Intel\\OpenVINO /B /S |find \".exe\" \"",
+                            UseShellExecute = false,
+                            RedirectStandardOutput = true,
+                            CreateNoWindow = true
+                        };
+                        var process = new Process()
+                        {
+                            StartInfo = processStartInfo
+                        };
+                        process.Start();
+                        string message = "";
+                        while (!process.StandardOutput.EndOfStream)
+                        {
+                            var line = process.StandardOutput.ReadLine();
+                            if (line.Contains(".exe"))
+                            {
+                                line = line.Substring(line.LastIndexOf("\\") + 1);
+                                Console.WriteLine("[INFO] Get SampleDemo info:" + line);
+                                message += line + "\n";
+                                
+                            }
+                            else
+                            {
+#if (DEBUG)
+                                Console.WriteLine("[DEBUG] " + processStartInfo.Arguments + ":" + line.Substring(line.LastIndexOf("\\") + 1) + "\n");
+#endif
+                            }
+
+                        }
+                        send_message(args, "SampleDemo", message);
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(e.Message);
+                    }
+                    break;
+                case "OMZ_Model_check":
+                    try
+                    {
+                        ProcessStartInfo processStartInfo = new ProcessStartInfo()
+                        {
+                            FileName = "cmd.exe",
+                            Arguments = "/C \"dir %USERPROFILE%\\Documents\\Intel\\OpenVINO\\openvino_models /B /S |find \".xml\" \"",
+                            UseShellExecute = false,
+                            RedirectStandardOutput = true,
+                            CreateNoWindow = true
+                        };
+                        var process = new Process()
+                        {
+                            StartInfo = processStartInfo
+                        };
+                        process.Start();
+                        string message = "";
+                        int counter = 0;
+                        while (!process.StandardOutput.EndOfStream)
+                        {
+                            var line = process.StandardOutput.ReadLine();
+                            if (line.Contains(".xml"))
+                            {
+                                //string temp = line.Substring(0,line.LastIndexOf("\\"));
+                                //temp = temp.Substring(temp.LastIndexOf("\\") + 1);
+
+                                //line = line.Substring(line.LastIndexOf("\\") + 1);
+                                //Console.WriteLine("[INFO] Get OMZ_model info:" + line + " [" + temp + "] ");
+                                //message += temp + "\\" + line + "\n";
+                                message += line + "\n";
+                                counter++;
+                            }
+                            else
+                            {
+#if (DEBUG)
+                                Console.WriteLine("[DEBUG] " + processStartInfo.Arguments + ":" + line.Substring(line.LastIndexOf("\\") + 1) + "\n");
+#endif
+                            }
+
+                        }
+                        Console.WriteLine(message);
+                        //File.WriteAllText(App_path + "\\downloaded_models_list.inf", message);
+                        File.WriteAllText(AppData_Path + "\\downloaded_models_list.inf", message);
+                        send_message(args, "OMZ_Model", counter.ToString());
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(e.Message);
+                    }
+                    break;
+                default:
+                    break;
+            }
         }
 
         private static void Interactive_face_detection_demo(string value_str)
@@ -129,7 +719,7 @@ namespace ConsoleConnector
             ProcessStartInfo processStartInfo = new ProcessStartInfo();
             processStartInfo.FileName = "cmd.exe";
             processStartInfo.Arguments = "/C \"" + setupvars_path + "\" & " + demo_Path + "interactive_face_detection_demo.exe " + value_str + " ";
-            //processStartInfo.Arguments = "/C \"" + setupvars_path + "\" &  %USERPROFILE%\\Documents\\Intel\\OpenVINO\\omz_demos_build\\intel64\\Release\\interactive_face_detection_demo.exe" +
+            //processStartInfo.Arguments = "/C \"" + setupvars_path + "\" &  %USERPROFILE%\\Documents\\Intel\\OpenVINO\\inference_engine_demos_build\\intel64\\Release\\interactive_face_detection_demo.exe" +
             //    " -m D:\\Intel\\openvino_models\\models\\SYNNEX_demo\\intel\\face-detection-adas-binary-0001\\FP32-INT1\\face-detection-adas-binary-0001.xml -i cam & PAUSE";
             //processStartInfo.Arguments = "/C \"" + setupvars_path + "\" & PAUSE";
 
@@ -144,6 +734,9 @@ namespace ConsoleConnector
         private static void Face_Recognition_Demo_Page(string value_str)
         {
             Console.WriteLine("[INFO] Face_Recognition_Demo_Page " + value_str);
+            //command("prerequest_Python_demos");
+            command("prerequest_Python_demos");
+            command("prerequest_Face_recognition");
             ProcessStartInfo processStartInfo = new ProcessStartInfo();
             processStartInfo.FileName = "cmd.exe";
             processStartInfo.Arguments = "/C \"\"" + setupvars_path + "\" & python \"" + python_demo_path + "face_recognition_demo\\face_recognition_demo.py\"\" " + value_str + " & PAUSE ";
@@ -158,17 +751,16 @@ namespace ConsoleConnector
         private static void Face_Recognition_Demo_Azure_Iot_Page(string value_str)
         {
             Console.WriteLine("[INFO] Face_Recognition_Demo_Azure_Iot_Page " + value_str);
+            command("prerequest_Python_demos");
+            command("prerequest_Face_recognition_IOT");
             ProcessStartInfo processStartInfo = new ProcessStartInfo();
             processStartInfo.FileName = "cmd.exe";
             //processStartInfo.Arguments = "/C \"\"" + setupvars_path + "\" & python \"" + python_demo_path + "face_recognition_demo\\face_recognition_demo.py\"\" " + value_str + " & PAUSE ";
-            processStartInfo.Arguments = "/C \"\"" + setupvars_path + "\" & python \"D:\\Intel\\open_model_zoo\\demos\\python_demos\\face_recognition_demo_Azure_IoT\\face_recognition_demo.py\"\" " + value_str + " & PAUSE ";
+            //processStartInfo.Arguments = "/C \"\"" + setupvars_path + "\" & python \"" + synnex_demo + "face_recognition_demo_Azure_IoT\\face_recognition_demo.py\"\" " + value_str + " & PAUSE ";
+            processStartInfo.Arguments = "/C \"\"" + setupvars_path + "\" & python \"" + App_path + "\\Demos\\synnex_demos\\face_recognition_demo_Azure_IoT\\face_recognition_demo.py\"\" " + value_str + " & PAUSE ";
             Console.WriteLine("[DEBUG] " + processStartInfo.Arguments);
             processStartInfo.WindowStyle = ProcessWindowStyle.Normal;
             Process.Start(processStartInfo);
-
-
-            //Process.Start("cmd.exe", "/C \"" + openvino_install_dir + setupvars_path + "\" && PAUSE");
-
         }
         private static void Crossroad_Camera_Demo_Page(string value_str)
         {

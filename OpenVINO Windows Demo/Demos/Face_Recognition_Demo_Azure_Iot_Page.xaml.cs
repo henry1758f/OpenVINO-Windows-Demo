@@ -19,6 +19,8 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using Windows.Storage;
+using Newtonsoft.Json;
 
 // 空白頁項目範本已記錄在 https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -29,106 +31,153 @@ namespace OpenVINO_Windows_Demo.Demos
     /// </summary>
     public sealed partial class Face_Recognition_Demo_Azure_Iot_Page : Page
     {
-        const string user_source_select_inform = "select a picture/video";
+        List<Models> Total_models = new List<Models>();
+        //List<Models> Downloaded_models = new List<Models>();
+        //List<Models> model0_list = new List<Models>();
+        List<Combobox_models> combobox0_Models = new List<Combobox_models>();
+        List<string> filter_model0 = new List<string> { "face-detection" };
+        List<string> filter_filter_model0 = new List<string> { };
+        const string model0_arg_parse = "_fd";
+        List<Combobox_models> combobox1_Models = new List<Combobox_models>();
+        List<string> filter_model1 = new List<string> { "landmarks-regression" };
+        List<string> filter_filter_model1 = new List<string> { /*"face-detection-0105", "face-detection-0106"*/ };
+        const string model1_arg_parse = "_lm";
+        List<Combobox_models> combobox2_Models = new List<Combobox_models>();
+        List<string> filter_model2 = new List<string> { "face-reidentification" };
+        List<string> filter_filter_model2 = new List<string> { };
+        const string model2_arg_parse = "_reid";
+        private static string Model_rootPath = UserDataPaths.GetDefault().Documents + @"\Intel\openvino_models\";
+        private static string defaultFG_Path = UserDataPaths.GetDefault().Pictures + @"\face_gallery";
+        private class Combobox_models
+        {
+            public string model_path { get; set; }
+            public string model_name { get; set; }
+            public string model_name_show { get; set; }
+            public string model_preprecisions { get; set; }
+            public Combobox_models(string path)
+            {
+                model_path = path;
+                string precision = model_path.Substring(0, model_path.LastIndexOf("\\"));
+                precision = precision.Substring(precision.LastIndexOf("\\") + 1);
+                model_name = model_path.Substring(model_path.LastIndexOf("\\") + 1);
+                model_preprecisions = precision;
+                model_name_show = model_name + "\t [" + model_preprecisions + "] ";
+            }
+        }
+
         string[] Target_device_list = new string[] { "CPU", "GPU", "MYRIAD" };
-        string[] Input_Source = new string[] { "cam", user_source_select_inform };
-        string[] FG_path_list = new string[] { "Default Path", "..." };
         string[] Input_Source_subname_support = new string[] { ".jpg", ".jpeg", ".png", ".mp4" };
+        const string connector_commandstr = "Face_Recognition_Demo_Azure_Iot_Page";
 
-        private static string Model_rootPath = @"D:\Intel\openvino_models\";
 
-        private class model_dataList
+        private async void get_all_and_downloaded_models()
         {
-            public string Model_Name { get; set; }
-            public string Model_Path { get; set; }
-            public string[] Model_precision_Support { get; set; }
-            public string Model_framework { get; set; }
-            public string Model_detail { get; set; }
+            var resourceLoader = Windows.ApplicationModel.Resources.ResourceLoader.GetForCurrentView();
+            try
+            {
+                //StorageFolder rootFolder = await StorageFolder.GetFolderFromPathAsync(Windows.ApplicationModel.Package.Current.InstalledLocation.Path);
+                string inf_file_name = "downloaded_models_list.inf";
+                string json_file_name = "models_info.json";
+                if (await ApplicationData.Current.LocalFolder.TryGetItemAsync(json_file_name) != null)
+                {
+                    StorageFile jsonFile = await ApplicationData.Current.LocalFolder.GetFileAsync(json_file_name);
+                    string json_string = await FileIO.ReadTextAsync(jsonFile);
+
+                    List<Models> models = new List<Models>();
+                    Total_models = JsonConvert.DeserializeObject<List<Models>>(json_string);
+                }
+                else
+                {
+                    MessageDialog messageDialogs = new MessageDialog(resourceLoader.GetString("Models_Info_Read_Failed") + "\n" + resourceLoader.GetString("Cannot_read") + ApplicationData.Current.LocalFolder.Path + "\\" + json_file_name + " !!", resourceLoader.GetString("Error") + " !");
+                    await messageDialogs.ShowAsync();
+                }
+
+                if (await ApplicationData.Current.LocalFolder.TryGetItemAsync(inf_file_name) != null)
+                {
+                    StorageFile infFile = await ApplicationData.Current.LocalFolder.GetFileAsync(inf_file_name);
+                    string inf_string = await FileIO.ReadTextAsync(infFile);
+                    List<string> model = inf_string.Split("\n").ToList();
+                    //List<Models> models = new List<Models>();
+                    foreach (string model_path in model)
+                    {
+                        if (model_path.Length <= 0)
+                        {
+                            continue;
+                        }
+                        Combobox_models _Models = new Combobox_models(model_path);
+                        foreach (string filter_word in filter_model0)
+                        {
+                            if (_Models.model_name.Contains(filter_word))
+                            {
+                                bool filter_filter_trigger = false;
+                                foreach (string filter_filter_word in filter_filter_model0)
+                                {
+                                    if (_Models.model_name.Contains(filter_filter_word))
+                                    {
+                                        filter_filter_trigger = true;
+                                    }
+                                }
+                                if (!filter_filter_trigger)
+                                {
+                                    combobox0_Models.Add(_Models);
+                                }
+                            }
+                        }
+                        foreach (string filter_word in filter_model1)
+                        {
+                            if (_Models.model_name.Contains(filter_word))
+                            {
+                                bool filter_filter_trigger = false;
+                                foreach (string filter_filter_word in filter_filter_model1)
+                                {
+                                    if (_Models.model_name.Contains(filter_filter_word))
+                                    {
+                                        filter_filter_trigger = true;
+                                    }
+                                }
+                                if (!filter_filter_trigger)
+                                {
+                                    combobox1_Models.Add(_Models);
+                                }
+                            }
+                        }
+                        foreach (string filter_word in filter_model2)
+                        {
+                            if (_Models.model_name.Contains(filter_word))
+                            {
+                                bool filter_filter_trigger = false;
+                                foreach (string filter_filter_word in filter_filter_model2)
+                                {
+                                    if (_Models.model_name.Contains(filter_filter_word))
+                                    {
+                                        filter_filter_trigger = true;
+                                    }
+                                }
+                                if (!filter_filter_trigger)
+                                {
+                                    combobox2_Models.Add(_Models);
+                                }
+                            }
+                        }
+
+                    }
+                }
+                model0_name.ItemsSource = combobox0_Models;
+                model0_name.DisplayMemberPath = "model_name_show";
+                model1_name.ItemsSource = combobox1_Models;
+                model1_name.DisplayMemberPath = "model_name_show";
+                model2_name.ItemsSource = combobox2_Models;
+                model2_name.DisplayMemberPath = "model_name_show";
+
+
+            }
+            catch (Exception e)
+            {
+                MessageDialog messageDialogs = new MessageDialog(e.Message, resourceLoader.GetString("Debug"));
+                await messageDialogs.ShowAsync();
+            }
         }
-        private static List<model_dataList> model0_list = new List<model_dataList>()
-        {
-            new model_dataList{
-                Model_Name = "face-detection-adas-0001",
-                Model_Path = @"models\SYNNEX_demo\intel\",
-                Model_precision_Support = new string[]{"FP32","FP16", "FP32-INT8" },
-                Model_framework = "dldt"
-            },
-            new model_dataList{
-                Model_Name = "face-detection-adas-binary-0001",
-                Model_Path = @"models\SYNNEX_demo\intel\",
-                Model_precision_Support = new string[]{"FP32-INT1" },
-                Model_framework = "dldt"
-            },
-            new model_dataList{
-                Model_Name = "face-detection-retail-0004",
-                Model_Path = @"models\SYNNEX_demo\intel\",
-                Model_precision_Support = new string[]{"FP32","FP16", "FP32-INT8" },
-                Model_framework = "dldt"
-            },
-            new model_dataList{
-                Model_Name = "face-detection-retail-0005",
-                Model_Path = @"models\SYNNEX_demo\intel\",
-                Model_precision_Support = new string[]{"FP32","FP16", "FP32-INT8" },
-                Model_framework = "dldt"
-            }
-        };
-        private static List<model_dataList> model1_list = new List<model_dataList>()
-        {
-            new model_dataList{
-                Model_Name = "landmarks-regression-retail-0009",
-                Model_Path = @"models\SYNNEX_demo\intel\",
-                Model_precision_Support = new string[]{"FP32","FP16", "FP32-INT8" },
-                Model_framework = "dldt"
-            }
-        };
-        private static List<model_dataList> model2_list = new List<model_dataList>()
-        {
-            new model_dataList{
-                Model_Name = "face-reidentification-retail-0095",
-                Model_Path = @"models\SYNNEX_demo\intel\",
-                Model_precision_Support = new string[]{"FP32","FP16", "FP32-INT8" },
-                Model_framework = "dldt"
-            }
-        };
-        public Face_Recognition_Demo_Azure_Iot_Page()
-        {
-            this.InitializeComponent();
-            foreach (model_dataList model_DataList in model0_list)
-            {
-                foreach (string precision in model_DataList.Model_precision_Support)
-                {
-                    model0_name.Items.Add(model_DataList.Model_Name + " [" + precision + "]");
-                }
-            }
-            foreach (model_dataList model_DataList in model1_list)
-            {
-                foreach (string precision in model_DataList.Model_precision_Support)
-                {
-                    model1_name.Items.Add(model_DataList.Model_Name + " [" + precision + "]");
-                }
-            }
-            foreach (model_dataList model_DataList in model2_list)
-            {
-                foreach (string precision in model_DataList.Model_precision_Support)
-                {
-                    model2_name.Items.Add(model_DataList.Model_Name + " [" + precision + "]");
-                }
-            }
-            foreach (string str in Input_Source)
-            {
-                Source.Items.Add(str);
-            }
-            foreach (string str in FG_path_list)
-            {
-                fg_path.Items.Add(str);
-            }
-            model0_name.SelectedIndex = 0;
-            model1_name.SelectedIndex = 0;
-            model2_name.SelectedIndex = 0;
-            Source.SelectedIndex = 0;
-            fg_path.SelectedIndex = 0;
 
-        }
         #region CameraPreview
         MediaCapture mediaCapture;
         bool isPreviewing, cam_init = false, previewing = false;
@@ -138,6 +187,7 @@ namespace OpenVINO_Windows_Demo.Demos
 
         private async Task StartPreviewAsync()
         {
+            var resourceLoader = Windows.ApplicationModel.Resources.ResourceLoader.GetForCurrentView();
             try
             {
 
@@ -150,7 +200,7 @@ namespace OpenVINO_Windows_Demo.Demos
             catch (UnauthorizedAccessException)
             {
                 // This will be thrown if the user denied access to the camera in privacy settings
-                var messageDialog = new MessageDialog("The app was denied access to the camera");
+                var messageDialog = new MessageDialog(resourceLoader.GetString("Camera_Access_Denied_info"), resourceLoader.GetString("Error") + " !");
                 await messageDialog.ShowAsync();
                 return;
             }
@@ -169,9 +219,10 @@ namespace OpenVINO_Windows_Demo.Demos
         }
         private async void _mediaCapture_CaptureDeviceExclusiveControlStatusChanged(MediaCapture sender, MediaCaptureDeviceExclusiveControlStatusChangedEventArgs args)
         {
+            var resourceLoader = Windows.ApplicationModel.Resources.ResourceLoader.GetForCurrentView();
             if (args.Status == MediaCaptureDeviceExclusiveControlStatus.SharedReadOnlyAvailable)
             {
-                var messageDialog = new MessageDialog("The camera preview can't be displayed because another app has exclusive access");
+                var messageDialog = new MessageDialog(resourceLoader.GetString("Camera_Access_Denied_info"), resourceLoader.GetString("Error") + " !");
                 await messageDialog.ShowAsync();
             }
             else if (args.Status == MediaCaptureDeviceExclusiveControlStatus.ExclusiveControlAvailable && !isPreviewing)
@@ -222,66 +273,32 @@ namespace OpenVINO_Windows_Demo.Demos
         }
         #endregion
 
-        private async void Source_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private async void Source_select_button_Click(object sender, RoutedEventArgs e)
         {
-            if (Source.SelectedItem.ToString().Equals(user_source_select_inform))
+            var resourceLoader = Windows.ApplicationModel.Resources.ResourceLoader.GetForCurrentView();
+            var picker = new Windows.Storage.Pickers.FileOpenPicker();
+            picker.ViewMode = Windows.Storage.Pickers.PickerViewMode.Thumbnail;
+            picker.SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.PicturesLibrary;
+            foreach (string type in Input_Source_subname_support)
             {
-                var picker = new Windows.Storage.Pickers.FileOpenPicker();
-                picker.ViewMode = Windows.Storage.Pickers.PickerViewMode.Thumbnail;
-                picker.SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.PicturesLibrary;
-                foreach (string type in Input_Source_subname_support)
-                {
-                    picker.FileTypeFilter.Add(type);
-                }
-                Windows.Storage.StorageFile file = await picker.PickSingleFileAsync();
-                if (file != null)
-                {
-                    // Application now has read/write access to the picked file
-                    Source.Items.Add(file.Path);
-                    Source.SelectedItem = file.Path;
-                }
-                else
-                {
-                    MessageDialog messageDialogs = new MessageDialog("No File been selected!");
-                    messageDialogs.ShowAsync();
-                }
+                picker.FileTypeFilter.Add(type);
             }
-        }
-
-        private async void fg_path_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (fg_path.SelectedItem.ToString().Equals("Default"))
+            StorageFile file = await picker.PickSingleFileAsync();
+            if (file != null)
             {
-
+                // Application now has read/write access to the picked file
+                Source.Text = file.Path;
             }
-            else if (fg_path.SelectedItem.ToString().Equals("..."))
+            else
             {
-                var picker = new Windows.Storage.Pickers.FolderPicker();
-                picker.SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.PicturesLibrary;
-                picker.FileTypeFilter.Add("*");
-                Windows.Storage.StorageFolder folder = await picker.PickSingleFolderAsync();
-                if (folder != null)
-                {
-                    // Application now has read/write access to the picked file
-                    fg_path.Items.Add(folder.Path);
-                    fg_path.SelectedItem = folder.Path;
-                }
-                else
-                {
-                    new MessageDialog("No File been selected!").ShowAsync();
-                }
+                MessageDialog messageDialogs = new MessageDialog(resourceLoader.GetString("Selected_File_Empty"), resourceLoader.GetString("Warning") + " !");
+                messageDialogs.ShowAsync();
             }
-            
-
-
-
-
-            MessageDialog messageDialogs = new MessageDialog("No File been selected!");
-            messageDialogs.ShowAsync();
         }
 
         private async void Button_Click(object sender, RoutedEventArgs e)
         {
+            var resourceLoader = Windows.ApplicationModel.Resources.ResourceLoader.GetForCurrentView();
             string Parameter = "";
             // Close camera and resource 
             if (cam_init && previewing)
@@ -294,118 +311,139 @@ namespace OpenVINO_Windows_Demo.Demos
             // Build Parameter String
             if (model0_name.SelectedItem == null)
             {
-                MessageDialog messageDialogs = new MessageDialog("You have to " + model0_TextBlock.Text, "ERROR!");
+                MessageDialog messageDialogs = new MessageDialog(resourceLoader.GetString("You_have_to") + model0_TextBlock.Text, resourceLoader.GetString("Error") + " !");
                 messageDialogs.ShowAsync();
                 return;
             }
             else
             {
-                foreach (model_dataList model_DataList in model0_list)
+                Combobox_models model = (Combobox_models)model0_name.SelectedItem;
+                Parameter += " -m" + model0_arg_parse + " " + model.model_path + " ";
+                if (model0_target.SelectedItem != null)
                 {
-                    foreach (string precision in model_DataList.Model_precision_Support)
-                    {
-                        if (model0_name.SelectedItem.ToString().Contains(precision) && model0_name.SelectedItem.ToString().Contains(model_DataList.Model_Name))
-                        {
-
-                            if (model0_target.SelectedItem != null)
-                                Parameter = " -m_fd " + Model_rootPath + model_DataList.Model_Path + model_DataList.Model_Name + @"\" + precision + @"\" + model_DataList.Model_Name + ".xml -d_fd " + model0_target.SelectedItem.ToString() + " ";
-                            else
-                                Parameter = " -m_fd " + Model_rootPath + model_DataList.Model_Path + model_DataList.Model_Name + @"\" + precision + @"\" + model_DataList.Model_Name + ".xml ";
-                        }
-                    }
+                    Parameter += " -d" + model0_arg_parse + " " + model0_target.SelectedItem.ToString() + " ";
                 }
             }
             if (model1_name.SelectedItem == null)
             {
-                MessageDialog messageDialogs = new MessageDialog("You have to " + model1_TextBlock.Text, "ERROR!");
+                MessageDialog messageDialogs = new MessageDialog(resourceLoader.GetString("You_have_to") + model1_TextBlock.Text, resourceLoader.GetString("Error") + " !");
                 messageDialogs.ShowAsync();
                 return;
             }
             else
             {
-                foreach (model_dataList model_DataList in model1_list)
+                Combobox_models model = (Combobox_models)model1_name.SelectedItem;
+                Parameter += " -m" + model1_arg_parse + " " + model.model_path + " ";
+                if (model1_target.SelectedItem != null)
                 {
-                    foreach (string precision in model_DataList.Model_precision_Support)
-                    {
-                        if (model1_name.SelectedItem.ToString().Contains(precision) && model1_name.SelectedItem.ToString().Contains(model_DataList.Model_Name))
-                        {
-
-                            if (model1_target.SelectedItem != null)
-                                Parameter += " -m_lm " + Model_rootPath + model_DataList.Model_Path + model_DataList.Model_Name + @"\" + precision + @"\" + model_DataList.Model_Name + ".xml -d_lm " + model1_target.SelectedItem.ToString() + " ";
-                            else
-                                Parameter += " -m_lm " + Model_rootPath + model_DataList.Model_Path + model_DataList.Model_Name + @"\" + precision + @"\" + model_DataList.Model_Name + ".xml ";
-                        }
-                    }
+                    Parameter += " -d" + model1_arg_parse + " " + model1_target.SelectedItem.ToString() + " ";
                 }
             }
             if (model2_name.SelectedItem == null)
             {
-                MessageDialog messageDialogs = new MessageDialog("You have to " + model2_TextBlock.Text, "ERROR!");
+                MessageDialog messageDialogs = new MessageDialog(resourceLoader.GetString("You_have_to") + model2_TextBlock.Text, resourceLoader.GetString("Error") + " !");
                 messageDialogs.ShowAsync();
                 return;
             }
             else
             {
-                foreach (model_dataList model_DataList in model2_list)
+                Combobox_models model = (Combobox_models)model2_name.SelectedItem;
+                Parameter += " -m" + model2_arg_parse + " " + model.model_path + " ";
+                if (model2_target.SelectedItem != null)
                 {
-                    foreach (string precision in model_DataList.Model_precision_Support)
-                    {
-                        if (model2_name.SelectedItem.ToString().Contains(precision) && model2_name.SelectedItem.ToString().Contains(model_DataList.Model_Name))
-                        {
-
-                            if (model2_target.SelectedItem != null)
-                                Parameter += " -m_reid " + Model_rootPath + model_DataList.Model_Path + model_DataList.Model_Name + @"\" + precision + @"\" + model_DataList.Model_Name + ".xml -d_reid " + model2_target.SelectedItem.ToString() + " ";
-                            else
-                                Parameter += " -m_reid " + Model_rootPath + model_DataList.Model_Path + model_DataList.Model_Name + @"\" + precision + @"\" + model_DataList.Model_Name + ".xml ";
-                        }
-                    }
+                    Parameter += " -d" + model2_arg_parse + " " + model2_target.SelectedItem.ToString() + " ";
                 }
             }
+
+
+            if (fg_Path.Text.Equals(null) || fg_Path.Text.Equals("default") || fg_Path.Text.Equals(""))
+            {
+
+                Parameter += " -fg " + defaultFG_Path + " ";
+            }
+            else if (Source.Text.Contains(" "))
+            {
+                MessageDialog messageDialogs = new MessageDialog(resourceLoader.GetString("Path_without_space_inform"), resourceLoader.GetString("Error") + " ! [Face Gallery]");
+                messageDialogs.ShowAsync();
+                //Parameter += " -i \"" + Source.Text.ToString() + "\" ";
+                return;
+            }
+            else
+            {
+                Parameter += " -fg " + fg_Path.Text + " ";
+            }
+
             if (run_detector_toggle.IsOn)
             {
-                Parameter += "";
+                Parameter += " --run_detector ";
             }
             if (allow_grow_toggle.IsOn)
             {
-                Parameter += "";
+                Parameter += " --allow_grow";
             }
-            if (azs_iothub.Text.Length!=0)
+            if (Source.Text.Equals(null) || Source.Text.Equals("cam") || Source.Text.Equals(""))
+            {
+                Parameter += " -i 0";
+            }
+            else if (Source.Text.Contains(" "))
+            {
+                MessageDialog messageDialogs = new MessageDialog(resourceLoader.GetString("Path_without_space_inform"), resourceLoader.GetString("Error") + " ! [Input Source]");
+                messageDialogs.ShowAsync();
+                //Parameter += " -i \"" + Source.Text.ToString() + "\" ";
+                return;
+            }
+            else
+            {
+                Parameter += " -i " + Source.Text + " ";
+            }
+
+            if (azs_iothub.Text.Equals(null) || azs_iothub.Text.Equals("") || azs_iothub.Text.Contains(" "))
+            {
+                //Parameter += " -azstr_iothub disable";
+                MessageDialog messageDialogs = new MessageDialog(resourceLoader.GetString("Connection_String_Error_Msg"), resourceLoader.GetString("Error") + " ! [IoT Hub Connection String]");
+                messageDialogs.ShowAsync();
+                return;
+            }
+            else
             {
                 Parameter += " -azstr_iothub " + azs_iothub.Text + " ";
             }
-            else
+
+            if (azs_storage.Text.Equals(null) || azs_storage.Text.Equals("") || azs_storage.Text.Contains(" "))
             {
-                MessageDialog messageDialogs = new MessageDialog("You have to Set the Connection String of Azure IoT Hub", "ERROR!");
+                //Parameter += " -azstr_storage disable";
+                MessageDialog messageDialogs = new MessageDialog(resourceLoader.GetString("Connection_String_Error_Msg"), resourceLoader.GetString("Error") + " ! [IoT Storage Connection String]");
                 messageDialogs.ShowAsync();
                 return;
             }
-            if(azs_storage.Text.Length!=0)
+            else
             {
                 Parameter += " -azstr_storage " + azs_storage.Text + " ";
             }
-            else
-            {
-                MessageDialog messageDialogs = new MessageDialog("You have to Set the Connection String of Azure Storage" , "ERROR!");
-                messageDialogs.ShowAsync();
-                return;
-            }
 
-            /*
-            if (Source.SelectedItem == null || Source.SelectedItem == "cam")
+            // Send Request to ConsoleConnector
+            await ((App)Application.Current).SendRequestToConsoleConnector(connector_commandstr, Parameter);
+        }
+
+        private async void fg_select_button_Click(object sender, RoutedEventArgs e)
+        {
+            var resourceLoader = Windows.ApplicationModel.Resources.ResourceLoader.GetForCurrentView();
+            var folderPicker = new Windows.Storage.Pickers.FolderPicker();
+            folderPicker.SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.Desktop;
+            folderPicker.FileTypeFilter.Add("*");
+            StorageFolder folder = await folderPicker.PickSingleFolderAsync();
+            if (folder != null)
             {
-                Parameter += " -i cam";
-            }
-            else if (Source.SelectedItem.ToString().Contains(" "))
-            {
-                Parameter += " -i \"" + Source.SelectedItem.ToString() + "\" ";
+                // Application now has read/write access to the picked file
+                fg_Path.Text = folder.Path;
             }
             else
             {
-                Parameter += " -i " + Source.SelectedItem.ToString() + " ";
-            }*/
-            // Send Request to ConsoleConnector
-            await ((App)Application.Current).SendRequestToConsoleConnector("Face_Recognition_Demo_Azure_Iot_Page", Parameter + " --verbose -fg DEFAULT ");
+                MessageDialog messageDialogs = new MessageDialog(resourceLoader.GetString("Selected_File_Empty"), resourceLoader.GetString("Warning") + " !");
+                messageDialogs.ShowAsync();
+            }
         }
+
         private async void Preview_Button_Click(object sender, RoutedEventArgs e)
         {
             // Using Windows.Media.Capture.MediaCapture APIs 
@@ -424,10 +462,12 @@ namespace OpenVINO_Windows_Demo.Demos
                 await mediaCaptureMgr.StartPreviewAsync();
                 previewing = true;
             }
-
-
-
-            //await FullTrustProcessLauncher.LaunchFullTrustProcessForCurrentAppAsync();
+        }
+        public Face_Recognition_Demo_Azure_Iot_Page()
+        {
+            this.InitializeComponent();
+            get_all_and_downloaded_models();
+            fg_Path.PlaceholderText = "Default Path: " + defaultFG_Path;
         }
     }
 }

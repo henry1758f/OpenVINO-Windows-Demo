@@ -101,6 +101,15 @@ namespace OpenVINO_Windows_Demo
         {
             var deferral = e.SuspendingOperation.GetDeferral();
             //TODO: 儲存應用程式狀態，並停止任何背景活動
+            try
+            {
+                SendRequestToConsoleConnector("Command", "Close");
+            }
+            catch(Exception)
+            {
+
+            }
+            
             deferral.Complete();
         }
         
@@ -108,7 +117,7 @@ namespace OpenVINO_Windows_Demo
 
         AppServiceConnection Connection = null;
         BackgroundTaskDeferral appServiceDeferral = null;
-        private async void APPLaunch()
+        public async void APPLaunch()
         {
             await FullTrustProcessLauncher.LaunchFullTrustProcessForCurrentAppAsync();
         }
@@ -137,7 +146,14 @@ namespace OpenVINO_Windows_Demo
                 Connection = details.AppServiceConnection;
 
                 // Send request to ConsoleConnector
-                await SendRequestToConsoleConnector("Command", "initialize");
+                try
+                {
+                    await SendRequestToConsoleConnector("Command", "initialize");
+                }
+                catch (Exception e)
+                {
+
+                }
             }
         }
 
@@ -161,13 +177,54 @@ namespace OpenVINO_Windows_Demo
 
             AppServiceResponse response = null;
             response = await Connection.SendMessageAsync(request);
-
-            string serialNumber = response.Message["serialNumber"] as string;
-            
-            var localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
-
-            localSettings.Values["serialNumber"] = serialNumber;
-
+            if(response.Message.Keys.Contains("CPU"))
+            {
+                string CPU_info = response.Message["CPU"] as string;
+                var localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
+                localSettings.Values["CPU"] = CPU_info;
+            }
+            else if (response.Message.Keys.Contains("OpenVINO"))
+            {
+                string OpenVINO_info = response.Message["OpenVINO"] as string;
+                var localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
+                localSettings.Values["OpenVINO"] = OpenVINO_info;
+            }
+            else if (response.Message.Keys.Contains("SampleDemo"))
+            {
+                string OpenVINO_info = response.Message["SampleDemo"] as string;
+                var localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
+                localSettings.Values["SampleDemo"] = OpenVINO_info;
+            }
+            else if (response.Message.Keys.Contains("OMZ_Model"))
+            {
+                string OpenVINO_info = response.Message["OMZ_Model"] as string;
+                var localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
+                localSettings.Values["OMZ_Model"] = OpenVINO_info;
+            }
+            else if (response.Message.Keys.Contains("All_Model_Name"))
+            {
+                string OpenVINO_info = response.Message["All_Model_Name"] as string;
+                var localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
+                localSettings.Values["All_Model_Name"] = OpenVINO_info;
+            }
+            else if (response.Message.Keys.Contains("Get_All_Model_info_json"))
+            {
+                string OpenVINO_info = response.Message["Get_All_Model_info_json"] as string;
+                var localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
+                localSettings.Values["Get_All_Model_info_json"] = OpenVINO_info;
+            }
+            else if (response.Message.Keys.Contains("Get_All_Model_info_json"))
+            {
+                string OpenVINO_info = response.Message["Downloaded_Model_Name"] as string;
+                var localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
+                localSettings.Values["Downloaded_Model_Name"] = OpenVINO_info;
+            }
+            else
+            {
+                
+                var localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
+                localSettings.Values["OMZ_Model"] = "No Detect";
+            }
         }
     }
 }
