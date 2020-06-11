@@ -12,11 +12,11 @@
   <Identity
     Name="9085b9dd-6f91-4b95-85a4-eae5213c6f3c"
     Publisher="CN=henryhuang"
-    Version="0.0.23.0" />
+    Version="0.0.5.0" />
   
   <mp:PhoneIdentity PhoneProductId="9085b9dd-6f91-4b95-85a4-eae5213c6f3c" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
   <Properties>
-    <DisplayName>OpenVINO Windows Demo</DisplayName>
+    <DisplayName>OpenVINO Windows Demo for ASUS</DisplayName>
     <PublisherDisplayName>henryhuang</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
@@ -34,7 +34,7 @@
       Executable="$targetnametoken$.exe"
       EntryPoint="OpenVINO_Windows_Demo.App">
       <uap:VisualElements
-        DisplayName="OpenVINO Windows Demo"
+        DisplayName="OpenVINO Windows Demo for ASUS"
         Square150x150Logo="Assets\Square150x150Logo.png"
         Square44x44Logo="Assets\Square44x44Logo.png"
         Description="OpenVINO Windows Demo"

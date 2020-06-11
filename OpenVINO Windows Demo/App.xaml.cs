@@ -19,6 +19,7 @@ using Windows.ApplicationModel.Activation;
 using Windows.ApplicationModel.AppService;
 using Windows.ApplicationModel.Background;
 using System.Threading.Tasks;
+using Windows.Storage;
 
 namespace OpenVINO_Windows_Demo
 {
@@ -119,6 +120,28 @@ namespace OpenVINO_Windows_Demo
         BackgroundTaskDeferral appServiceDeferral = null;
         public async void APPLaunch()
         {
+            ApplicationDataContainer localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
+            Windows.Storage.ApplicationDataContainer roamingSettings = Windows.Storage.ApplicationData.Current.RoamingSettings;
+            
+            string path = Directory.GetCurrentDirectory();
+            localSettings.Values["default_model_0"] = path + @"\Demos\synnex_demos\models\face-detection-retail-0005.xml";
+            localSettings.Values["default_model_0_target"] = "CPU";
+            localSettings.Values["default_model_1"] = path + @"\Demos\synnex_demos\models\face-reidentification-retail-0095.xml";
+            localSettings.Values["default_model_1_target"] = "CPU";
+            localSettings.Values["default_model_2"] = path + @"\Demos\synnex_demos\models\landmarks-regression-retail-0009.xml";
+            localSettings.Values["default_model_2_target"] = "CPU";
+            localSettings.Values["default_fg"] = UserDataPaths.GetDefault().Pictures + @"\face_gallery";
+            localSettings.Values["model_0"] = localSettings.Values["default_model_0"];
+            localSettings.Values["model_0_target"] = localSettings.Values["default_model_0_target"];
+            localSettings.Values["model_1"] = localSettings.Values["default_model_1"];
+            localSettings.Values["model_1_target"] = localSettings.Values["default_model_1_target"];
+            localSettings.Values["model_2"] = localSettings.Values["default_model_2"];
+            localSettings.Values["model_2_target"] = localSettings.Values["default_model_2_target"];
+            localSettings.Values["fg"] = localSettings.Values["default_fg"];
+            //localSettings.Values["iot_device_id"] = "";
+            //localSettings.Values["azure_iot_hub_connection_string"] = "";
+            //localSettings.Values["azure_storage_connection_string"] = "";
+
             await FullTrustProcessLauncher.LaunchFullTrustProcessForCurrentAppAsync();
         }
         /// <summary>

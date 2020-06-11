@@ -757,7 +757,7 @@ namespace ConsoleConnector
             processStartInfo.FileName = "cmd.exe";
             //processStartInfo.Arguments = "/C \"\"" + setupvars_path + "\" & python \"" + python_demo_path + "face_recognition_demo\\face_recognition_demo.py\"\" " + value_str + " & PAUSE ";
             //processStartInfo.Arguments = "/C \"\"" + setupvars_path + "\" & python \"" + synnex_demo + "face_recognition_demo_Azure_IoT\\face_recognition_demo.py\"\" " + value_str + " & PAUSE ";
-            processStartInfo.Arguments = "/C \"\"" + setupvars_path + "\" & python \"" + App_path + "\\Demos\\synnex_demos\\face_recognition_demo_Azure_IoT\\face_recognition_demo.py\"\" " + value_str + " & PAUSE ";
+            processStartInfo.Arguments = "/C \"\"" + setupvars_path + "\" & python \"" + App_path + "\\Demos\\synnex_demos\\face_recognition_demo_Azure_IoT\\face_recognition_demo.py\" " + value_str + "\" & PAUSE ";
             Console.WriteLine("[DEBUG] " + processStartInfo.Arguments);
             processStartInfo.WindowStyle = ProcessWindowStyle.Normal;
             Process.Start(processStartInfo);

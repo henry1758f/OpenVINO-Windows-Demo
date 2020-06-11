@@ -259,6 +259,15 @@ namespace OpenVINO_Windows_Demo
 
         private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
+            const string connector_commandstr = "Face_Recognition_Demo_Azure_Iot_Page";
+            string Parameter = "";
+            string model_0 = "";
+            string model_1 = "";
+            string model_2 = "";
+            string az_iothub_str = "";
+            string az_storage_str = "";
+            string fg_path = "";
+            
             Refresh_Button.IsEnabled = false;
             version_textbox.Text = "Version " + GetAppVersion();
             //Environment_check_process(sender,e);
@@ -272,12 +281,37 @@ namespace OpenVINO_Windows_Demo
             {
                 await Environment_check("CPU");
                 await Environment_check("OpenVINO");
-                await Environment_check("SampleDemo");
-                await Environment_check("OMZ_Model");
+                //await Environment_check("SampleDemo");
+                //await Environment_check("OMZ_Model");
+                string path = Directory.GetCurrentDirectory();
+                await ((App)Application.Current).SendRequestToConsoleConnector("App_Path", path);
+                ApplicationDataContainer localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
+                model_0 = localSettings.Values["model_0"].ToString();
+                model_1 = localSettings.Values["model_1"].ToString();
+                model_2 = localSettings.Values["model_2"].ToString();
+                fg_path = localSettings.Values["fg"].ToString();
+                Parameter = " -m_fd \"" + model_0 + "\" -d_fd " + localSettings.Values["model_0_target"].ToString();
+                Parameter += " -m_reid \"" + model_1 + "\" -d_reid " + localSettings.Values["model_1_target"].ToString();
+                Parameter += " -m_lm \"" + model_2 + "\" -d_lm " + localSettings.Values["model_2_target"].ToString();
+                Parameter += " -fg " + fg_path;
+                if (localSettings.Values["azure_iot_hub_connection_string"] == null || localSettings.Values["azure_storage_connection_string"] == null || localSettings.Values["azure_iot_hub_connection_string"].ToString().Length == 0 || localSettings.Values["azure_storage_connection_string"].ToString().Length == 0)
+                {
+                    MessageDialog messageDialogs = new MessageDialog("You have to set connection String!!", "Missing Config");
+                    await messageDialogs.ShowAsync();
+                }
+                else
+                {
+                    Parameter += " -azstr_iothub " + localSettings.Values["azure_iot_hub_connection_string"].ToString();
+                    Parameter += " -azstr_storage " + localSettings.Values["azure_storage_connection_string"].ToString();
+                    //Parameter += " -cw 1920 -ch 1080";
+                    await ((App)Application.Current).SendRequestToConsoleConnector(connector_commandstr, Parameter);
+                }
+                
+
             }
             catch (Exception ex)
             {
-                MessageDialog messageDialogs = new MessageDialog("Console Connector is not ready!!");
+                MessageDialog messageDialogs = new MessageDialog("Console Connector is not ready!!" + ex.ToString());
                 messageDialogs.Title = "Console Connetor Problem";
                 await messageDialogs.ShowAsync();
                 Page_Loaded(sender, e);

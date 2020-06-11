@@ -39,11 +39,6 @@ namespace OpenVINO_Windows_Demo
         private readonly List<(string Tag, Type Page)> _pages = new List<(string Tag, Type Page)>
         {
             ("HOME", typeof(HomePage)),
-            ("Apps", typeof(DemosPage)),
-            ("Performance", typeof(BenchmarkPage)),
-            ("downloader", typeof(DownloaderPage)),
-            ("MO", typeof(MOPage)),
-            ("Interactive_Face_Detection_Demo_Page", typeof(Demos.Interactive_Face_Detection_Demo_Page))
         };
 
         private void NavView_Loaded(object sender, RoutedEventArgs e)

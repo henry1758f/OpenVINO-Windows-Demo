@@ -9,8 +9,86 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid>
-        <ToggleSwitch x:Name="connector_show_toggle" x:Uid="connector_show_toggle"
+        <Grid HorizontalAlignment="Center" VerticalAlignment="Top" Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="auto" />
+            </Grid.RowDefinitions>
+
+            <TextBlock Grid.Row="0" x:Uid="Setting_Your_Models" Style="{StaticResource TitleTextBlockStyle}" 
+                   HorizontalAlignment="Left" VerticalAlignment="Center" />
+            <TextBlock Grid.Row="1" x:Uid="Selection_Face_Detection_model" Margin="5" Style="{StaticResource SubtitleTextBlockStyle}" 
+                   HorizontalAlignment="Left" VerticalAlignment="Bottom" x:Name="model0_TextBlock"/>
+            <RelativePanel  Grid.Row="2">
+                <TextBox x:Name="model0_name" Width="600" RelativePanel.AlignLeftWithPanel="True" />
+                <TextBox x:Name="model0_target" x:Uid="Demos_Target_Device" Width="200" RelativePanel.RightOf="model0_name"  Margin="10,0"  >
+                </TextBox>
+            </RelativePanel>
+
+            <TextBlock Grid.Row="3" x:Uid="Selection_Facial_Landmarks_Regression_model" Margin="5" Style="{StaticResource SubtitleTextBlockStyle}" 
+                   HorizontalAlignment="Left" VerticalAlignment="Bottom" x:Name="model1_TextBlock"/>
+            <RelativePanel  Grid.Row="4">
+                <TextBox x:Name="model1_name" Width="600" RelativePanel.AlignLeftWithPanel="True" />
+                <TextBox x:Name="model1_target" x:Uid="Demos_Target_Device" Width="200" RelativePanel.RightOf="model1_name"  Margin="10,0"  >
+                </TextBox>
+            </RelativePanel>
+
+            <TextBlock Grid.Row="5" x:Uid="Selection_Face_Reidentification_model" Margin="5" Style="{StaticResource SubtitleTextBlockStyle}" 
+                   HorizontalAlignment="Left" VerticalAlignment="Bottom" x:Name="model2_TextBlock"/>
+            <RelativePanel  Grid.Row="6">
+                <TextBox x:Name="model2_name" Width="600" RelativePanel.AlignLeftWithPanel="True" />
+                <TextBox x:Name="model2_target" x:Uid="Demos_Target_Device" Width="200" RelativePanel.RightOf="model2_name"  Margin="10,0" >
+                </TextBox>
+            </RelativePanel>
+
+            <TextBlock Grid.Row="7" x:Uid="Set_Face_Gallery" Margin="5" Style="{StaticResource SubtitleTextBlockStyle}" 
+                   HorizontalAlignment="Left" VerticalAlignment="Bottom" x:Name="fg_TextBlock" Width="600"/>
+            <RelativePanel  Grid.Row="8">
+                <TextBox x:Name="fg_Path" PlaceholderText="Default is " RelativePanel.AlignLeftWithPanel="True" />
+            </RelativePanel>
+            <RelativePanel Grid.Row="9">
+                <ToggleSwitch x:Name="run_detector_toggle" x:Uid="run_detector_toggle"
+                              OffContent="Disable"
+                              OnContent="Enable" RelativePanel.AlignLeftWithPanel="True"/>
+                <ToggleSwitch x:Name="allow_grow_toggle" x:Uid="allow_grow_toggle"
+                              OffContent="Disable"
+                              OnContent="Enable" RelativePanel.Below="run_detector_toggle"/>
+            </RelativePanel>
+
+            <RelativePanel Grid.Row="10">
+                <TextBlock Name="IoT_Hub_Hint" x:Uid="Connection_String_Hint_IoT_Hub" Style="{StaticResource SubtitleTextBlockStyle}" HorizontalAlignment="Left" RelativePanel.AlignLeftWithPanel="True"/>
+                <TextBox x:Name="azs_iothub" PlaceholderText="Enter Your Connection String" RelativePanel.AlignLeftWithPanel="True" RelativePanel.Below="IoT_Hub_Hint" RelativePanel.AlignRightWithPanel="True"/>
+                <TextBlock Name="IoT_Storage_Hint" x:Uid="Connection_String_Hint_IoT_Storage" Style="{StaticResource SubtitleTextBlockStyle}" HorizontalAlignment="Left" RelativePanel.AlignLeftWithPanel="True" RelativePanel.Below="azs_iothub"/>
+                <TextBox x:Name="azs_storage" PlaceholderText="Enter Your Connection String" RelativePanel.AlignLeftWithPanel="True" RelativePanel.Below="IoT_Storage_Hint" RelativePanel.AlignRightWithPanel="True"/>
+            </RelativePanel>
+
+            <TextBlock Grid.Row="11" x:Uid="Setting_Your_Inference_Source" Style="{StaticResource TitleTextBlockStyle}" 
+                   HorizontalAlignment="Left" VerticalAlignment="Center" />
+            <RelativePanel  Grid.Row="12">
+                <TextBox x:Name="Source" PlaceholderText="cam" RelativePanel.AlignLeftWithPanel="True"/>
+            </RelativePanel>
+            <RelativePanel Grid.Row="13">
+                <Button Name="Apply_Button" Content="Apply Settings" Click="Apply_Button_Click"/>
+            </RelativePanel>
+            <ToggleSwitch x:Name="connector_show_toggle" x:Uid="connector_show_toggle" Grid.Row="14"
                               OffContent="Disable"
                               OnContent="Enable" Toggled="connector_show_toggle_Toggled"/>
+        </Grid>
     </Grid>
 </Page>

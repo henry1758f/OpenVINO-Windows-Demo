@@ -14,6 +14,7 @@ import random
 import time
 import threading
 import datetime
+import json
 # Using the Python Device SDK for IoT Hub:
 #   https://github.com/Azure/azure-iot-sdk-python
 # The sample connects to a device-specific MQTT endpoint on your IoT Hub.
@@ -38,8 +39,25 @@ MATCH_ALGO = ['HUNGARIAN', 'MIN_DIST']
 
 azure_delay_counter = 0
 AZURE_DELAY_LIMIT = 100
+ACCESS_COUNTER_LIMIT = 50
+
+Access_Counter = -1
+Access_Person = 0
 MSG_TXT = '{{"deviceID": "{deviceID}","employeeID": "{person}","accuracy": {accuracy}}}'
 
+class employee():
+    def __init__(self,ID,name,department,title,sex,email,mobilePhone,extension,allowedZone,allowedStatus):
+        self.name = name
+        self.id = ID
+        self.department = department
+        self.title = title
+        self.sex = sex
+        self.email = email
+        self.mobilePhone = mobilePhone
+        self.extension = extension
+        self.allowedZone = allowedZone
+        self.allowedStatus = allowedStatus
+employee0 = employee(0,'unknow','unknow','unknow','unknow','unknow','unknow','unknow','unknow','unknow')
 
 def build_argparser():
     parser = ArgumentParser()
@@ -203,7 +221,6 @@ class FrameProcessor:
             "Expected input frame in (H, W, C) format"
         assert frame.shape[2] in [3, 4], \
             "Expected BGR or BGRA input"
-
         orig_image = frame.copy()
         frame = frame.transpose((2, 0, 1)) # HWC to CHW
         frame = np.expand_dims(frame, axis=0)
@@ -297,9 +314,28 @@ class Visualizer:
             .face_identifier.get_identity_label(identity.id)
 
         # Draw face ROI border
-        cv2.rectangle(frame,
-                      tuple(roi.position), tuple(roi.position + roi.size),
-                      (0, 220, 0), 2)
+        color = (220, 0, 0)
+        thick = 2
+        global Access_Person
+        global Access_Counter
+        global employee0
+        print("[DEBUG] Access_Person:{value1},label:{value2}".format(value1=Access_Person,value2=label))
+
+        if label == Access_Person and employee0.allowedStatus == '1' :
+            color = (0, 220, 0)
+            thick = 5
+        else:
+            color = (0, 0, 220)
+            thick = 5
+        if identity.id == FaceIdentifier.UNKNOWN_ID:
+            thick = 2
+        print("[DEBUG] roi size:{size}, position:{pos}".format(size=roi.size,pos=roi.position))
+        if roi.size[0] > 250 or roi.size[1] > 250:
+            cv2.rectangle(frame,
+                            tuple(roi.position), tuple(roi.position + roi.size),
+                            color, thick)
+        else:
+            return
 
         # Draw identity label
         text_scale = 0.5
@@ -308,7 +344,10 @@ class Visualizer:
         line_height = np.array([0, text_size[0][1]])
         text = label
         if identity.id != FaceIdentifier.UNKNOWN_ID:
-            text += ' %.2f%%' % (100.0 * (1 - identity.distance))
+            if label == employee0.id:
+                text += ' %.2f%%' % (100.0 * (1 - identity.distance)) + " " + employee0.name
+            else:
+                text += ' %.2f%%' % (100.0 * (1 - identity.distance)) + " Updating informations..."
         self.draw_text_with_background(frame, text,
                                        roi.position - line_height * 0.5,
                                        font, scale=text_scale)
@@ -362,15 +401,18 @@ class Visualizer:
         color = (255, 255, 255)
         font = cv2.FONT_HERSHEY_SIMPLEX
         text_scale = 0.5
-        text = "Press '%s' key to exit" % (self.BREAK_KEY_LABELS)
+        text = "SYNNEX Technology International Corp. (%s)" % (self.BREAK_KEY_LABELS)
         thickness = 2
         text_size = cv2.getTextSize(text, font, text_scale, thickness)
         origin = np.array([frame.shape[-2] - text_size[0][0] - 10, 10])
         line_height = np.array([0, text_size[0][1]]) * 1.5
         cv2.putText(frame, text,
                     tuple(origin.astype(int)), font, text_scale, color, thickness)
-
-        cv2.imshow('Face recognition demo', frame)
+        cv2.namedWindow("SYNNEX Face Recognication Demo", cv2.WND_PROP_FULLSCREEN)
+        cv2.setWindowProperty("SYNNEX Face Recognication Demo",cv2.WND_PROP_FULLSCREEN,cv2.WINDOW_FULLSCREEN)
+        cv2.imshow('SYNNEX Face Recognication Demo', frame)
+        
+        
 
     def should_stop_display(self):
         key = cv2.waitKey(self.frame_timeout) & 0xFF
@@ -416,19 +458,21 @@ class Visualizer:
 
     def run(self, args):
         input_stream = Visualizer.open_input_stream(args.input)
+        input_stream.set(cv2.CAP_PROP_FRAME_WIDTH,1920)
+        input_stream.set(cv2.CAP_PROP_FRAME_HEIGHT,1080)
         if input_stream is None or not input_stream.isOpened():
             log.error("Cannot open input stream: %s" % args.input)
         fps = input_stream.get(cv2.CAP_PROP_FPS)
         frame_size = (int(input_stream.get(cv2.CAP_PROP_FRAME_WIDTH)),
                       int(input_stream.get(cv2.CAP_PROP_FRAME_HEIGHT)))
+        #frame_size = (1920,1080)
         self.frame_count = int(input_stream.get(cv2.CAP_PROP_FRAME_COUNT))
         if args.crop_width and args.crop_height:
             crop_size = (args.crop_width, args.crop_height)
             frame_size = tuple(np.minimum(frame_size, crop_size))
-        log.info("Input stream info: %d x %d @ %.2f FPS" % \
+        print("Input stream info: %d x %d @ %.2f FPS" % \
             (frame_size[0], frame_size[1], fps))
         output_stream = Visualizer.open_output_stream(args.output, fps, frame_size)
-
         self.process(input_stream, output_stream)
 
         # Release resources
@@ -466,11 +510,6 @@ class Visualizer:
 
     # Azure IoT
 
-    
-
-
-    
-
     def iothub_client_telemetry_sample_run(self, frame, roi, identity):
         try:
             label = self.frame_processor \
@@ -487,7 +526,11 @@ class Visualizer:
             else:
                 acc = 0.0
 
-
+            origin = np.array([100, 10])
+            color = (10, 160, 10)
+            font = cv2.FONT_HERSHEY_SIMPLEX
+            text_scale = 0.5
+            self.draw_text_with_background(frame,"frfrrfrfffffffffffffffffffffffffffffffffffffffrfr", (origin ), font, text_scale, color)
             # Build the message with simulated telemetry values.
             msg_txt_formatted = MSG_TXT.format(deviceID=devID, person=label, accuracy=acc)
             message = Message(msg_txt_formatted)
@@ -496,7 +539,6 @@ class Visualizer:
                 message.custom_properties["Unknow_Person"] = "false"
             else:
                 message.custom_properties["Unknow_Person"] = "true"
-
             # Send the message.
             print( "Sending message: {}".format(message) )
             client.send_message(message)
@@ -518,6 +560,37 @@ def iothub_client_reboot_listener(client):
             method_name=method_request.name,
             payload=method_request.payload)  
             )
+        iothub_json_payload = json.loads(str(method_request.payload).replace("'",'"'))
+        if method_request.name == "detectEmployee":
+            global employee0
+            employee0 = employee( iothub_json_payload['employeeID'],
+                                    iothub_json_payload['name'],
+                                    iothub_json_payload['department'],
+                                    iothub_json_payload['title'],
+                                    iothub_json_payload['sex'],
+                                    iothub_json_payload['email'],
+                                    iothub_json_payload['mobilePhone'],
+                                    iothub_json_payload['extension'],
+                                    iothub_json_payload['allowedZone'],
+                                    iothub_json_payload['allowedStatus'] )
+            print("[ INFO ] Get ID information!\n\tID:{ID}\n\tName:{name}\n\tDepartment:{dept}\n\tTitle:{title}\n\tSexual:{sex}\n\temail:{mail}\n\tMobile:{mobile}\n\tExtension:{ext}\n\tAllowedZone:{zone}\n\tAllowedStatus:{allowed}".format(
+                    ID=employee0.id ,
+                    name=employee0.name ,
+                    dept=employee0.department ,
+                    title=employee0.title ,
+                    sex=employee0.sex ,
+                    mail=employee0.email ,
+                    mobile=employee0.mobilePhone,
+                    ext=employee0.extension,
+                    zone=employee0.allowedZone,
+                    allowed=employee0.allowedStatus )
+                )
+            global Access_Person
+            global Access_Counter
+            Access_Person = employee0.id
+                    
+        
+        
         #time.sleep(20)
         #print( "Device rebooted")
 

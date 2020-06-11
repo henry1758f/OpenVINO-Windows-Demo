@@ -25,8 +25,9 @@
     <GenerateTestArtifacts>True</GenerateTestArtifacts>
     <AppxBundle>Always</AppxBundle>
     <AppxBundlePlatforms>x64</AppxBundlePlatforms>
-    <AppInstallerUri>https://synnexopenvinodemo.blob.core.windows.net/windowsdemoapp/</AppInstallerUri>
+    <AppInstallerUri>https://synnexopenvinodemo.blob.core.windows.net/synnexasusintelligentedge/</AppInstallerUri>
     <HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
+    <AppxPackageDir>D:\Intel\OpenVINO Windows Demo\OpenVINO Windows Demo\AppPackages\ASUS\</AppxPackageDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
@@ -188,6 +189,10 @@
     <Content Include="Demos\synnex_demos\face_recognition_demo_Azure_IoT\requirements.txt" />
     <Content Include="Demos\synnex_demos\face_recognition_demo_Azure_IoT\utils.py" />
     <Content Include="Demos\synnex_demos\face_recognition_demo_Azure_IoT\__init__.py" />
+    <Content Include="Demos\synnex_demos\models\face-detection-0105.xml" />
+    <Content Include="Demos\synnex_demos\models\face-detection-retail-0005.xml" />
+    <Content Include="Demos\synnex_demos\models\face-reidentification-retail-0095.xml" />
+    <Content Include="Demos\synnex_demos\models\landmarks-regression-retail-0009.xml" />
     <Content Include="Demos\synnex_demos\requirements.txt" />
     <Content Include="Properties\Default.rd.xml" />
     <Content Include="Assets\LockScreenLogo.scale-200.png" />
@@ -280,6 +285,10 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Demos\synnex_demos\face_recognition_demo_Azure_IoT\README.md" />
+    <Content Include="Demos\synnex_demos\models\face-detection-0105.bin" />
+    <Content Include="Demos\synnex_demos\models\face-reidentification-retail-0095.bin" />
+    <Content Include="Demos\synnex_demos\models\face-detection-retail-0005.bin" />
+    <Content Include="Demos\synnex_demos\models\landmarks-regression-retail-0009.bin" />
     <None Include="OpenVINO Windows Demo_TemporaryKey.pfx" />
     <PRIResource Include="Strings\en\Resources.resw" />
   </ItemGroup>
