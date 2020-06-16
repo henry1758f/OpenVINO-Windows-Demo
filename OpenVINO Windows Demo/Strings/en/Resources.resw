@@ -226,6 +226,12 @@ This demo executes four parallel infer requests for the Age/Gender Recognition, 
   <data name="Sample_build.Text" xml:space="preserve">
     <value>OpenVINO Sample and Demo Compilation</value>
   </data>
+  <data name="Segmentation_Demo_Intro.Text" xml:space="preserve">
+    <value>This topic demonstrates how to run the Image Segmentation demo application, which does inference using semantic segmentation networks.</value>
+  </data>
+  <data name="Segmentation_Demo_Title.Text" xml:space="preserve">
+    <value>Image Segmentation C++ Demo</value>
+  </data>
   <data name="Selected_File_Empty" xml:space="preserve">
     <value>No files have been selected.</value>
   </data>
@@ -264,6 +270,9 @@ This demo executes four parallel infer requests for the Age/Gender Recognition, 
   </data>
   <data name="Selection_Person_Reidentification_model.Text" xml:space="preserve">
     <value>Select a trained Person Reidentification model</value>
+  </data>
+  <data name="Selection_Segmentation_model.Text" xml:space="preserve">
+    <value>Select a trained a trained Semantic Segmentation model</value>
   </data>
   <data name="Setting_Your_Inference_Source.Text" xml:space="preserve">
     <value>Setting Your Inference Source</value>

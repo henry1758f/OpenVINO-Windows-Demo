@@ -152,6 +152,9 @@
     <Compile Include="Demos\Interactive_Face_Detection_Demo_Page.xaml.cs">
       <DependentUpon>Interactive_Face_Detection_Demo_Page.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Demos\Segmentation_demo.xaml.cs">
+      <DependentUpon>Segmentation_demo.xaml</DependentUpon>
+    </Compile>
     <Compile Include="DownloaderPage.xaml.cs">
       <DependentUpon>DownloaderPage.xaml</DependentUpon>
     </Compile>
@@ -232,6 +235,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Demos\Interactive_Face_Detection_Demo_Page.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Demos\Segmentation_demo.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

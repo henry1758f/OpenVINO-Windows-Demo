@@ -1,0 +1,72 @@
+﻿<Page
+    x:Class="OpenVINO_Windows_Demo.Demos.Segmentation_demo"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <TextBlock x:Uid="Segmentation_Demo_Title" Style="{StaticResource TitleTextBlockStyle}" Grid.Row="0"/>
+            <TextBlock Margin="10" Style="{ThemeResource BaseTextBlockStyle}" Grid.Row="1" x:Uid="Segmentation_Demo_Intro"/>
+            <StackPanel Grid.Row="2">
+                <Button x:Uid="Demos_Run_Button" Click="Button_Click" HorizontalAlignment="Center"/>
+            </StackPanel>
+        </Grid>
+
+        <Grid HorizontalAlignment="Center" VerticalAlignment="Top" Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="auto" />
+            </Grid.RowDefinitions>
+
+            <TextBlock Grid.Row="0" x:Uid="Setting_Your_Models" Style="{StaticResource TitleTextBlockStyle}" 
+                   HorizontalAlignment="Left" VerticalAlignment="Center" />
+            <TextBlock Grid.Row="1" x:Uid="Selection_Segmentation_model" Margin="5" Style="{StaticResource SubtitleTextBlockStyle}" 
+                   HorizontalAlignment="Left" VerticalAlignment="Bottom" x:Name="model0_TextBlock"/>
+            <RelativePanel  Grid.Row="2">
+                <ComboBox x:Name="model0_name" Width="600" RelativePanel.AlignLeftWithPanel="True" ItemsSource="{x:Bind combobox0_Models}"/>
+                <Button x:Name="model0_select_button" Content="..." RelativePanel.RightOf="model0_name" />
+                <ComboBox x:Name="model0_target" x:Uid="Demos_Target_Device" Width="200" RelativePanel.RightOf="model0_select_button" Margin="10,0" ItemsSource="{x:Bind Target_device_list}" >
+                </ComboBox>
+            </RelativePanel>
+
+            <TextBlock Grid.Row="11" x:Uid="Setting_Your_Inference_Source" Style="{StaticResource TitleTextBlockStyle}" 
+                   HorizontalAlignment="Left" VerticalAlignment="Center" />
+            <RelativePanel  Grid.Row="12">
+                <TextBox x:Name="Source" PlaceholderText="cam" RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignRightWith="Source_select_button"/>
+                <Button x:Name="Source_select_button" Content="..." RelativePanel.AlignRightWithPanel="True" Click="Source_select_button_Click"/>
+            </RelativePanel>
+            <RelativePanel Grid.Row="13">
+                <Button Name="Preview_Button" Click="Preview_Button_Click" x:Uid="Camera_Preview_Button"/>
+                <CaptureElement x:Name="PreviewControl"  RelativePanel.Below="Preview_Button" />
+            </RelativePanel>
+        </Grid>
+    </Grid>
+</Page>

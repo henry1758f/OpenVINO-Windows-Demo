@@ -124,7 +124,7 @@ namespace OpenVINO_Windows_Demo
                     try
                     {
                         OpenVINO_info.Text = localSettings.Values["OpenVINO"].ToString();
-                        if (OpenVINO_info.Text.Contains("openvino_2020.2"))
+                        if (OpenVINO_info.Text.Contains("openvino_2020.2") || OpenVINO_info.Text.Contains("openvino_2020.3"))
                         {
                             OpenVINO_Checking_sign.Fill = new SolidColorBrush(Colors.Green);
                             OpenVINO_info_border.BorderBrush = new SolidColorBrush(Colors.Green);
@@ -134,7 +134,7 @@ namespace OpenVINO_Windows_Demo
                         }
                         else
                         {
-                            OpenVINO_info.Text += "\nPlease install OpenVINO v2020.2";
+                            OpenVINO_info.Text += "\nPlease install OpenVINO v2020.2 or the Latest version.";
                             OpenVINO_Checking_sign.Fill = new SolidColorBrush(Colors.Red);
                             OpenVINO_info_border.BorderBrush = new SolidColorBrush(Colors.Red);
                             Fix_OpenVINO.Visibility = Visibility.Visible;
@@ -158,7 +158,7 @@ namespace OpenVINO_Windows_Demo
                     SampleDemo_info_border.BorderBrush = new SolidColorBrush(Colors.Yellow);
                     SampleDemo_info_border.BorderThickness = new Thickness(1);
                     SampleDemo_info.Text = "Checking...";
-                    if (OpenVINO_info.Text.Contains("openvino_2020.2"))
+                    if (OpenVINO_info.Text.Contains("openvino_2020.2") || OpenVINO_info.Text.Contains("openvino_2020.3"))
                     {
                         await ((App)Application.Current).SendRequestToConsoleConnector("Home_Page", "SampleDemo_check");
                         try

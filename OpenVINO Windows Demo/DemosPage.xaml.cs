@@ -59,6 +59,12 @@ namespace OpenVINO_Windows_Demo
             "",
             "/Assets/Interactive_Face_Detection_C++_Demo.png"
             ),
+            ("Image Segmentation C++ Demo",
+            "PATH",
+            "This topic demonstrates how to run the Image Segmentation demo application, which does inference using semantic segmentation networks.",
+            "https://docs.openvinotoolkit.org/latest/_demos_crossroad_camera_demo_README.html",
+            "/Assets/Interactive_Face_Detection_C++_Demo.png"
+            ),
             ("Face Recognition Demo Azure IoT Showcase",
             "PATH",
             "This example demonstrates an approach to create interactive applications for video processing. It shows the basic architecture for building model pipelines supporting model placement on different devices and simultaneous parallel or sequential execution using OpenVINO library in Python. In particular, this demo uses 3 models to build a pipeline able to detect faces on videos, their keypoints (aka \"landmarks\"), and recognize persons using the provided faces database (the gallery).",
@@ -107,6 +113,11 @@ namespace OpenVINO_Windows_Demo
             {
                 //messageDialog.ShowAsync();
                 this.Frame.Navigate(typeof(Demos.Gaze_Estimation_Demo_Page), null);
+            }
+            else if (item.Name == "Image Segmentation C++ Demo")
+            {
+                //messageDialog.ShowAsync();
+                this.Frame.Navigate(typeof(Demos.Segmentation_demo), null);
             }
             else if (item.Name == "Face Recognition Demo Azure IoT Showcase")
             {
