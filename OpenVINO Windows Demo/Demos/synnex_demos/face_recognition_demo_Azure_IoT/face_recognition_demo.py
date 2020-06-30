@@ -59,6 +59,8 @@ class employee():
         self.allowedStatus = allowedStatus
 employee0 = employee(0,'unknow','unknow','unknow','unknow','unknow','unknow','unknow','unknow','unknow')
 
+employee_list = []
+
 def build_argparser():
     parser = ArgumentParser()
 
@@ -563,6 +565,7 @@ def iothub_client_reboot_listener(client):
         iothub_json_payload = json.loads(str(method_request.payload).replace("'",'"'))
         if method_request.name == "detectEmployee":
             global employee0
+            global employee_list
             employee0 = employee( iothub_json_payload['employeeID'],
                                     iothub_json_payload['name'],
                                     iothub_json_payload['department'],
@@ -585,10 +588,25 @@ def iothub_client_reboot_listener(client):
                     zone=employee0.allowedZone,
                     allowed=employee0.allowedStatus )
                 )
+            flag_recognized = False
+            for compare in employee_list:
+                if compare.id == employee0.id:
+                    flag_recognized = True
+            if flag_recognized:
+                employee_list.append(employee0)
+
             global Access_Person
             global Access_Counter
             Access_Person = employee0.id
-                    
+        elif method_request.name == "reboot":
+            jsontime = iothub_json_payload["Time"]
+            print("[ INFO ] REBOOT DEVICE COMMAND RECEIVED!! Reboot in {time} seconds !!!".format(time=jsontime))
+            os.system("shutdown /r /t {time}".format(time=jsontime))
+        elif method_request.name == "command":
+            if iothub_json_payload["Type"] == "restart":
+                print("RESTART")
+            if iothub_json_payload["Type"] == "access_control":
+                print("ACCESS_CONTROL")
         
         
         #time.sleep(20)
