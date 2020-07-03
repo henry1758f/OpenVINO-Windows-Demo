@@ -626,7 +626,7 @@ namespace ConsoleConnector
                         ProcessStartInfo processStartInfo = new ProcessStartInfo()
                         {
                             FileName = "cmd.exe",
-                            Arguments = "/C \"dir %USERPROFILE%\\Documents\\Intel\\OpenVINO /B /S |find \".exe\" \"",
+                            Arguments = "/C \"dir \"%USERPROFILE%\\Documents\\Intel\\OpenVINO\" /B /S |find \".exe\" \"",
                             UseShellExecute = false,
                             RedirectStandardOutput = true,
                             CreateNoWindow = true
@@ -668,7 +668,7 @@ namespace ConsoleConnector
                         ProcessStartInfo processStartInfo = new ProcessStartInfo()
                         {
                             FileName = "cmd.exe",
-                            Arguments = "/C \"dir %USERPROFILE%\\Documents\\Intel\\OpenVINO\\openvino_models /B /S |find \".xml\" \"",
+                            Arguments = "/C \"dir \"%USERPROFILE%\\Documents\\Intel\\OpenVINO\\openvino_models\" /B /S |find \".xml\" \"",
                             UseShellExecute = false,
                             RedirectStandardOutput = true,
                             CreateNoWindow = true
@@ -722,7 +722,7 @@ namespace ConsoleConnector
             Console.WriteLine("[INFO] Interactive_face_detection_demo " + value_str);
             ProcessStartInfo processStartInfo = new ProcessStartInfo();
             processStartInfo.FileName = "cmd.exe";
-            processStartInfo.Arguments = "/C \"" + setupvars_path + "\" & " + demo_Path + "interactive_face_detection_demo.exe " + value_str + " ";
+            processStartInfo.Arguments = "/C \"\"" + setupvars_path + "\" & \"" + demo_Path + "interactive_face_detection_demo.exe\" " + value_str + " \"";
             //processStartInfo.Arguments = "/C \"" + setupvars_path + "\" &  %USERPROFILE%\\Documents\\Intel\\OpenVINO\\inference_engine_demos_build\\intel64\\Release\\interactive_face_detection_demo.exe" +
             //    " -m D:\\Intel\\openvino_models\\models\\SYNNEX_demo\\intel\\face-detection-adas-binary-0001\\FP32-INT1\\face-detection-adas-binary-0001.xml -i cam & PAUSE";
             //processStartInfo.Arguments = "/C \"" + setupvars_path + "\" & PAUSE";
@@ -772,7 +772,7 @@ namespace ConsoleConnector
             ProcessStartInfo processStartInfo = new ProcessStartInfo();
             processStartInfo.FileName = "cmd.exe";
 
-            processStartInfo.Arguments = "/C \"" + setupvars_path + "\" & " + demo_Path + "crossroad_camera_demo.exe " + value_str + " & PAUSE ";
+            processStartInfo.Arguments = "/C \"\"" + setupvars_path + "\" & \"" + demo_Path + "crossroad_camera_demo.exe\" " + value_str + "\" & PAUSE ";
             Console.WriteLine("[DEBUG] " + processStartInfo.Arguments);
             processStartInfo.WindowStyle = ProcessWindowStyle.Normal;
             Process.Start(processStartInfo);
@@ -787,7 +787,7 @@ namespace ConsoleConnector
             ProcessStartInfo processStartInfo = new ProcessStartInfo();
             processStartInfo.FileName = "cmd.exe";
 
-            processStartInfo.Arguments = "/C \"" + setupvars_path + "\" & " + demo_Path + "human_pose_estimation_demo.exe " + value_str + " & PAUSE ";
+            processStartInfo.Arguments = "/C \"\"" + setupvars_path + "\" & \"" + demo_Path + "human_pose_estimation_demo.exe\" " + value_str + "\" & PAUSE ";
             Console.WriteLine("[DEBUG] " + processStartInfo.Arguments);
             processStartInfo.WindowStyle = ProcessWindowStyle.Normal;
             Process.Start(processStartInfo);
@@ -802,7 +802,7 @@ namespace ConsoleConnector
             ProcessStartInfo processStartInfo = new ProcessStartInfo();
             processStartInfo.FileName = "cmd.exe";
 
-            processStartInfo.Arguments = "/C \"" + setupvars_path + "\" & " + demo_Path + "segmentation_demo .exe " + value_str + " & PAUSE ";
+            processStartInfo.Arguments = "/C \"\"" + setupvars_path + "\" & \"" + demo_Path + "segmentation_demo.exe\" " + value_str + "\" & PAUSE ";
             Console.WriteLine("[DEBUG] " + processStartInfo.Arguments);
             processStartInfo.WindowStyle = ProcessWindowStyle.Normal;
             Process.Start(processStartInfo);
@@ -817,7 +817,7 @@ namespace ConsoleConnector
             ProcessStartInfo processStartInfo = new ProcessStartInfo();
             processStartInfo.FileName = "cmd.exe";
 
-            processStartInfo.Arguments = "/C \"" + setupvars_path + "\" & " + demo_Path + "gaze_estimation_demo.exe " + value_str + " & PAUSE ";
+            processStartInfo.Arguments = "/C \"\"" + setupvars_path + "\" & \"" + demo_Path + "gaze_estimation_demo.exe\" " + value_str + "\" & PAUSE ";
             Console.WriteLine("[DEBUG] " + processStartInfo.Arguments);
             processStartInfo.WindowStyle = ProcessWindowStyle.Normal;
             Process.Start(processStartInfo);

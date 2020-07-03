@@ -345,7 +345,7 @@ namespace OpenVINO_Windows_Demo.Demos
             else
             {
                 Combobox_models model = (Combobox_models)model0_name.SelectedItem;
-                Parameter += " -m" + model0_arg_parse + " " + model.model_path + " ";
+                Parameter += " -m" + model0_arg_parse + " \"" + model.model_path + "\" ";
                 if (model0_target.SelectedItem != null)
                 {
                     Parameter += " -d" + model0_arg_parse + " " + model0_target.SelectedItem.ToString() + " ";
@@ -360,7 +360,7 @@ namespace OpenVINO_Windows_Demo.Demos
             else
             {
                 Combobox_models model = (Combobox_models)model1_name.SelectedItem;
-                Parameter += " -m" + model1_arg_parse + " " + model.model_path + " ";
+                Parameter += " -m" + model1_arg_parse + " \"" + model.model_path + "\" ";
                 if (model1_target.SelectedItem != null)
                 {
                     Parameter += " -d" + model1_arg_parse + " " + model1_target.SelectedItem.ToString() + " ";
@@ -375,7 +375,7 @@ namespace OpenVINO_Windows_Demo.Demos
             else
             {
                 Combobox_models model = (Combobox_models)model2_name.SelectedItem;
-                Parameter += " -m" + model2_arg_parse + " " + model.model_path + " ";
+                Parameter += " -m" + model2_arg_parse + " \"" + model.model_path + "\" ";
                 if (model2_target.SelectedItem != null)
                 {
                     Parameter += " -d" + model2_arg_parse + " " + model2_target.SelectedItem.ToString() + " ";
@@ -390,7 +390,7 @@ namespace OpenVINO_Windows_Demo.Demos
             else
             {
                 Combobox_models model = (Combobox_models)model3_name.SelectedItem;
-                Parameter += " -m" + model3_arg_parse + " " + model.model_path + " ";
+                Parameter += " -m" + model3_arg_parse + " \"" + model.model_path + "\" ";
                 if (model3_target.SelectedItem != null)
                 {
                     Parameter += " -d" + model3_arg_parse + " " + model3_target.SelectedItem.ToString() + " ";
@@ -409,7 +409,7 @@ namespace OpenVINO_Windows_Demo.Demos
             }
             else
             {
-                Parameter += " -i " + Source.Text + " ";
+                Parameter += " -i \"" + Source.Text + "\" ";
             }
             // Send Request to ConsoleConnector
             await ((App)Application.Current).SendRequestToConsoleConnector(connector_commandstr, Parameter);

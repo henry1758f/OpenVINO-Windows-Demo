@@ -12,7 +12,7 @@
   <Identity
     Name="9085b9dd-6f91-4b95-85a4-eae5213c6f3c"
     Publisher="CN=henryhuang"
-    Version="0.0.23.0" />
+    Version="0.0.29.0" />
   
   <mp:PhoneIdentity PhoneProductId="9085b9dd-6f91-4b95-85a4-eae5213c6f3c" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
   <Properties>
@@ -35,11 +35,9 @@
       EntryPoint="OpenVINO_Windows_Demo.App">
       <uap:VisualElements
         DisplayName="OpenVINO Windows Demo"
-        Square150x150Logo="Assets\Square150x150Logo.png"
-        Square44x44Logo="Assets\Square44x44Logo.png"
         Description="OpenVINO Windows Demo"
-        BackgroundColor="transparent">
-        <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png"/>
+        BackgroundColor="transparent" Square150x150Logo="Assets\Square150x150Logo.png" Square44x44Logo="Assets\Square44x44Logo.png">
+        <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png"  Square71x71Logo="Assets\SmallTile.png" Square310x310Logo="Assets\LargeTile.png"/>
         <uap:SplashScreen Image="Assets\SplashScreen.png" />
       </uap:VisualElements>
       <Extensions>
