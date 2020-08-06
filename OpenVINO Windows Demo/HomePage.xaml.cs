@@ -124,7 +124,7 @@ namespace OpenVINO_Windows_Demo
                     try
                     {
                         OpenVINO_info.Text = localSettings.Values["OpenVINO"].ToString();
-                        if (OpenVINO_info.Text.Contains("openvino_2020.2"))
+                        if (OpenVINO_info.Text.Contains("openvino_2020.2") || OpenVINO_info.Text.Contains("openvino_2020.3"))
                         {
                             OpenVINO_Checking_sign.Fill = new SolidColorBrush(Colors.Green);
                             OpenVINO_info_border.BorderBrush = new SolidColorBrush(Colors.Green);
@@ -158,7 +158,7 @@ namespace OpenVINO_Windows_Demo
                     SampleDemo_info_border.BorderBrush = new SolidColorBrush(Colors.Yellow);
                     SampleDemo_info_border.BorderThickness = new Thickness(1);
                     SampleDemo_info.Text = "Checking...";
-                    if (OpenVINO_info.Text.Contains("openvino_2020.2"))
+                    if (OpenVINO_info.Text.Contains("openvino_2020.2") || OpenVINO_info.Text.Contains("openvino_2020.3"))
                     {
                         await ((App)Application.Current).SendRequestToConsoleConnector("Home_Page", "SampleDemo_check");
                         try
@@ -267,6 +267,7 @@ namespace OpenVINO_Windows_Demo
             string az_iothub_str = "";
             string az_storage_str = "";
             string fg_path = "";
+            string Azdelaytime = "50";
             
             Refresh_Button.IsEnabled = false;
             version_textbox.Text = "Version " + GetAppVersion();
@@ -290,10 +291,16 @@ namespace OpenVINO_Windows_Demo
                 model_1 = localSettings.Values["model_1"].ToString();
                 model_2 = localSettings.Values["model_2"].ToString();
                 fg_path = localSettings.Values["fg"].ToString();
+                if (localSettings.Values["azure_delay_time"] == null)
+                {
+                    localSettings.Values["azure_delay_time"] = 50;
+                }
+                Azdelaytime = localSettings.Values["azure_delay_time"].ToString();
                 Parameter = " -m_fd \"" + model_0 + "\" -d_fd " + localSettings.Values["model_0_target"].ToString();
                 Parameter += " -m_reid \"" + model_1 + "\" -d_reid " + localSettings.Values["model_1_target"].ToString();
                 Parameter += " -m_lm \"" + model_2 + "\" -d_lm " + localSettings.Values["model_2_target"].ToString();
                 Parameter += " -fg " + fg_path;
+                Parameter += " -az_delaytime " + Azdelaytime;
                 if (localSettings.Values["azure_iot_hub_connection_string"] == null || localSettings.Values["azure_storage_connection_string"] == null || localSettings.Values["azure_iot_hub_connection_string"].ToString().Length == 0 || localSettings.Values["azure_storage_connection_string"].ToString().Length == 0)
                 {
                     MessageDialog messageDialogs = new MessageDialog("You have to set connection String!!", "Missing Config");
@@ -306,7 +313,8 @@ namespace OpenVINO_Windows_Demo
                     //Parameter += " -cw 1920 -ch 1080";
                     await ((App)Application.Current).SendRequestToConsoleConnector(connector_commandstr, Parameter);
                 }
-                
+
+
 
             }
             catch (Exception ex)

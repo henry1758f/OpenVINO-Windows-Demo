@@ -74,6 +74,7 @@ namespace OpenVINO_Windows_Demo
                 localSettings.Values["iot_device_id"] = "";
                 localSettings.Values["azure_iot_hub_connection_string"] = azs_iothub.Text;
                 localSettings.Values["azure_storage_connection_string"] = azs_storage.Text;
+                localSettings.Values["azure_delay_time"] = Aztime_delay.Text;
             }
         }
     }

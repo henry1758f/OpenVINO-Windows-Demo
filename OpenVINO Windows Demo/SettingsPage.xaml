@@ -28,6 +28,10 @@
                 <RowDefinition Height="*" />
                 <RowDefinition Height="*" />
                 <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
                 <RowDefinition Height="auto" />
             </Grid.RowDefinitions>
 
@@ -83,10 +87,15 @@
             <RelativePanel  Grid.Row="12">
                 <TextBox x:Name="Source" PlaceholderText="cam" RelativePanel.AlignLeftWithPanel="True"/>
             </RelativePanel>
-            <RelativePanel Grid.Row="13">
+            <TextBlock Grid.Row="13" x:Uid="Setting_Azure Data request time delay " Style="{StaticResource TitleTextBlockStyle}" 
+                   HorizontalAlignment="Left" VerticalAlignment="Center" />
+            <RelativePanel  Grid.Row="14">
+                <TextBox x:Name="Aztime_delay" PlaceholderText="50" RelativePanel.AlignLeftWithPanel="True"/>
+            </RelativePanel>
+            <RelativePanel Grid.Row="15">
                 <Button Name="Apply_Button" Content="Apply Settings" Click="Apply_Button_Click"/>
             </RelativePanel>
-            <ToggleSwitch x:Name="connector_show_toggle" x:Uid="connector_show_toggle" Grid.Row="14"
+            <ToggleSwitch x:Name="connector_show_toggle" x:Uid="connector_show_toggle" Grid.Row="16"
                               OffContent="Disable"
                               OnContent="Enable" Toggled="connector_show_toggle_Toggled"/>
         </Grid>

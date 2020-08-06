@@ -253,7 +253,7 @@ namespace ConsoleConnector
                     break;
                 case "prerequest_Face_recognition_IOT":
                     processStartInfo.FileName = "cmd.exe";
-                    processStartInfo.Arguments = "/C pip install -r synnex_demos\\face_recognition_demo_Azure_IoT\\requirements.txt ";
+                    processStartInfo.Arguments = "/C pip install -r "+ App_path + "\\Demos\\synnex_demos\\face_recognition_demo_Azure_IoT\\requirements.txt ";
                     processStartInfo.WindowStyle = ProcessWindowStyle.Normal;
 
 #if (DEBUG)

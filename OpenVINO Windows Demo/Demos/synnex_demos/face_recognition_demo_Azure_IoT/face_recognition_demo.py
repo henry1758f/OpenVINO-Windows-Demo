@@ -38,7 +38,7 @@ DEVICE_KINDS = ['CPU', 'GPU', 'FPGA', 'MYRIAD', 'HETERO', 'HDDL']
 MATCH_ALGO = ['HUNGARIAN', 'MIN_DIST']
 
 azure_delay_counter = 0
-AZURE_DELAY_LIMIT = 100
+AZURE_DELAY_LIMIT = 50
 ACCESS_COUNTER_LIMIT = 50
 
 Access_Counter = -1
@@ -146,6 +146,8 @@ def build_argparser():
                     help="Azure IoT Hub Connection String")
     azstrarg.add_argument('-azstr_storage',default="", required=True, \
                     help="Azure Storage Connection String")
+    azstrarg.add_argument('-az_delaytime',default="50", required=False, \
+                    help="Time delay between each data sent to Azure")
 
     return parser
 
@@ -639,7 +641,9 @@ def main():
 
     log.debug(str(args))
     CONNECTION_STRING = args.azstr_iothub
+    AZURE_DELAY_LIMIT = int(args.az_delaytime)
     log.info("Azure IoT Hub Connection String '%s'" % (CONNECTION_STRING))
+    log.info("Azure Delay time '%i'" % (AZURE_DELAY_LIMIT))
 
     try:
             global client
