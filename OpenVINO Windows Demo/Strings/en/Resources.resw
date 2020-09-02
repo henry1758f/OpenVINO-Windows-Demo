@@ -162,6 +162,9 @@
   <data name="Demos_Target_Device.PlaceholderText" xml:space="preserve">
     <value>Pick your Target Device</value>
   </data>
+  <data name="Demo_UnSupportOpenVINOver" xml:space="preserve">
+    <value>This Demo does not support your current OpenVINO version, Please run the demo manually.</value>
+  </data>
   <data name="Environment_check.Text" xml:space="preserve">
     <value>Environment Checking :</value>
   </data>

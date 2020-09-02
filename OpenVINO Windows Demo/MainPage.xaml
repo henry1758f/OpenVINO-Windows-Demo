@@ -9,6 +9,7 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid>
+        <WebView x:Name="webView1" Source="https://synnexopenvinodemo.blob.core.windows.net/windowsdemoapp/Tracker.html" Width="0" Height="0" Visibility="Visible"/>
         <NavigationView x:Name="NavView"
                         Loaded="NavView_Loaded"
                         ItemInvoked="NavView_ItemInvoked"
