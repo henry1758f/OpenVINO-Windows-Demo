@@ -49,10 +49,16 @@
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
                 <TextBlock Grid.Column="0" Grid.Row="0" x:Uid="AboutApp_title" Style="{StaticResource TitleTextBlockStyle}" HorizontalAlignment="Center" Margin="10"/>
                 <TextBlock Grid.Column="0" Grid.Row="1" x:Uid="AboutApp" Style="{StaticResource SubtitleTextBlockStyle}"/>
+                <TextBlock Grid.Column="0" Grid.Row="2" Style="{StaticResource TitleTextBlockStyle}" >
+                    <LineBreak/>
+                    <Span xml:space="preserve"><Run x:Uid="Please_visit"/><Hyperlink x:Uid="more_info_link">OpenVINO Documents</Hyperlink><Run x:Uid="For_more_info_text"/></Span><LineBreak/>
+                    <Span xml:space="preserve"><Run x:Uid="Linux_ver_title"/><Hyperlink x:Uid="Linux_ver_link">  Linux Version Demo Tool</Hyperlink></Span>
+                </TextBlock>
             </Grid>
             <Grid Grid.Row="1">
                 <!--   Environment Checking   -->

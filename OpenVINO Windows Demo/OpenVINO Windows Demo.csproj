@@ -178,6 +178,12 @@
     </AppxManifest>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Assets\Crossroad_Camera_Demo.png" />
+    <Content Include="Assets\Face_Recognition_Demo.png" />
+    <Content Include="Assets\Face_Recognition_Demo_Azure.png" />
+    <Content Include="Assets\Gaze_Estimation_Demo.png" />
+    <Content Include="Assets\Human_Pose_Estimation_Demo.png" />
+    <Content Include="Assets\Image_Segmentation_Demo.png" />
     <Content Include="Assets\Interactive_Face_Detection_C++_Demo.png" />
     <Content Include="Assets\LargeTile.scale-100.png" />
     <Content Include="Assets\LargeTile.scale-125.png" />

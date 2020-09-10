@@ -45,7 +45,6 @@ namespace OpenVINO_Windows_Demo
         protected override void OnLaunched(LaunchActivatedEventArgs e)
         {
             APPLaunch();
-
             Frame rootFrame = Window.Current.Content as Frame;
 
             // 當視窗中已有內容時，不重複應用程式初始化，

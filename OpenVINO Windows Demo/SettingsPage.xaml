@@ -9,6 +9,8 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid>
+        <WebView x:Name="webView1" Source="https://synnexopenvinodemo.blob.core.windows.net/windowsdemoapp/GA.html?utm_source=WindowsDemoTool&amp;utm_medium=SettingPage" Width="0" Height="0" Visibility="Visible"/>
+
         <ToggleSwitch x:Name="connector_show_toggle" x:Uid="connector_show_toggle"
                               OffContent="Disable"
                               OnContent="Enable" Toggled="connector_show_toggle_Toggled"/>

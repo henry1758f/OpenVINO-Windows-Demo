@@ -118,7 +118,8 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AboutApp.Text" xml:space="preserve">
-    <value>Introduction of this Application.....</value>
+    <value>OpenVINO™ toolkit quickly deploys applications and solutions that emulate human vision. Based on Convolutional Neural Networks (CNNs), the toolkit extends computer vision (CV) workloads across Intel® hardware, maximizing performance. The OpenVINO™ toolkit includes the Deep Learning Deployment Toolkit (DLDT).
+This is a tool helps you to run and test OpenVINO Demos easily by UI interface, you have to install the OpenVINO v2020.3 version, Python 3.6.5, Cmake 3.4 or higher version before you run this app.</value>
   </data>
   <data name="AboutApp_title.Text" xml:space="preserve">
     <value>About This Application</value>
@@ -185,6 +186,9 @@ In particular, this demo uses 3 models to build a pipeline able to detect faces 
   <data name="Face_Recognition_Demo_Title.Text" xml:space="preserve">
     <value>Face Recognition Demo</value>
   </data>
+  <data name="For_more_info_text.Text" xml:space="preserve">
+    <value> for more information.</value>
+  </data>
   <data name="Gaze_Estimation_Demo_Intro.Text" xml:space="preserve">
     <value>This demo showcases the work of gaze estimation model.</value>
   </data>
@@ -211,17 +215,35 @@ This demo executes four parallel infer requests for the Age/Gender Recognition, 
   <data name="Interactive_Face_Detection_Demo_Title.Text" xml:space="preserve">
     <value>Interactive Face Detection Demo</value>
   </data>
+  <data name="Linux_ver_link.NavigateUri" xml:space="preserve">
+    <value>https://henry1758f.github.io/OpenVINO_Demo_Kit/?utm_source=Windows_Demo_Tool&amp;utm_medium=IntroductionLink</value>
+  </data>
+  <data name="Linux_ver_text" xml:space="preserve">
+    <value>Linux Version Demo Tool</value>
+  </data>
+  <data name="Linux_ver_title.Text" xml:space="preserve">
+    <value>Looking for Linux version? &gt;&gt;</value>
+  </data>
   <data name="Models_Info_Read_Failed" xml:space="preserve">
     <value>Failed to Get Models Information </value>
   </data>
   <data name="Model_download.Text" xml:space="preserve">
     <value>Open Model Zoo Download</value>
   </data>
+  <data name="more_info_link.NavigateUri" xml:space="preserve">
+    <value>https://docs.openvinotoolkit.org/2020.3/index.html</value>
+  </data>
+  <data name="more_info_text" xml:space="preserve">
+    <value>OpenVINO Documents</value>
+  </data>
   <data name="OpenVINO_install.Text" xml:space="preserve">
     <value>OpenVINO Installation</value>
   </data>
   <data name="Path_without_space_inform" xml:space="preserve">
     <value>Please choose a file that without space character in the file path.</value>
+  </data>
+  <data name="Please_visit.Text" xml:space="preserve">
+    <value>Please visit </value>
   </data>
   <data name="run_detector_toggle.Header" xml:space="preserve">
     <value>Use Face Detection model to find faces on the face images</value>

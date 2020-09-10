@@ -67,7 +67,6 @@ namespace OpenVINO_Windows_Demo
             // Because we use ItemInvoked to navigate, we need to call Navigate
             // here to load the home page.
             NavView_Navigate("HOME", new EntranceNavigationTransitionInfo());
-
             // Add keyboard accelerators for backwards navigation.
             var goBack = new KeyboardAccelerator { Key = VirtualKey.GoBack };
             goBack.Invoked += BackInvoked;

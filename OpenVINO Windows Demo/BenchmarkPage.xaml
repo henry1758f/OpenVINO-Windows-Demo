@@ -9,6 +9,7 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" >
 
     <Grid>
+        <WebView x:Name="webView1" Source="https://synnexopenvinodemo.blob.core.windows.net/windowsdemoapp/GA.html?utm_source=WindowsDemoTool&amp;utm_medium=BenchmarkPage" Width="0" Height="0" Visibility="Visible"/>
 
     </Grid>
 </Page>

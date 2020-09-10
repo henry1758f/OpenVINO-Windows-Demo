@@ -40,43 +40,43 @@ namespace OpenVINO_Windows_Demo
             "PATH",
             "This demo provides an inference pipeline for persons' detection, recognition and reidentification. The demo uses Person Detection network followed by the Person Attributes Recognition and Person Reidentification Retail networks applied on top of the detection results.",
             "https://docs.openvinotoolkit.org/latest/_demos_crossroad_camera_demo_README.html",
-            "/Assets/Interactive_Face_Detection_C++_Demo.png",
+            "/Assets/Crossroad_Camera_Demo.png",
             new string[]{  }
             ),
             ("Face Recognition Demo",
             "PATH",
             "This example demonstrates an approach to create interactive applications for video processing. It shows the basic architecture for building model pipelines supporting model placement on different devices and simultaneous parallel or sequential execution using OpenVINO library in Python. In particular, this demo uses 3 models to build a pipeline able to detect faces on videos, their keypoints (aka \"landmarks\"), and recognize persons using the provided faces database (the gallery).",
             "https://docs.openvinotoolkit.org/latest/_demos_crossroad_camera_demo_README.html",
-            "/Assets/Interactive_Face_Detection_C++_Demo.png",
+            "/Assets/Face_Recognition_Demo.png",
             new string[]{ "2020.4" }
             ),
             ("Human Pose Estimation C++ Demo",
             "PATH",
             "This demo showcases the work of multi-person 2D pose estimation algorithm. The task is to predict a pose: body skeleton, which consists of keypoints and connections between them, for every person in an input video. The pose may contain up to 18 keypoints: ears, eyes, nose, neck, shoulders, elbows, wrists, hips, knees, and ankles. Some of potential use cases of the algorithm are action recognition and behavior understanding. ",
             "",
-            "/Assets/Interactive_Face_Detection_C++_Demo.png",
+            "/Assets/Human_Pose_Estimation_Demo.png",
             new string[]{  }
             ),
             ("Gaze Estimation Demo",
             "PATH",
             "This demo showcases the work of gaze estimation model.",
             "",
-            "/Assets/Interactive_Face_Detection_C++_Demo.png",
+            "/Assets/Gaze_Estimation_Demo.png",
             new string[]{  }
             ),
             ("Image Segmentation C++ Demo",
             "PATH",
             "This topic demonstrates how to run the Image Segmentation demo application, which does inference using semantic segmentation networks.",
             "https://docs.openvinotoolkit.org/latest/_demos_crossroad_camera_demo_README.html",
-            "/Assets/Interactive_Face_Detection_C++_Demo.png",
+            "/Assets/Image_Segmentation_Demo.png",
             new string[]{  }
             ),
             ("Face Recognition Demo Azure IoT Showcase",
             "PATH",
             "This example demonstrates an approach to create interactive applications for video processing. It shows the basic architecture for building model pipelines supporting model placement on different devices and simultaneous parallel or sequential execution using OpenVINO library in Python. In particular, this demo uses 3 models to build a pipeline able to detect faces on videos, their keypoints (aka \"landmarks\"), and recognize persons using the provided faces database (the gallery).",
             "https://docs.openvinotoolkit.org/latest/_demos_crossroad_camera_demo_README.html",
-            "/Assets/Interactive_Face_Detection_C++_Demo.png",
-            new string[]{ "2020.4" }
+            "/Assets/Face_Recognition_Demo_Azure.png",
+            new string[]{  }
             )
         };
 

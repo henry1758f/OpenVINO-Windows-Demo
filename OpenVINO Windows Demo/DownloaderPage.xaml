@@ -44,6 +44,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
+        <WebView x:Name="webView1" Source="https://synnexopenvinodemo.blob.core.windows.net/windowsdemoapp/GA.html?utm_source=WindowsDemoTool&amp;utm_medium=DownloaderPage" Width="0" Height="0" Visibility="Visible"/>
         <TextBlock Grid.Column="0" Grid.Row="0" Text="TITLE" Grid.ColumnSpan="3" Style="{StaticResource TitleTextBlockStyle}" />
         <TextBlock Grid.Column="1" Grid.Row="1" Text="Open Model Zoo Model List" VerticalAlignment="Center" HorizontalAlignment="Center" />
         <ListView Grid.Column="1" Grid.Row="2" ItemTemplate="{StaticResource ModelItemTemplate}" ItemsSource="{x:Bind Total_Models}" IsItemClickEnabled="True" x:Name="Total_Models_List" IsMultiSelectCheckBoxEnabled="True" SelectionMode="Multiple" />

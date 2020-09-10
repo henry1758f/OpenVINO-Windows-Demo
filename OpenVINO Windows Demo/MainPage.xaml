@@ -9,7 +9,7 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid>
-        <WebView x:Name="webView1" Source="https://synnexopenvinodemo.blob.core.windows.net/windowsdemoapp/Tracker.html" Width="0" Height="0" Visibility="Visible"/>
+        <WebView x:Name="webView1" Source="https://synnexopenvinodemo.blob.core.windows.net/windowsdemoapp/GA.html?utm_source=WindowsDemoTool&amp;utm_medium=MainPage" Width="0" Height="0" Visibility="Visible"/>
         <NavigationView x:Name="NavView"
                         Loaded="NavView_Loaded"
                         ItemInvoked="NavView_ItemInvoked"
@@ -24,11 +24,11 @@
                         <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xEB3C;"/>
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
-                <NavigationViewItem Tag="Performance" Content="Performance Benchmark Test">
+                <!--<NavigationViewItem Tag="Performance" Content="Performance Benchmark Test">
                     <NavigationViewItem.Icon>
                         <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xEB3C;"/>
                     </NavigationViewItem.Icon>
-                </NavigationViewItem>
+                </NavigationViewItem>-->
                 <NavigationViewItemHeader x:Name="MOHerder"
                                           Content="OpenVINO Model Optimizer and Tools"/>
                 <NavigationViewItem Tag="downloader" Content="Model Downloader">
@@ -36,11 +36,11 @@
                         <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xEB3C;"/>
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
-                <NavigationViewItem Tag="MO" Content="Model Optimizer">
+                <!--<NavigationViewItem Tag="MO" Content="Model Optimizer">
                     <NavigationViewItem.Icon>
                         <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xEB3C;"/>
                     </NavigationViewItem.Icon>
-                </NavigationViewItem>
+                </NavigationViewItem> -->
             </NavigationView.MenuItems>
             <NavigationView.AutoSuggestBox>
                 <AutoSuggestBox x:Name="NavViewSearchBox" QueryIcon="Find"/>

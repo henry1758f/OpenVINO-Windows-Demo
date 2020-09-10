@@ -46,6 +46,7 @@
                 <RowDefinition Height="*" />
                 <RowDefinition Height="auto" />
             </Grid.RowDefinitions>
+            <WebView x:Name="webView1" Source="https://synnexopenvinodemo.blob.core.windows.net/windowsdemoapp/GA.html?utm_source=WindowsDemoTool&amp;utm_medium=Face_Recognition_Demo_Page" Width="0" Height="0" Visibility="Visible"/>
 
             <TextBlock Grid.Row="0" x:Uid="Setting_Your_Models" Style="{StaticResource TitleTextBlockStyle}" 
                    HorizontalAlignment="Left" VerticalAlignment="Center" />
