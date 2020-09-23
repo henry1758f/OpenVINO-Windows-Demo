@@ -3,3 +3,6 @@ numpy
 scikit-learn
 scipy
 tqdm
+azure-iot-hub
+azure-iot-device
+azure-storage-blob

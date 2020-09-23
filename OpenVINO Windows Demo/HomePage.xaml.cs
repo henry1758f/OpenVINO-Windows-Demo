@@ -300,6 +300,10 @@ namespace OpenVINO_Windows_Demo
                 Parameter += " -m_reid \"" + model_1 + "\" -d_reid " + localSettings.Values["model_1_target"].ToString();
                 Parameter += " -m_lm \"" + model_2 + "\" -d_lm " + localSettings.Values["model_2_target"].ToString();
                 Parameter += " -fg " + fg_path;
+                if(Azdelaytime.Length.Equals(0))
+                {
+                    Azdelaytime = "50";
+                }
                 Parameter += " -az_delaytime " + Azdelaytime;
                 if (localSettings.Values["azure_iot_hub_connection_string"] == null || localSettings.Values["azure_storage_connection_string"] == null || localSettings.Values["azure_iot_hub_connection_string"].ToString().Length == 0 || localSettings.Values["azure_storage_connection_string"].ToString().Length == 0)
                 {
